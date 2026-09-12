@@ -131,7 +131,8 @@ const json = JSON.stringify({
     doubleSided: true,
     alphaMode: 'BLEND',
     pbrMetallicRoughness: {
-      baseColorFactor: [0.52, 0.68, 0.88, 0.27],
+      // Opacity is controlled by the renderer so the model does not become doubly transparent.
+      baseColorFactor: [0.52, 0.68, 0.88, 1],
       metallicFactor: 0,
       roughnessFactor: 0.65,
     },

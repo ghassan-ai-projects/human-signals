@@ -2371,8 +2371,8 @@
     {
       "id": "asset-makehuman-preview-body",
       "path": "content/assets/makehuman-preview-body.glb",
-      "sha256": "e913efb9ce1b6e2b6fa3258439f0b3c9475cb5cf433350dd11a7d7cea884f200",
-      "bytes": 644088,
+      "sha256": "39795b09c03340e6a831a92a76243dc04bcd6dbf25e221e161e4a251211396b8",
+      "bytes": 644084,
       "kind": "body-model",
       "source": "https://github.com/makehumancommunity/makehuman/blob/1f508f6083b2f823dab15de924b3bde72e08d77c/makehuman/data/3dobjs/base.obj",
       "sourceRevision": "1f508f6083b2f823dab15de924b3bde72e08d77c",
