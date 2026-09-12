@@ -893,7 +893,128 @@
       "claimIds": [
         "claim-fictional-beta-response"
       ],
-      "comparison": [],
+      "comparison": [
+        {
+          "dimension": "type",
+          "contextIds": [
+            "ctx-fictional-episode"
+          ],
+          "text": {
+            "intro": "An invented intermediary signal.",
+            "standard": "Invented intermediary signal used for teaching chains.",
+            "mechanism": "Invented signal; plays the middle link of the chain."
+          },
+          "applicability": "applicable",
+          "claimIds": [
+            "claim-fictional-beta-response"
+          ]
+        },
+        {
+          "dimension": "sources",
+          "contextIds": [
+            "ctx-fictional-episode"
+          ],
+          "text": {
+            "intro": "The middle structure.",
+            "standard": "Released by the invented middle structure in this episode.",
+            "mechanism": "Released by the middle structure; no other source is authored here."
+          },
+          "applicability": "applicable",
+          "claimIds": [
+            "claim-fictional-beta-response"
+          ]
+        },
+        {
+          "dimension": "transport",
+          "contextIds": [
+            "ctx-fictional-episode"
+          ],
+          "text": {
+            "intro": "Travels the drawn route.",
+            "standard": "Moves along the authored route from middle structure onward.",
+            "mechanism": "Transport follows the authored route; the fixture marks it as local to the episode."
+          },
+          "applicability": "applicable",
+          "claimIds": [
+            "claim-fictional-beta-response"
+          ]
+        },
+        {
+          "dimension": "targets",
+          "contextIds": [
+            "ctx-fictional-episode"
+          ],
+          "text": {
+            "intro": "The peripheral structure.",
+            "standard": "Acts on the invented peripheral structure.",
+            "mechanism": "Authored target is the peripheral structure only."
+          },
+          "applicability": "applicable",
+          "claimIds": [
+            "claim-fictional-beta-response"
+          ]
+        },
+        {
+          "dimension": "effects",
+          "contextIds": [
+            "ctx-fictional-episode"
+          ],
+          "text": {
+            "intro": "It passes the message on.",
+            "standard": "Stimulates the peripheral structure to respond.",
+            "mechanism": "Stimulates the peripheral structure, whose response is Gamma release."
+          },
+          "applicability": "applicable",
+          "claimIds": [
+            "claim-fictional-beta-response"
+          ]
+        },
+        {
+          "dimension": "timing",
+          "contextIds": [
+            "ctx-fictional-episode"
+          ],
+          "text": {
+            "intro": "Earlier in the episode.",
+            "standard": "Acts before the peripheral response.",
+            "mechanism": "Authored ordering only: Beta precedes Gamma; no durations are implied."
+          },
+          "applicability": "applicable",
+          "claimIds": [
+            "claim-fictional-beta-response"
+          ]
+        },
+        {
+          "dimension": "regulation",
+          "contextIds": [
+            "ctx-fictional-episode"
+          ],
+          "text": {
+            "intro": "Not regulated in this episode.",
+            "standard": "No regulation of Beta is authored in this fixture.",
+            "mechanism": "The fixture authors no upstream regulator for Beta."
+          },
+          "applicability": "applicable",
+          "claimIds": [
+            "claim-fictional-beta-response"
+          ]
+        },
+        {
+          "dimension": "misconception",
+          "contextIds": [
+            "ctx-fictional-episode"
+          ],
+          "text": {
+            "intro": "It is not Alpha.",
+            "standard": "A common mistake is reading Beta as a second copy of Alpha.",
+            "mechanism": "Beta is a distinct signal on its own route; the fixture gives it no Alpha-like role."
+          },
+          "applicability": "applicable",
+          "claimIds": [
+            "claim-fictional-beta-response"
+          ]
+        }
+      ],
       "journeyIds": [
         "exercise-synthetic-feedback"
       ]
@@ -932,7 +1053,124 @@
         "claim-fictional-gamma-output",
         "claim-fictional-gamma-feedback"
       ],
-      "comparison": [],
+      "comparison": [
+        {
+          "dimension": "type",
+          "contextIds": [
+            "ctx-fictional-episode"
+          ],
+          "text": {
+            "intro": "An invented output signal.",
+            "standard": "Invented output signal of the peripheral structure.",
+            "mechanism": "Invented signal; carries the peripheral response and the feedback link."
+          },
+          "applicability": "applicable",
+          "claimIds": [
+            "claim-fictional-gamma-output"
+          ]
+        },
+        {
+          "dimension": "sources",
+          "contextIds": [
+            "ctx-fictional-episode"
+          ],
+          "text": {
+            "intro": "The peripheral structure.",
+            "standard": "Released by the invented peripheral structure.",
+            "mechanism": "Released by the peripheral structure after its Beta-driven response."
+          },
+          "applicability": "applicable",
+          "claimIds": [
+            "claim-fictional-gamma-output"
+          ]
+        },
+        {
+          "dimension": "transport",
+          "contextIds": [
+            "ctx-fictional-episode"
+          ],
+          "text": {
+            "intro": "Travels back to the source.",
+            "standard": "Moves along the authored feedback route to the source structure.",
+            "mechanism": "The fixture marks Gamma as travelling the feedback route; it is local to the episode."
+          },
+          "applicability": "applicable",
+          "claimIds": [
+            "claim-fictional-gamma-output"
+          ]
+        },
+        {
+          "dimension": "targets",
+          "contextIds": [
+            "ctx-fictional-episode"
+          ],
+          "text": {
+            "intro": "The source structure.",
+            "standard": "Acts on the invented source structure.",
+            "mechanism": "Authored target is the source structure, closing the loop."
+          },
+          "applicability": "applicable",
+          "claimIds": [
+            "claim-fictional-gamma-feedback"
+          ]
+        },
+        {
+          "dimension": "effects",
+          "contextIds": [
+            "ctx-fictional-episode"
+          ],
+          "text": {
+            "intro": "It turns the source down.",
+            "standard": "Inhibits the source structure, reducing Alpha.",
+            "mechanism": "Inhibits Alpha release at the source structure; the sign is authored as inhibitory."
+          },
+          "applicability": "applicable",
+          "claimIds": [
+            "claim-fictional-gamma-feedback"
+          ]
+        },
+        {
+          "dimension": "timing",
+          "contextIds": [
+            "ctx-fictional-episode"
+          ],
+          "text": {
+            "intro": "Later in the episode.",
+            "standard": "Acts after the peripheral response.",
+            "mechanism": "Authored ordering only: Gamma follows the peripheral response; no durations are implied."
+          },
+          "applicability": "applicable",
+          "claimIds": [
+            "claim-fictional-gamma-feedback"
+          ]
+        },
+        {
+          "dimension": "regulation",
+          "contextIds": [
+            "ctx-fictional-episode"
+          ],
+          "text": {
+            "intro": "The loop turns itself down.",
+            "standard": "Gamma is itself reduced when Alpha falls.",
+            "mechanism": "Authored as a negative loop: less Alpha means less drive, so Gamma falls."
+          },
+          "applicability": "applicable",
+          "claimIds": [
+            "claim-fictional-gamma-feedback"
+          ]
+        },
+        {
+          "dimension": "misconception",
+          "contextIds": [],
+          "text": {
+            "intro": "Not a punishment signal.",
+            "standard": "A common mistake is reading the slowdown as a failure.",
+            "mechanism": "The slowdown is the fixture loop working as authored, not an error state."
+          },
+          "applicability": "not-comparable",
+          "claimIds": []
+        }
+      ],
       "journeyIds": [
         "exercise-synthetic-feedback"
       ]
@@ -1494,7 +1732,25 @@
       ]
     }
   ],
-  "comparisons": [],
+  "comparisons": [
+    {
+      "id": "pair-alpha-beta",
+      "signalIds": [
+        "sig-alpha",
+        "sig-beta"
+      ],
+      "title": "Alpha and Beta in the invented loop",
+      "explanation": {
+        "intro": "Two invented signals from the same made-up episode: Alpha starts the chain and Beta carries it one step further.",
+        "standard": "Alpha and Beta are distinct signals with distinct routes in the invented episode. Alpha leaves the source structure; Beta is released by the middle structure after Alpha arrives. Comparing them shows how a chain divides one story into steps.",
+        "mechanism": "The fixture authors Alpha as the source-structure output and Beta as the middle-structure output, each with its own route and target. Their comparison demonstrates aligned authored dimensions; nothing here implies the two signals are interchangeable or that either models a real hormone."
+      },
+      "claimIds": [
+        "claim-fictional-alpha-release",
+        "claim-fictional-beta-response"
+      ]
+    }
+  ],
   "assets": [],
   "reviews": []
 }
