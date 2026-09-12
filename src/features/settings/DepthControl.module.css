@@ -1,0 +1,57 @@
+.control {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.legend {
+  padding: 0;
+  font-size: var(--hs-text-small);
+  font-weight: 600;
+  color: var(--hs-text-muted);
+}
+
+.options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--hs-space-2);
+  margin-top: var(--hs-space-2);
+}
+
+.option,
+.optionActive {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: var(--hs-tap-target);
+  padding: var(--hs-space-2) var(--hs-space-3);
+  border: 1px solid var(--hs-border-strong);
+  border-radius: var(--hs-radius);
+  background: var(--hs-surface);
+  cursor: pointer;
+}
+
+.optionActive {
+  border-width: 2px;
+  border-color: var(--hs-role-route);
+  background: var(--hs-role-route-soft);
+  font-weight: 600;
+}
+
+.option input,
+.optionActive input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.optionLabel {
+  font-size: var(--hs-text-small);
+}
+
+.optionHint {
+  font-size: 12px;
+  color: var(--hs-text-muted);
+  max-width: 26ch;
+}

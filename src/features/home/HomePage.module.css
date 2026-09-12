@@ -30,3 +30,30 @@
   color: var(--hs-text-muted);
   font-size: var(--hs-text-small);
 }
+
+.starter {
+  margin-bottom: var(--hs-space-5);
+}
+
+.starterLink {
+  display: inline-block;
+  min-height: var(--hs-tap-target);
+  padding: var(--hs-space-3) var(--hs-space-5);
+  background: var(--hs-role-route);
+  border-radius: var(--hs-radius);
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.starterLink:hover {
+  filter: brightness(1.1);
+}
+
+.contentNotice {
+  padding: var(--hs-space-3);
+  background: var(--hs-surface-2);
+  border: 1px solid var(--hs-border);
+  border-radius: var(--hs-radius);
+  font-size: var(--hs-text-small);
+}

@@ -89,3 +89,27 @@
   flex: 1;
   min-width: 0;
 }
+
+.tools {
+  display: flex;
+  align-items: center;
+  gap: var(--hs-space-2);
+  margin-left: auto;
+}
+
+.storageNotice {
+  margin: 0;
+  max-width: none;
+  padding: var(--hs-space-2) var(--hs-space-4);
+  background: var(--hs-surface-2);
+  border-bottom: 1px solid var(--hs-border);
+  font-size: var(--hs-text-small);
+}
+
+.noticeDismiss {
+  min-height: 32px;
+  min-width: 0;
+  margin-left: var(--hs-space-2);
+  padding: var(--hs-space-1) var(--hs-space-2);
+  font-size: var(--hs-text-small);
+}

@@ -59,6 +59,16 @@ export default tseslint.config(
     rules: {
       ...reactHooks.configs.recommended.rules,
       ...jsxA11y.flatConfigs.strict.rules,
+      // The ARIA tree pattern is built from ul and li, which this rule does not allow by default.
+      'jsx-a11y/no-noninteractive-element-to-interactive-role': [
+        'error',
+        {
+          ul: ['listbox', 'menu', 'menubar', 'radiogroup', 'tablist', 'tree', 'treegrid'],
+          li: ['menuitem', 'option', 'row', 'tab', 'treeitem'],
+          table: ['grid'],
+          td: ['gridcell'],
+        },
+      ],
       // A scrollable region needs a tab stop and an accessible name to be keyboard reachable.
       'jsx-a11y/no-noninteractive-tabindex': [
         'error',

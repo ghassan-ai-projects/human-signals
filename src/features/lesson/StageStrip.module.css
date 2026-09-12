@@ -1,0 +1,83 @@
+.strip {
+  display: grid;
+  gap: var(--hs-space-3);
+}
+
+.track {
+  min-width: 0;
+}
+
+.trackLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--hs-space-2);
+  margin: 0 0 var(--hs-space-2);
+  font-size: var(--hs-text-small);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--hs-text-muted);
+}
+
+/* Track identity carries a number as well as position, never colour alone. */
+.trackMarker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--hs-border-strong);
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.steps {
+  display: flex;
+  gap: var(--hs-space-2);
+  overflow-x: auto;
+  margin: 0;
+  padding: 0 0 var(--hs-space-2);
+  list-style: none;
+  max-width: none;
+}
+
+.steps li {
+  max-width: none;
+}
+
+.step,
+.stepCurrent {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--hs-space-1);
+  min-width: 148px;
+  max-width: 220px;
+  height: 100%;
+  padding: var(--hs-space-2) var(--hs-space-3);
+  text-align: left;
+  white-space: normal;
+}
+
+.stepCurrent {
+  border-color: var(--hs-role-route);
+  border-width: 2px;
+  background: var(--hs-role-route-soft);
+  font-weight: 600;
+}
+
+.stage {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--hs-text-muted);
+}
+
+.stepCurrent .stage {
+  color: var(--hs-role-route);
+}
+
+.label {
+  font-size: var(--hs-text-small);
+  line-height: 1.35;
+}

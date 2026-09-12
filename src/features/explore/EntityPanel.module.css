@@ -1,0 +1,60 @@
+.panel h2 {
+  margin-top: 0;
+}
+
+.panel h3 {
+  margin: var(--hs-space-4) 0 var(--hs-space-2);
+  font-size: var(--hs-text-small);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--hs-text-muted);
+}
+
+.aliases {
+  margin: 0 0 var(--hs-space-2);
+  font-size: var(--hs-text-small);
+  color: var(--hs-text-muted);
+}
+
+.roles {
+  margin: 0;
+  padding-left: var(--hs-space-5);
+  font-size: var(--hs-text-small);
+}
+
+.relationships {
+  display: grid;
+  gap: var(--hs-space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.relationships li {
+  max-width: none;
+  padding-bottom: var(--hs-space-3);
+  border-bottom: 1px solid var(--hs-border);
+}
+
+.relationText {
+  margin: 0 0 var(--hs-space-2);
+  font-size: var(--hs-text-small);
+}
+
+.feedbackTag {
+  display: inline-block;
+  margin-left: var(--hs-space-2);
+  padding: 0 var(--hs-space-2);
+  border: 1px solid var(--hs-role-inhibit);
+  border-radius: var(--hs-radius-sm);
+  color: var(--hs-role-inhibit);
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.empty {
+  padding: var(--hs-space-3);
+  background: var(--hs-surface-2);
+  border-radius: var(--hs-radius);
+  font-size: var(--hs-text-small);
+}

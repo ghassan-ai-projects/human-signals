@@ -1,0 +1,54 @@
+.page {
+  padding: var(--hs-space-5);
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--hs-space-4);
+}
+
+.header h1 {
+  margin: 0;
+}
+
+.lede {
+  color: var(--hs-text-muted);
+}
+
+.cards {
+  display: grid;
+  gap: var(--hs-space-4);
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  margin: var(--hs-space-4) 0 0;
+  padding: 0;
+  list-style: none;
+  max-width: none;
+}
+
+.cards li {
+  max-width: none;
+  padding: var(--hs-space-4);
+  background: var(--hs-surface);
+  border: 1px solid var(--hs-border);
+  border-radius: var(--hs-radius-lg);
+}
+
+.cards h2 {
+  margin-top: 0;
+  font-size: 1.1rem;
+}
+
+.tracks {
+  margin: 0;
+  font-size: var(--hs-text-small);
+  color: var(--hs-text-muted);
+}
+
+.empty {
+  padding: var(--hs-space-4);
+  background: var(--hs-surface-2);
+  border-radius: var(--hs-radius-lg);
+}

@@ -1,0 +1,151 @@
+.wrapper {
+  display: grid;
+  gap: var(--hs-space-4);
+  grid-template-columns: minmax(220px, 1fr) minmax(240px, 1fr);
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .wrapper {
+    grid-template-columns: 1fr;
+  }
+}
+
+.canvas {
+  width: 100%;
+  max-height: 60vh;
+  background: var(--hs-canvas);
+  border: 1px solid var(--hs-border);
+  border-radius: var(--hs-radius-lg);
+}
+
+.silhouette {
+  fill: var(--hs-surface-3);
+  stroke: var(--hs-border-strong);
+  stroke-width: 0.4;
+}
+
+.nodeGroup,
+.nodeGroupSelected {
+  cursor: pointer;
+}
+
+.nodeGroupSelected circle {
+  stroke-width: 1.6;
+  stroke-dasharray: 2 1.2;
+}
+
+.nodeIdle {
+  fill: var(--hs-surface);
+  stroke: var(--hs-border-strong);
+  stroke-width: 0.7;
+}
+
+.nodeSource {
+  fill: var(--hs-role-source-soft);
+  stroke: var(--hs-role-source);
+  stroke-width: 1;
+}
+
+.nodeTarget {
+  fill: var(--hs-role-target-soft);
+  stroke: var(--hs-role-target);
+  stroke-width: 1;
+}
+
+.nodeActive {
+  fill: var(--hs-role-route-soft);
+  stroke: var(--hs-role-route);
+  stroke-width: 1;
+}
+
+.roleGlyph {
+  font-size: 3.2px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--hs-text);
+}
+
+.nodeLabel {
+  font-size: 3.4px;
+  fill: var(--hs-text);
+  paint-order: stroke;
+  stroke: var(--hs-canvas);
+  stroke-width: 1.2px;
+  stroke-linejoin: round;
+}
+
+.edge-route {
+  stroke: var(--hs-role-route);
+  stroke-width: 1;
+}
+
+.edge-inhibit {
+  stroke: var(--hs-role-inhibit);
+  stroke-width: 1;
+}
+
+.edge-uncertain {
+  stroke: var(--hs-role-uncertain);
+  stroke-width: 0.8;
+}
+
+.markerShape {
+  fill: var(--hs-role-route);
+}
+
+.markerShapeInhibit {
+  fill: var(--hs-role-inhibit);
+}
+
+.pulse {
+  fill: var(--hs-role-route);
+}
+
+.legend {
+  padding: var(--hs-space-4);
+  background: var(--hs-surface);
+  border: 1px solid var(--hs-border);
+  border-radius: var(--hs-radius-lg);
+  font-size: var(--hs-text-small);
+}
+
+.legendHeading {
+  margin-top: 0;
+  font-size: var(--hs-text-small);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--hs-text-muted);
+}
+
+.legend ul {
+  margin: 0 0 var(--hs-space-3);
+  padding-left: var(--hs-space-5);
+}
+
+.legend li {
+  margin-bottom: var(--hs-space-1);
+}
+
+.edgeActions {
+  list-style: none;
+  padding: 0;
+  border-top: 1px solid var(--hs-border);
+  padding-top: var(--hs-space-3);
+}
+
+.edgeActions li {
+  display: flex;
+  flex-direction: column;
+  gap: var(--hs-space-1);
+  margin-bottom: var(--hs-space-3);
+}
+
+.edgeActions button {
+  text-align: left;
+  min-height: var(--hs-tap-target);
+}
+
+.edgeMeta {
+  color: var(--hs-text-muted);
+}

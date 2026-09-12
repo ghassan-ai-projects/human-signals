@@ -1,0 +1,40 @@
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--hs-space-2);
+  margin: var(--hs-space-3) 0;
+  font-size: var(--hs-text-small);
+}
+
+.badge,
+.badgeDashed {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--hs-space-2);
+  padding: var(--hs-space-1) var(--hs-space-3);
+  border: 2px solid var(--hs-border-strong);
+  border-radius: 999px;
+  background: var(--hs-surface-2);
+  font-weight: 600;
+}
+
+.badgeDashed {
+  border-style: dashed;
+}
+
+.glyph {
+  font-family: var(--hs-font-mono);
+}
+
+.link {
+  min-height: 36px;
+  min-width: 0;
+  padding: var(--hs-space-1) var(--hs-space-3);
+  font-size: var(--hs-text-small);
+}
+
+.draftNote {
+  width: 100%;
+  color: var(--hs-role-inhibit);
+}

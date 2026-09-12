@@ -1,0 +1,79 @@
+.panel {
+  padding: var(--hs-space-4);
+  background: var(--hs-surface);
+  border: 1px solid var(--hs-border-strong);
+  border-radius: var(--hs-radius-lg);
+  box-shadow: var(--hs-shadow);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--hs-space-3);
+}
+
+.header h2 {
+  font-size: 1.1rem;
+}
+
+.claim {
+  padding-top: var(--hs-space-3);
+  border-top: 1px solid var(--hs-border);
+}
+
+.claim h3 {
+  margin: var(--hs-space-3) 0 var(--hs-space-1);
+  font-size: var(--hs-text-small);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--hs-text-muted);
+}
+
+.support {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--hs-space-2);
+  align-items: center;
+}
+
+.badge,
+.badgeDashed {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--hs-space-2);
+  padding: var(--hs-space-1) var(--hs-space-3);
+  border: 2px solid var(--hs-border-strong);
+  border-radius: 999px;
+  background: var(--hs-surface-2);
+  font-weight: 600;
+}
+
+.badgeDashed {
+  border-style: dashed;
+}
+
+.kind {
+  padding: var(--hs-space-1) var(--hs-space-2);
+  border: 1px solid var(--hs-border-strong);
+  border-radius: var(--hs-radius-sm);
+  font-size: var(--hs-text-small);
+}
+
+.contexts {
+  margin: 0 0 var(--hs-space-2);
+  padding-left: var(--hs-space-4);
+  font-size: var(--hs-text-small);
+  color: var(--hs-text-muted);
+}
+
+.missing {
+  color: var(--hs-role-inhibit);
+}
+
+.checked,
+.stance {
+  display: block;
+  font-size: var(--hs-text-small);
+  color: var(--hs-text-muted);
+}

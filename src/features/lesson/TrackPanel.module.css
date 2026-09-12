@@ -1,0 +1,110 @@
+.panel {
+  display: grid;
+  gap: var(--hs-space-4);
+}
+
+.tracks {
+  display: grid;
+  gap: var(--hs-space-3);
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.track,
+.trackDimmed {
+  padding: var(--hs-space-4);
+  background: var(--hs-surface);
+  border: 1px solid var(--hs-border);
+  border-left: 4px solid var(--hs-role-route);
+  border-radius: var(--hs-radius);
+}
+
+/* A dimmed track is still fully readable: focusing changes emphasis, never content. */
+.trackDimmed {
+  border-left-color: var(--hs-border-strong);
+  background: var(--hs-surface-2);
+}
+
+.trackHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--hs-space-3);
+  margin-bottom: var(--hs-space-2);
+}
+
+.trackHeader h3 {
+  display: flex;
+  align-items: center;
+  gap: var(--hs-space-2);
+  margin: 0;
+  font-size: var(--hs-text-small);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--hs-text-muted);
+}
+
+.trackMarker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--hs-border-strong);
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.focusButton {
+  min-height: 32px;
+  min-width: 0;
+  padding: var(--hs-space-1) var(--hs-space-2);
+  font-size: var(--hs-text-small);
+}
+
+.caption {
+  margin: 0 0 var(--hs-space-2);
+}
+
+.timing {
+  margin: 0;
+  font-size: var(--hs-text-small);
+  color: var(--hs-text-muted);
+}
+
+.trends {
+  padding: var(--hs-space-4);
+  background: var(--hs-surface);
+  border: 1px solid var(--hs-border);
+  border-radius: var(--hs-radius);
+}
+
+.trendsHeading {
+  margin-top: 0;
+  font-size: var(--hs-text-small);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--hs-text-muted);
+}
+
+.trends ul {
+  margin: 0 0 var(--hs-space-2);
+  padding-left: var(--hs-space-4);
+  list-style: none;
+}
+
+.trends li {
+  display: flex;
+  gap: var(--hs-space-2);
+  align-items: baseline;
+}
+
+.trendGlyph {
+  font-family: var(--hs-font-mono);
+}
+
+.trendsNote {
+  margin: 0;
+  font-size: var(--hs-text-small);
+  color: var(--hs-text-muted);
+}

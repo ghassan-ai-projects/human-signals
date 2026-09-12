@@ -1,0 +1,55 @@
+.page {
+  display: grid;
+  gap: var(--hs-space-5);
+  padding: var(--hs-space-5);
+}
+
+.header h1 {
+  margin-bottom: var(--hs-space-3);
+}
+
+.kind {
+  margin: 0;
+  font-size: var(--hs-text-small);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--hs-text-muted);
+}
+
+.headerControls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--hs-space-4);
+}
+
+.copied {
+  font-size: var(--hs-text-small);
+  color: var(--hs-role-target);
+}
+
+.prerequisites {
+  padding: var(--hs-space-4);
+  background: var(--hs-surface-2);
+  border: 1px solid var(--hs-border);
+  border-radius: var(--hs-radius-lg);
+}
+
+.prerequisites h2 {
+  margin-top: 0;
+  font-size: 1.05rem;
+}
+
+.prerequisites dt {
+  font-weight: 600;
+}
+
+.prerequisites dd {
+  margin: 0 0 var(--hs-space-2);
+}
+
+.prerequisiteNote {
+  margin: 0;
+  font-size: var(--hs-text-small);
+  color: var(--hs-text-muted);
+}
