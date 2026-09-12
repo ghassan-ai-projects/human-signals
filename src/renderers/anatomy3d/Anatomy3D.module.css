@@ -145,3 +145,12 @@
 .routeLegend span {
   color: var(--hs-text-muted);
 }
+
+/* On a phone the 4/3 holder's min-height forced it wider than the viewport
+   (320 px × 4/3 ≈ 427 px); a square canvas fits and keeps everything reachable. */
+@media (max-width: 480px) {
+  .canvasHolder {
+    min-height: 0;
+    aspect-ratio: 1 / 1;
+  }
+}
