@@ -17,6 +17,7 @@ import { EvidencePanel } from '../evidence/EvidencePanel.tsx';
 import { useAnnouncer } from '../../components/Announcer.tsx';
 import { useLessonSession } from '../session/useLessonSession.ts';
 import { PlaybackControls } from './PlaybackControls.tsx';
+import { CheckpointCard } from './CheckpointCard.tsx';
 import { StageStrip } from './StageStrip.tsx';
 import { TrackPanel } from './TrackPanel.tsx';
 import { Transcript } from './Transcript.tsx';
@@ -60,7 +61,7 @@ export function LessonPlayer({
   }, [timeline.steps, requestedStepId]);
   const unknownStep = requestedStepId !== null && initialCursorMs === undefined;
 
-  const { session, frame, dispatch } = useLessonSession({
+  const { session, frame, dispatch, activePrediction } = useLessonSession({
     timeline,
     predictions,
     contentVersion: repository.manifest.contentVersion,
@@ -266,6 +267,35 @@ export function LessonPlayer({
           dispatch({ type: 'SET_SPEED', speed });
         }}
       />
+
+      {(session.status === 'question' || session.status === 'feedback') && activePrediction && (
+        <CheckpointCard
+          prediction={activePrediction}
+          status={session.status}
+          depth={depth}
+          selectedOptionId={session.selectedOptionId}
+          isPractice={
+            session.exposedFamilyIds.includes(activePrediction.familyId) ||
+            (priorAnsweredQuestionIds?.includes(activePrediction.id) ?? false)
+          }
+          onChoose={(optionId) => {
+            dispatch({ type: 'CHOOSE', optionId });
+          }}
+          onSubmit={() => {
+            dispatch({ type: 'SUBMIT' });
+          }}
+          onSkip={() => {
+            dispatch({ type: 'SKIP' });
+          }}
+          onContinue={() => {
+            dispatch({ type: 'CONTINUE' });
+          }}
+          onOpenEvidence={(claimIds, title) => {
+            lastInvoker.current = document.activeElement as HTMLElement | null;
+            setEvidence({ claimIds, title });
+          }}
+        />
+      )}
 
       <TrackPanel
         repository={repository}
