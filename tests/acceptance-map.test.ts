@@ -60,8 +60,8 @@ const ACCEPTANCE: AcceptanceEntry[] = [
   {
     id: 'AC-08',
     title: 'Comparison is a learning tool',
-    automated: [],
-    humanGate: 'blocked — the generic comparison view is W5 scope and is not built yet',
+    automated: ['integration/compare.test.tsx'],
+    humanGate: 'not run — 390 px visual review of the comparison is a G5 owner action',
   },
   {
     id: 'AC-09',

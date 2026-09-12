@@ -7,14 +7,16 @@
  * one choice updates only that column and the URL. The table keeps both values on one row, so
  * a narrow viewport never needs horizontal scrolling.
  */
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useRepository } from '../../app/ContentProvider.tsx';
 import { useDepth } from '../../app/useDepth.ts';
 import { safeId, timelineUrl } from '../../app/urls.ts';
-import { comparisonDimensions, type ComparisonDimension, type Signal } from '../../content/schema.ts';
+import { comparisonDimensions, type ComparisonDimension, type Depth, type Signal } from '../../content/schema.ts';
+import type { ContentRepository } from '../../content/repository.ts';
 import { DepthControl } from '../settings/DepthControl.tsx';
 import { EvidencePanel } from '../evidence/EvidencePanel.tsx';
+import { useEvidenceOverlay } from '../evidence/useEvidenceOverlay.ts';
 import styles from './ComparePage.module.css';
 
 const DIMENSION_LABEL: Record<ComparisonDimension, string> = {
@@ -28,17 +30,11 @@ const DIMENSION_LABEL: Record<ComparisonDimension, string> = {
   misconception: 'Common misconception',
 };
 
-interface EvidenceRequest {
-  claimIds: string[];
-  title: string;
-}
-
 export function ComparePage(): React.JSX.Element {
   const repository = useRepository();
   const [params, setParams] = useSearchParams();
   const [depth, setDepth] = useDepth();
-  const [evidence, setEvidence] = useState<EvidenceRequest | null>(null);
-  const lastInvoker = useRef<HTMLElement | null>(null);
+  const { evidence, openEvidence, closeEvidence } = useEvidenceOverlay();
 
   const signals = useMemo(
     () => [...repository.bundle.signals].sort((a, b) => a.label.localeCompare(b.label)),
@@ -51,9 +47,10 @@ export function ComparePage(): React.JSX.Element {
   const requestedB = safeId(rawB);
   const first = requestedA === null ? undefined : repository.getSignal(requestedA);
   const second = requestedB === null ? undefined : repository.getSignal(requestedB);
+  // An empty value is treated as no value; anything else malformed recovers without a substitute.
   const malformed =
-    (rawA !== null && requestedA === null) ||
-    (rawB !== null && requestedB === null) ||
+    (rawA !== null && rawA !== '' && requestedA === null) ||
+    (rawB !== null && rawB !== '' && requestedB === null) ||
     (requestedA !== null && first === undefined) ||
     (requestedB !== null && second === undefined);
   const identical = requestedA !== null && requestedA === requestedB;
@@ -67,26 +64,6 @@ export function ComparePage(): React.JSX.Element {
     },
     [params, setParams],
   );
-
-  const openEvidence = useCallback((claimIds: string[], title: string) => {
-    lastInvoker.current = document.activeElement as HTMLElement | null;
-    setEvidence({ claimIds, title });
-  }, []);
-
-  const closeEvidence = useCallback(() => {
-    setEvidence(null);
-    lastInvoker.current?.focus();
-  }, []);
-
-  useEffect(() => {
-    const onKeyDown = (event: KeyboardEvent): void => {
-      if (event.key === 'Escape' && evidence !== null) closeEvidence();
-    };
-    document.addEventListener('keydown', onKeyDown);
-    return () => {
-      document.removeEventListener('keydown', onKeyDown);
-    };
-  }, [evidence, closeEvidence]);
 
   const curated =
     first !== undefined && second !== undefined
@@ -195,9 +172,15 @@ export function ComparePage(): React.JSX.Element {
         </section>
       )}
 
-      {first !== undefined && second === undefined && !identical && (
+      {first !== undefined && second === undefined && !malformed && !identical && (
         <p role="status" className={styles.prompt}>
           {first.label} is in the first column. Choose a second signal to see the two together.
+        </p>
+      )}
+
+      {second !== undefined && first === undefined && !malformed && (
+        <p role="status" className={styles.prompt}>
+          {second.label} is in the second column. Choose a first signal to see the two together.
         </p>
       )}
 
@@ -272,8 +255,8 @@ function SignalCell({
 }: {
   signal: Signal;
   dimension: ComparisonDimension;
-  depth: ReturnType<typeof useDepth>[0];
-  repository: ReturnType<typeof useRepository>;
+  depth: Depth;
+  repository: ContentRepository;
   onEvidence: (claimIds: string[], title: string) => void;
 }): React.JSX.Element {
   const cell = signal.comparison.find((item) => item.dimension === dimension);
@@ -318,7 +301,7 @@ function ContextLine({
   repository,
 }: {
   contextIds: readonly string[];
-  repository: ReturnType<typeof useRepository>;
+  repository: ContentRepository;
 }): React.JSX.Element | null {
   if (contextIds.length === 0) return null;
   const labels = contextIds
@@ -333,7 +316,7 @@ function JourneyLinks({
   repository,
 }: {
   signal: Signal;
-  repository: ReturnType<typeof useRepository>;
+  repository: ContentRepository;
 }): React.JSX.Element {
   const lessons = signal.journeyIds
     .map((timelineId) => repository.getTimeline(timelineId))

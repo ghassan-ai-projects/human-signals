@@ -135,8 +135,8 @@
   margin: 0;
 }
 
-.context {
-  margin-top: var(--hs-space-2) !important;
+.table .context {
+  margin-top: var(--hs-space-2);
   color: var(--hs-text-muted);
   font-size: var(--hs-text-small);
 }

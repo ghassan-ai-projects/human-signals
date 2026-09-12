@@ -14,6 +14,7 @@ import { distinctStepTimes } from '../../engine/frame.ts';
 import { SceneHost } from './SceneHost.tsx';
 import { WhyPanel } from '../why/WhyPanel.tsx';
 import { EvidencePanel } from '../evidence/EvidencePanel.tsx';
+import { useEvidenceOverlay } from '../evidence/useEvidenceOverlay.ts';
 import { useAnnouncer } from '../../components/Announcer.tsx';
 import { useLessonSession } from '../session/useLessonSession.ts';
 import { PlaybackControls } from './PlaybackControls.tsx';
@@ -77,10 +78,10 @@ export function LessonPlayer({
   });
 
   const [openRelationshipId, setOpenRelationshipId] = useState<string | null>(null);
-  const [evidence, setEvidence] = useState<{ claimIds: string[]; title: string } | null>(null);
+  const { evidence, openEvidence, closeEvidence, clearEvidence } = useEvidenceOverlay();
   const [selectedAnatomyId, setSelectedAnatomyId] = useState<string | null>(null);
   const [focusedTrackId, setFocusedTrackId] = useState<string | null>(null);
-  const lastInvoker = useRef<HTMLElement | null>(null);
+  const whyInvoker = useRef<HTMLElement | null>(null);
 
   const stepTimes = useMemo(() => distinctStepTimes(timeline), [timeline]);
 
@@ -139,7 +140,7 @@ export function LessonPlayer({
 
   const openRelationship = useCallback(
     (relationshipId: string) => {
-      lastInvoker.current = document.activeElement as HTMLElement | null;
+      whyInvoker.current = document.activeElement as HTMLElement | null;
       dispatch({ type: 'OPEN_EXPLANATION' });
       setOpenRelationshipId(relationshipId);
     },
@@ -162,31 +163,25 @@ export function LessonPlayer({
     [repository, onExposeFamilies],
   );
 
-  const closeEvidence = useCallback(() => {
-    setEvidence(null);
-    lastInvoker.current?.focus();
-  }, []);
-
   const closePanels = useCallback(() => {
+    clearEvidence();
     setOpenRelationshipId(null);
-    setEvidence(null);
-    lastInvoker.current?.focus();
-  }, []);
+    whyInvoker.current?.focus();
+  }, [clearEvidence]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent): void => {
       if (event.key !== 'Escape') return;
-      if (evidence !== null) {
-        closeEvidence();
-        return;
-      }
+      // The evidence overlay closes itself and restores its own invoker; only when it is
+      // closed does Escape reach the Why panel.
+      if (evidence !== null) return;
       if (openRelationshipId !== null) closePanels();
     };
     document.addEventListener('keydown', onKeyDown);
     return () => {
       document.removeEventListener('keydown', onKeyDown);
     };
-  }, [evidence, openRelationshipId, closePanels, closeEvidence]);
+  }, [evidence, openRelationshipId, closePanels]);
 
   const completed = session.status === 'completed';
 
@@ -318,10 +313,7 @@ export function LessonPlayer({
           onContinue={() => {
             dispatch({ type: 'CONTINUE' });
           }}
-          onOpenEvidence={(claimIds, title) => {
-            lastInvoker.current = document.activeElement as HTMLElement | null;
-            setEvidence({ claimIds, title });
-          }}
+          onOpenEvidence={openEvidence}
         />
       )}
 
@@ -340,9 +332,7 @@ export function LessonPlayer({
           relationshipId={openRelationshipId}
           depth={depth}
           onClose={closePanels}
-          onOpenEvidence={(claimIds, title) => {
-            setEvidence({ claimIds, title });
-          }}
+          onOpenEvidence={openEvidence}
           onOpenRelationship={setOpenRelationshipId}
           onExplanationOpened={onExplanationOpened}
         />

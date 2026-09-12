@@ -103,13 +103,14 @@ describe('authored values', () => {
     expect(within(row).getByText(/Not a punishment signal\./)).toBeInTheDocument();
   });
 
-  it('opens the evidence behind a cell without leaving the page', async () => {
+  it('opens the evidence behind a cell, closes with Escape and restores focus', async () => {
     const user = userEvent.setup();
     await openCompare('#/compare?a=sig-alpha&b=sig-beta');
 
     const table = await screen.findByRole('table');
     const typeRow = within(table).getByRole('row', { name: /Signal type/ });
-    await user.click(within(typeRow).getAllByRole('button', { name: 'Evidence' })[0]!);
+    const trigger = within(typeRow).getAllByRole('button', { name: 'Evidence' })[0]!;
+    await user.click(trigger);
 
     const evidence = await screen.findByRole('complementary', { name: /^Evidence:/ });
     expect(within(evidence).getByRole('heading', { name: 'What is claimed' })).toBeInTheDocument();
@@ -118,6 +119,21 @@ describe('authored values', () => {
     await waitFor(() => {
       expect(screen.queryByRole('complementary', { name: /^Evidence:/ })).not.toBeInTheDocument();
     });
+    expect(trigger).toHaveFocus();
+  });
+
+  it('prompts for the missing first signal when only the second is given', async () => {
+    await openCompare('#/compare?b=sig-beta');
+
+    expect(screen.getByText(/is in the second column/)).toBeInTheDocument();
+    expect(screen.queryByRole('table')).not.toBeInTheDocument();
+  });
+
+  it('recovers from malformed identifiers without substituting content', async () => {
+    await openCompare('#/compare?a=SIG-ALPHA&b=' + 'x'.repeat(200));
+
+    expect(screen.getByText(/That comparison is not available/)).toBeInTheDocument();
+    expect(screen.queryByRole('table')).not.toBeInTheDocument();
   });
 
   it('shows the curated pair essay when the pair is curated', async () => {

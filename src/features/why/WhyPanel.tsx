@@ -39,12 +39,16 @@ export function WhyPanel({
   const headingRef = useRef<HTMLHeadingElement>(null);
 
   // The trail belongs to one relationship. Opening a different edge starts a new trail without
-  // an effect, so there is no render where the panel shows the previous edge's questions.
+  // an effect, so there is no render where the panel shows the previous edge's questions. The
+  // open glossary term is keyed the same way, so it never arrives pre-expanded on a new edge.
   const [trailState, setTrailState] = useState<{ relationshipId: string; trail: string[] }>({
     relationshipId,
     trail: relationship ? [relationship.whyRootId] : [],
   });
-  const [openConceptId, setOpenConceptId] = useState<string | null>(null);
+  const [conceptState, setConceptState] = useState<{
+    relationshipId: string;
+    openConceptId: string | null;
+  }>({ relationshipId, openConceptId: null });
   const trail =
     trailState.relationshipId === relationshipId && trailState.trail.length > 0
       ? trailState.trail
@@ -53,6 +57,11 @@ export function WhyPanel({
         : [];
   const setTrail = (next: string[]): void => {
     setTrailState({ relationshipId, trail: next });
+  };
+  const openConceptId =
+    conceptState.relationshipId === relationshipId ? conceptState.openConceptId : null;
+  const toggleConcept = (conceptId: string | null): void => {
+    setConceptState({ relationshipId, openConceptId: conceptId });
   };
 
   useEffect(() => {
@@ -181,7 +190,7 @@ export function WhyPanel({
                     type="button"
                     aria-expanded={open}
                     onClick={() => {
-                      setOpenConceptId(open ? null : conceptId);
+                      toggleConcept(open ? null : conceptId);
                     }}
                   >
                     <strong>{concept.label}</strong>
