@@ -1,0 +1,37 @@
+{
+  "fixtureVersion": 1,
+  "fictional": true,
+  "description": "Fictional signals for engineering tests only. Not a ContentBundle or physiology lesson.",
+  "timeline": {
+    "id": "exercise-synthetic-feedback",
+    "durationMs": 6000,
+    "tracks": ["main", "parallel"],
+    "steps": [
+      {"id": "source", "atMs": 0, "trackId": "main"},
+      {"id": "parallel-start", "atMs": 0, "trackId": "parallel"},
+      {"id": "signal", "atMs": 1000, "trackId": "main"},
+      {"id": "intermediary", "atMs": 2000, "trackId": "main"},
+      {"id": "parallel-target", "atMs": 2000, "trackId": "parallel"},
+      {"id": "output", "atMs": 3000, "trackId": "main"},
+      {"id": "feedback", "atMs": 5000, "trackId": "main"}
+    ],
+    "events": [
+      {"id": "e0", "atMs": 0, "order": 0, "trackId": "main", "command": {"type": "set-highlight", "anatomyId": "anat-fictional-source", "value": "source"}},
+      {"id": "e1", "atMs": 1000, "order": 1, "trackId": "main", "command": {"type": "set-relation", "relationshipId": "rel-alpha-beta", "visible": true}},
+      {"id": "e2", "atMs": 1000, "order": 2, "trackId": "main", "command": {"type": "set-trend", "signalId": "sig-alpha", "value": "increasing"}},
+      {"id": "e3", "atMs": 2000, "order": 3, "trackId": "main", "command": {"type": "set-highlight", "anatomyId": "anat-fictional-intermediary", "value": "target"}},
+      {"id": "e4", "atMs": 2000, "order": 4, "trackId": "parallel", "command": {"type": "set-highlight", "anatomyId": "anat-fictional-peripheral", "value": "target"}},
+      {"id": "e5", "atMs": 3000, "order": 5, "trackId": "main", "command": {"type": "set-relation", "relationshipId": "rel-beta-gamma", "visible": true}},
+      {"id": "e6", "atMs": 3000, "order": 6, "trackId": "main", "command": {"type": "set-trend", "signalId": "sig-gamma", "value": "increasing"}},
+      {"id": "e7", "atMs": 5000, "order": 7, "trackId": "main", "command": {"type": "set-relation", "relationshipId": "rel-gamma-inhibits-alpha", "visible": true}},
+      {"id": "e8", "atMs": 5000, "order": 8, "trackId": "main", "command": {"type": "set-trend", "signalId": "sig-alpha", "value": "decreasing"}}
+    ],
+    "checkpoint": {"id": "pred-fictional-next", "atMs": 2800, "revealAtMs": 3000}
+  },
+  "checks": [
+    {"atMs": 0, "visibleRelationshipIds": [], "trends": {}},
+    {"atMs": 1000, "visibleRelationshipIds": ["rel-alpha-beta"], "trends": {"sig-alpha": "increasing"}},
+    {"atMs": 3000, "visibleRelationshipIds": ["rel-alpha-beta", "rel-beta-gamma"], "trends": {"sig-alpha": "increasing", "sig-gamma": "increasing"}},
+    {"atMs": 5000, "visibleRelationshipIds": ["rel-alpha-beta", "rel-beta-gamma", "rel-gamma-inhibits-alpha"], "trends": {"sig-alpha": "decreasing", "sig-gamma": "increasing"}}
+  ]
+}
