@@ -84,7 +84,6 @@ Defect found and fixed during the browser check: changing only the `step` parame
 already open did not move the cursor, because the lesson only applied a step on load.
 
 ### W6 — Predictions and local learning state (`182cee8`..`8b73a9d`)
-
 Checkpoint question/feedback interface shared by journeys, states and exercises: assumptions,
 2–4 options, explicit Check answer that never submits on selection, feedback with words and an
 icon, the chosen option's authored mechanism feedback, the best answer and the evidence; Skip
@@ -114,6 +113,31 @@ interrupt, no auto-submit, wrong-answer correction, evidence open/close, continu
 reset, storage-denied teaching. Preview build at this commit: shell 129 KB gzip, lazy 3D chunk
 240 KB gzip. Not run here: physical-device performance (G5), screen readers (G5), and e2e specs
 beyond the Playwright smoke (tests/e2e from quality bar sections C4/D remain W9 work).
+
+### W5 completion — comparisons, glossary in place, source index (`165d55c`..`27b01e5`)
+
+The remaining W5 deliverable. The fixture gains full comparison cells for Beta and Gamma
+(Gamma's misconception row authored `not-comparable`) and a curated Alpha/Beta pair essay, all
+fictional. The `/compare` route and primary-nav entry offer two selectors with a prompt for the
+missing choice, polite rejection of identical pairs, curated starting pairs, the curated essay
+with its own evidence, and all eight authored dimensions plus related lessons as aligned rows
+with per-cell evidence and context labels; `not-comparable` keeps its authored reason and a
+missing value is labelled rather than invented. Pair and depth travel in the URL; malformed or
+unknown identifiers recover without substituting content. Why-panel glossary terms now expand in
+place with focus and `aria-expanded`, preserving cursor and trail; About lists the bundle
+references as a source index with an honest empty state. The evidence overlay moved into a
+shared `useEvidenceOverlay` hook for lesson and compare.
+
+Executed at `27b01e5`: `npm run verify` (typecheck, lint zero warnings, content validation,
+coverage — statements 98.9%, branches 93.9%) and 460 tests including 13 compare integration
+cases, the glossary-in-place case, the source-index case, and the AC-08 acceptance-map entry
+moved from a blocked gate to automated coverage (390 px visual review stays a G5 note). A
+12-check Playwright pass (`scripts/w5-compare-check.mjs`) against the built preview at 1280 px
+and 390 px: curated flow, eight aligned rows, per-cell evidence with focus restore, column-only
+switching, identical-pair rejection, shared-URL reload on a phone viewport with zero horizontal
+overflow. The code review confirmed depth parity, honesty and safety claims and its findings
+(a shared evidence-overlay hook, the missing prompt for a b-only URL, stacked recovery
+statuses, glossary state carrying across relationships) were fixed before the final commit.
 
 ## Blocked, and why
 
