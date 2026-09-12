@@ -68,6 +68,11 @@ export default tseslint.config(
   },
   {
     files: ['scripts/**/*.ts', 'tests/**/*.ts', 'tests/**/*.tsx', '*.config.ts', '*.config.js'],
-    rules: { 'no-console': 'off', '@typescript-eslint/no-non-null-assertion': 'off' },
+    rules: {
+      'no-console': 'off',
+      '@typescript-eslint/no-non-null-assertion': 'off',
+      // Tests use `(bundle) => void (bundle.x = y)` to keep one-line mutations readable.
+      '@typescript-eslint/no-meaningless-void-operator': 'off',
+    },
   },
 );

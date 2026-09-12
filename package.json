@@ -21,7 +21,7 @@
     "build:preview": "npm run content:build && vite build --mode preview",
     "build": "node scripts/content-cli.ts build --mode=production && vite build --mode production",
     "preview": "vite preview --port 4173 --strictPort",
-    "verify": "npm run typecheck && npm run lint && npm run content:validate && npm test",
+    "verify": "npm run typecheck && npm run lint && npm run content:validate && npm run test:coverage",
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
