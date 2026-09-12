@@ -167,6 +167,29 @@ describe('inspecting a relationship', () => {
     ).toBeInTheDocument();
   });
 
+  it('opens a glossary term in place and leaves the cursor untouched', async () => {
+    const user = userEvent.setup();
+    await openLesson();
+
+    await user.click(screen.getByRole('button', { name: 'Next step' }));
+    const before = screen.getByLabelText('Lesson position').getAttribute('value');
+
+    const transcript = screen.getByRole('region', { name: 'Causal transcript' });
+    await user.click(
+      within(transcript).getAllByRole('button', { name: /^Why\? Alpha stimulates the Intermediary structure/ })[0]!,
+    );
+    const why = await screen.findByRole('complementary', { name: /stimulates/ });
+
+    const term = within(why).getByRole('button', { name: /Regulated loop/ });
+    expect(term).toHaveAttribute('aria-expanded', 'false');
+    await user.click(term);
+    expect(term).toHaveAttribute('aria-expanded', 'true');
+    expect(within(why).getByText(/A chain where the end of the chain can turn the start back down/)).toBeInTheDocument();
+
+    // Opening a term navigates nowhere: the lesson cursor and the trail are preserved.
+    expect(screen.getByLabelText('Lesson position')).toHaveValue(before);
+  });
+
   it('closes the panel with Escape', async () => {
     const user = userEvent.setup();
     await openLesson();

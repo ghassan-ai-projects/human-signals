@@ -24,4 +24,13 @@ describe('application shell', () => {
     render(<App />);
     expect(screen.getByRole('status')).toHaveTextContent(/Draft preview/);
   });
+
+  it('lists the source index honestly when no reference has been recorded', () => {
+    globalThis.location.hash = '#/about';
+    render(<App />);
+    expect(
+      screen.getByRole('heading', { name: 'Sources' }),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/No sources have been recorded yet/)).toBeInTheDocument();
+  });
 });

@@ -92,8 +92,24 @@
   padding-left: var(--hs-space-4);
 }
 
+.concepts button {
+  min-height: 36px;
+  padding: var(--hs-space-1) var(--hs-space-2);
+  border: 1px solid var(--hs-border-strong);
+  border-radius: var(--hs-radius);
+  background: var(--hs-surface-2);
+  font: inherit;
+  text-align: left;
+}
+
 .concepts p {
   margin: var(--hs-space-1) 0 var(--hs-space-3);
+  font-size: var(--hs-text-small);
+}
+
+.glossaryHint {
+  margin: 0 0 var(--hs-space-2);
+  color: var(--hs-text-muted);
   font-size: var(--hs-text-small);
 }
 

@@ -44,6 +44,7 @@ export function WhyPanel({
     relationshipId,
     trail: relationship ? [relationship.whyRootId] : [],
   });
+  const [openConceptId, setOpenConceptId] = useState<string | null>(null);
   const trail =
     trailState.relationshipId === relationshipId && trailState.trail.length > 0
       ? trailState.trail
@@ -165,14 +166,27 @@ export function WhyPanel({
           <h3 id="hs-why-concepts" className={styles.deeperHeading}>
             Related ideas
           </h3>
+          <p className={styles.glossaryHint}>
+            Terms from the glossary of this lesson. Opening one does not move the lesson or this
+            trail.
+          </p>
           <ul className={styles.concepts}>
             {current.relatedConceptIds.map((conceptId) => {
               const concept = repository.getConcept(conceptId);
               if (!concept) return null;
+              const open = openConceptId === conceptId;
               return (
                 <li key={conceptId}>
-                  <strong>{concept.label}</strong>
-                  <p>{concept.definition[depth]}</p>
+                  <button
+                    type="button"
+                    aria-expanded={open}
+                    onClick={() => {
+                      setOpenConceptId(open ? null : conceptId);
+                    }}
+                  >
+                    <strong>{concept.label}</strong>
+                  </button>
+                  {open && <p>{concept.definition[depth]}</p>}
                 </li>
               );
             })}

@@ -1,13 +1,18 @@
 import styles from './AboutPage.module.css';
 import { formatDiagnostics, readDiagnostics } from '../../platform/diagnostics.ts';
+import { useContent } from '../../app/ContentProvider.tsx';
 import { useState } from 'react';
 
 /**
  * Document 10: About states the educational scope, the content version and review status, the
- * access methods and the local-data controls, and works without the 3D model.
+ * access methods and the local-data controls, and works without the 3D model. Document 02 also
+ * requires a source index; it lists exactly the references in the loaded bundle and is honest
+ * when none exist.
  */
 export function AboutPage(): React.JSX.Element {
   const [diagnostics, setDiagnostics] = useState<string | null>(null);
+  const { repository } = useContent();
+  const references = repository?.bundle.references ?? [];
 
   return (
     <main id="main" tabIndex={-1} className={styles.about}>
@@ -28,6 +33,33 @@ export function AboutPage(): React.JSX.Element {
         that review exists; this preview exists so the software can be tested honestly in the
         meantime.
       </p>
+
+      <h2>Sources</h2>
+      {references.length === 0 ? (
+        <p>
+          No sources have been recorded yet. The publication process refuses to ship a claim whose
+          source has not been read and logged by a person, so this index stays empty until then.
+        </p>
+      ) : (
+        <ul className={styles.sources}>
+          {references.map((reference) => (
+            <li key={reference.id}>
+              <cite>{reference.title}</cite> — {reference.authors.join(', ')} ({reference.year},{' '}
+              {reference.kind})
+              {reference.url && (
+                <>
+                 {' '}
+                  <a href={reference.url} target="_blank" rel="noopener noreferrer">
+                    Open source
+                    <span className="hs-visually-hidden"> (opens in a new tab)</span>
+                  </a>
+                </>
+              )}
+              {reference.doi && <> DOI: {reference.doi}</>}. Checked on {reference.checkedOn}.
+            </li>
+          ))}
+        </ul>
+      )}
 
       <h2>Versions</h2>
       <dl className={styles.versions}>
