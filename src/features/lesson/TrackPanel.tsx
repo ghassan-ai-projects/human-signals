@@ -76,7 +76,13 @@ export function TrackPanel({
                     </button>
                   )}
                 </header>
-                {step ? (
+                {dimmed ? (
+                  // Focused view: other tracks collapse to a summary line. Nothing is removed
+                  // from the lesson text; the transcript still carries their full contribution.
+                  <p className={styles.dimmedCaption}>
+                    {step ? step.label : 'This track has not started in this lesson yet.'}
+                  </p>
+                ) : step ? (
                   <>
                     <p className={styles.caption}>{step.caption[depth]}</p>
                     {band && (
@@ -92,6 +98,13 @@ export function TrackPanel({
             );
           })}
       </div>
+
+      {focusedTrackId !== null && (
+        <p className={styles.focusNote}>
+          Focused view: the other tracks are summarised here and remain in full in the causal
+          transcript.
+        </p>
+      )}
 
       {trends.length > 0 && (
         <div className={styles.trends}>

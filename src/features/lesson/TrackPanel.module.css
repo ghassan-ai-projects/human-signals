@@ -108,3 +108,19 @@
   font-size: var(--hs-text-small);
   color: var(--hs-text-muted);
 }
+
+.dimmedCaption {
+  margin: 0;
+  color: var(--hs-text-muted);
+  font-size: var(--hs-text-small);
+}
+
+.focusNote {
+  margin: 0;
+  padding: var(--hs-space-2) var(--hs-space-3);
+  background: var(--hs-surface-2);
+  border-left: 4px solid var(--hs-border-strong);
+  border-radius: var(--hs-radius-sm);
+  color: var(--hs-text-muted);
+  font-size: var(--hs-text-small);
+}
