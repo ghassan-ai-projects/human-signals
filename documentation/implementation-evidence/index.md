@@ -114,6 +114,7 @@ reset, storage-denied teaching. Preview build at this commit: shell 129 KB gzip,
 240 KB gzip. Not run here: physical-device performance (G5), screen readers (G5), and e2e specs
 beyond the Playwright smoke (tests/e2e from quality bar sections C4/D remain W9 work).
 
+
 ### W5 completion — comparisons, glossary in place, source index (`165d55c`..`27b01e5`)
 
 The remaining W5 deliverable. The fixture gains full comparison cells for Beta and Gamma
@@ -138,6 +139,32 @@ switching, identical-pair rejection, shared-URL reload on a phone viewport with 
 overflow. The code review confirmed depth parity, honesty and safety claims and its findings
 (a shared evidence-overlay hook, the missing prompt for a b-only URL, stacked recovery
 statuses, glossary state carrying across relationships) were fixed before the final commit.
+
+### W7 — Parallel human states (`8d24530`..`beb8991`)
+
+The invented alarm state (`state-fictional-alarm`, fixture-only): three ordered tracks — fast
+route, slower carried route, slowest regulation — on the engine's single shared cursor, with
+qualitative timing bands, two state checkpoints whose reveals match authored steps, and the
+authored shared-organ schedule (the intermediary is highlighted by the fast route at 5 s and
+re-highlighted by the carried route at 30 s as the source of its own signal). Trends change
+only at authored events and the end state never auto-resets. The track panel gains a true
+focused view: non-focused tracks collapse to their step label while the transcript keeps every
+track's contribution, announced with a status note. A phone-width defect found by the new
+browser check was fixed: the 3D canvas holder's 4/3 aspect with a 320 px min-height forced
+427 px width on a 390 px viewport; below 480 px it becomes square.
+
+Executed at `beb8991`: `npm run verify` (typecheck, lint zero warnings, content validation,
+coverage) and 473 tests, including 7 integration cases over `/states` and the state lesson
+(catalog card, per-track steps at the simultaneous instant, qualitative-only timing, shared-organ
+schedule, repeat-as-practice on reload, focused view), and 6 engine tests (event-array-order
+invariance as the no-last-render-wins guarantee, persistence to duration with no automatic
+baseline, VAL-008 rejection of same-instant same-property writes on real content). A 9-check
+Playwright pass (`scripts/w7-state-check.mjs`) against the built preview at 1280 px and 390 px:
+catalog flow, three tracks in authored order, focused view, state checkpoint, authored trend
+change, zero horizontal overflow on both widths. The code review found and I fixed a caption
+contradiction (fast track claiming the carried route still travelling after its arrival), a
+never-visible carried edge, and test-honesty items. Not run here: real-device performance
+(G5), screen readers (G5); real Stress biology remains G4/W8.
 
 ## Blocked, and why
 
