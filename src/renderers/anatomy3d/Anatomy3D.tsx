@@ -25,7 +25,7 @@ import {
   type CameraPose,
   type Vec3,
 } from './coordinates.ts';
-import { layoutLabels, toScreen, type LabelCandidate } from './labels.ts';
+import { clampLabelPosition, layoutLabels, toScreen, type LabelCandidate } from './labels.ts';
 import { pixelRatioFor, QualityWatchdog } from './webgl.ts';
 import { BodyShell, BrainShell, RegionMesh, RouteMesh, type PlacedRegion } from './scene-parts.tsx';
 import { BodyModel, type BodyModelState } from './BodyModel.tsx';
@@ -192,7 +192,8 @@ function LabelProjector({
         continue;
       }
       element.hidden = false;
-      element.style.transform = `translate3d(${String(Math.round(label.x))}px, ${String(Math.round(label.y))}px, 0)`;
+      const position = clampLabelPosition(label, size.width, size.height);
+      element.style.transform = `translate3d(${String(Math.round(position.x))}px, ${String(Math.round(position.y))}px, 0)`;
     }
 
     const collapsedKey = layout.collapsed.map((label) => label.id).join('|');
@@ -456,6 +457,25 @@ export default function Anatomy3D({
             label is still shown.
           </p>
         )}
+
+        <div className={styles.anatomyActions} role="group" aria-labelledby="anatomy-actions-title">
+          <h3 id="anatomy-actions-title">Select a structure</h3>
+          <ul>
+            {regions.map((region) => (
+              <li key={region.record.id}>
+                <button
+                  type="button"
+                  aria-pressed={region.selected}
+                  onClick={() => {
+                    onSelect(region.record.id);
+                  }}
+                >
+                  {region.record.label}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
 
         {collapsed.length > 0 && (
           <details className={styles.collapsed}>

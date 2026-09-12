@@ -196,10 +196,19 @@ export function Diagram2D({
             key={region.record.id}
             data-region={region.record.id}
             data-highlight={region.highlight}
+            role="button"
+            tabIndex={0}
+            aria-label={`${region.record.label}. ${region.record.description.intro}`}
+            aria-pressed={selectedId === region.record.id}
             className={
               selectedId === region.record.id ? styles.nodeGroupSelected : styles.nodeGroup
             }
             onClick={() => {
+              onSelect(region.record.id);
+            }}
+            onKeyDown={(event) => {
+              if (event.key !== 'Enter' && event.key !== ' ') return;
+              event.preventDefault();
               onSelect(region.record.id);
             }}
           >
@@ -219,7 +228,12 @@ export function Diagram2D({
                 T
               </text>
             )}
-            <text x={region.x + 6} y={region.y + 1.6} className={styles.nodeLabel}>
+            <text
+              x={region.x > 60 ? 96 : region.x < 40 ? 4 : 50}
+              y={region.y + 1.6}
+              textAnchor={region.x > 60 ? 'end' : region.x < 40 ? 'start' : 'middle'}
+              className={styles.nodeLabel}
+            >
               {region.record.label}
             </text>
           </g>
@@ -273,6 +287,24 @@ export function Diagram2D({
             })}
           </ul>
         )}
+        <div className={styles.anatomyActions} role="group" aria-labelledby="diagram-anatomy-actions-title">
+          <h3 id="diagram-anatomy-actions-title">Select a structure</h3>
+          <ul>
+            {regions.map((region) => (
+              <li key={region.record.id}>
+                <button
+                  type="button"
+                  aria-pressed={selectedId === region.record.id}
+                  onClick={() => {
+                    onSelect(region.record.id);
+                  }}
+                >
+                  {region.record.label}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   );

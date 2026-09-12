@@ -53,6 +53,10 @@ describe('when WebGL is unavailable', () => {
 
     expect(await screen.findByText(/cannot show the 3D body/)).toBeInTheDocument();
     expect(screen.getByTestId('diagram-2d')).toBeInTheDocument();
+    const structure = screen.getByRole('button', { name: 'Source structure (invented)' });
+    expect(structure).toHaveAttribute('aria-pressed', 'false');
+    await userEvent.setup().click(structure);
+    expect(structure).toHaveAttribute('aria-pressed', 'true');
     // "Unsupported" is not a transient failure, so no retry is offered for it.
     expect(screen.queryByRole('button', { name: 'Retry 3D' })).not.toBeInTheDocument();
   });

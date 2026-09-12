@@ -25,6 +25,9 @@ export interface PlacedLabel extends LabelCandidate {
 export const MAX_VISIBLE_LABELS = 8;
 export const LABEL_WIDTH = 132;
 export const LABEL_HEIGHT = 26;
+export const LABEL_BOX_WIDTH = 160;
+export const LABEL_BOX_HEIGHT = 42;
+export const LABEL_MARGIN = 8;
 
 const ROLE_PRIORITY: Record<LabelCandidate['role'], number> = {
   selected: 0,
@@ -45,6 +48,20 @@ export interface LabelLayout {
   visible: PlacedLabel[];
   /** Everything that could not be drawn. The list beside the scene always shows these. */
   collapsed: PlacedLabel[];
+}
+
+/** Keeps a visible label inside its viewport even when its anchor is near an edge. */
+export function clampLabelPosition(
+  label: Pick<LabelCandidate, 'x' | 'y'>,
+  width: number,
+  height: number,
+): { x: number; y: number } {
+  const maxX = Math.max(LABEL_MARGIN, width - LABEL_BOX_WIDTH - LABEL_MARGIN);
+  const maxY = Math.max(LABEL_MARGIN, height - LABEL_BOX_HEIGHT - LABEL_MARGIN);
+  return {
+    x: Math.min(Math.max(label.x, LABEL_MARGIN), maxX),
+    y: Math.min(Math.max(label.y, LABEL_MARGIN), maxY),
+  };
 }
 
 export function layoutLabels(candidates: readonly LabelCandidate[]): LabelLayout {

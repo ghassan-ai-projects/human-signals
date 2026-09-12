@@ -35,6 +35,12 @@
   stroke-dasharray: 2 1.2;
 }
 
+.nodeGroup:focus-visible circle,
+.nodeGroupSelected:focus-visible circle {
+  stroke: var(--hs-role-route);
+  stroke-width: 1.8;
+}
+
 .nodeIdle {
   fill: var(--hs-surface);
   stroke: var(--hs-border-strong);
@@ -148,4 +154,40 @@
 
 .edgeMeta {
   color: var(--hs-text-muted);
+}
+
+.anatomyActions {
+  border-top: 1px solid var(--hs-border);
+  padding-top: var(--hs-space-3);
+}
+
+.anatomyActions h3 {
+  margin: 0 0 var(--hs-space-2);
+  font-size: var(--hs-text-small);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--hs-text-muted);
+}
+
+.anatomyActions ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: var(--hs-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.anatomyActions button {
+  width: 100%;
+  min-height: var(--hs-tap-target);
+  padding: var(--hs-space-2) var(--hs-space-3);
+  text-align: left;
+}
+
+.anatomyActions button[aria-pressed='true'] {
+  border-width: 2px;
+  border-color: var(--hs-role-route);
+  background: var(--hs-role-route-soft);
+  font-weight: 600;
 }

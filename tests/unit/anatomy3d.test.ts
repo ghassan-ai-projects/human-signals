@@ -16,6 +16,7 @@ import {
   type CameraPose,
 } from '../../src/renderers/anatomy3d/coordinates.ts';
 import {
+  clampLabelPosition,
   MAX_VISIBLE_LABELS,
   layoutLabels,
   toScreen,
@@ -94,6 +95,11 @@ describe('camera bounds', () => {
 });
 
 describe('label placement', () => {
+  it('keeps labels inside a narrow viewport', () => {
+    expect(clampLabelPosition({ x: 310, y: 190 }, 320, 200)).toEqual({ x: 152, y: 150 });
+    expect(clampLabelPosition({ x: -20, y: -10 }, 320, 200)).toEqual({ x: 8, y: 8 });
+  });
+
   function candidate(overrides: Partial<LabelCandidate> & { id: string }): LabelCandidate {
     return {
       text: overrides.id,
