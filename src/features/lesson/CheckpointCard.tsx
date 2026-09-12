@@ -83,7 +83,7 @@ export function CheckpointCard({
           const isBest = option.id === prediction.correctOptionId;
           const showMark = !answering && (chosen || isBest);
           return (
-            <label
+            <div
               key={option.id}
               className={cx(
                 styles.option,
@@ -91,7 +91,7 @@ export function CheckpointCard({
                 chosen && styles.optionChosen,
               )}
             >
-              <span className={styles.optionRow}>
+              <label className={styles.optionRow}>
                 <input
                   type="radio"
                   name={`hs-checkpoint-${prediction.id}`}
@@ -117,9 +117,9 @@ export function CheckpointCard({
                     {chosen && isBest ? 'Correct' : chosen ? 'Your answer' : 'Best answer'}
                   </span>
                 )}
-              </span>
+              </label>
               {!answering && chosen && <p className={styles.optionFeedback}>{option.feedback[depth]}</p>}
-            </label>
+            </div>
           );
         })}
       </fieldset>
@@ -133,7 +133,7 @@ export function CheckpointCard({
             Skip and continue
           </button>
           <p className={styles.hint}>
-            You can open Why or the transcript first; the question then counts as practice.
+            You can open Why first; the question then counts as practice.
           </p>
         </div>
       ) : (

@@ -14,6 +14,7 @@ import { createSafeStorage, type SafeStorage, type StorageStatus } from './stora
 
 export const PROGRESS_KEY = 'human-signals:progress:v1';
 export const MAX_ATTEMPTS = 500;
+export const MAX_COMPLETED = 500;
 export const MAX_EXPOSED_FAMILIES = 500;
 export const MAX_HISTORY = 10;
 
@@ -40,7 +41,7 @@ export type Attempt = z.infer<typeof AttemptSchema>;
 export const ProgressSchema = z.strictObject({
   version: z.literal(1),
   contentVersion: z.string().min(1).max(40),
-  completed: z.array(z.string().max(120)).max(500),
+  completed: z.array(z.string().max(120)).max(MAX_COMPLETED),
   attempts: z.array(AttemptSchema).max(MAX_ATTEMPTS),
   exposedFamilyIds: z.array(z.string().max(120)).max(MAX_EXPOSED_FAMILIES),
   /** Set when older exposure history had to be dropped; results then read conservatively. */
@@ -49,7 +50,7 @@ export const ProgressSchema = z.strictObject({
     .array(
       z.strictObject({
         contentVersion: z.string().min(1).max(40),
-        completed: z.array(z.string().max(120)).max(500),
+        completed: z.array(z.string().max(120)).max(MAX_COMPLETED),
         attempts: z.number().int().nonnegative(),
       }),
     )
@@ -193,10 +194,12 @@ export function mergeProgress(mine: ProgressRecord, theirs: ProgressRecord): Pro
 
   const completed = [...mine.completed];
   for (const id of theirs.completed) if (!completed.includes(id)) completed.push(id);
+  // The cap mirrors the schema: a merged record must never become unreadable.
+  const boundedCompleted = completed.slice(-MAX_COMPLETED);
 
   const merged: ProgressRecord = {
     ...mine,
-    completed,
+    completed: boundedCompleted,
     attempts,
     history: mine.history.length >= theirs.history.length ? mine.history : theirs.history,
     exposureTruncated: mine.exposureTruncated || theirs.exposureTruncated,

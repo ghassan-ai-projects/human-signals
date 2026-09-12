@@ -5,6 +5,7 @@
  * a reload is practice; storage that is blocked or corrupt leaves the lesson fully usable; and
  * one confirmed action clears the key and the live state.
  */
+import { StrictMode } from 'react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -44,6 +45,9 @@ async function answerFirstCheckpointCorrectly(
     );
   });
   fireEvent.change(screen.getByLabelText('Lesson position'), { target: { value: '2700' } });
+  await waitFor(() => {
+    expect(screen.getByLabelText('Lesson position')).toHaveValue('2700');
+  });
   await user.click(screen.getByRole('button', { name: 'Play' }));
   await screen.findByRole('heading', { name: /Practice question/ });
   await user.click(screen.getByRole('radio', { name: 'The Peripheral structure releases Gamma.' }));
@@ -52,13 +56,38 @@ async function answerFirstCheckpointCorrectly(
 }
 
 describe('attempts reach local storage', () => {
+  it('stores exactly one attempt per submit, even under StrictMode double invocation', async () => {
+    const user = userEvent.setup();
+    globalThis.location.hash = LESSON_PATH;
+    render(
+      <StrictMode>
+        <App />
+      </StrictMode>,
+    );
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
+        'Abstract exercise: an invented signalling loop',
+      );
+    });
+    fireEvent.change(screen.getByLabelText('Lesson position'), { target: { value: '2700' } });
+    await waitFor(() => {
+      expect(screen.getByLabelText('Lesson position')).toHaveValue('2700');
+    });
+    await user.click(screen.getByRole('button', { name: 'Play' }));
+    await screen.findByRole('heading', { name: /Practice question/ });
+    await user.click(screen.getByRole('radio', { name: 'The Peripheral structure releases Gamma.' }));
+    await user.click(screen.getByRole('button', { name: 'Check answer' }));
+    expect(screen.getByText('Correct.')).toBeInTheDocument();
+
+    const record = storedProgress();
+    expect(record.attempts).toHaveLength(1);
+  });
   it('records one first attempt, the exposure and a skip without leaving the page', async () => {
     const user = userEvent.setup();
     await answerFirstCheckpointCorrectly(user);
     await user.click(screen.getByRole('button', { name: 'Continue' }));
-
     await waitFor(() => {
-      expect(screen.getByLabelText('Lesson position')).toHaveValue('3000');
+      expect(screen.getByRole('button', { name: 'Pause' })).toBeInTheDocument();
     });
     await user.click(screen.getByRole('button', { name: 'Pause' }));
 
@@ -189,6 +218,9 @@ describe('storage that fails', () => {
 
     // The merged exposure reaches this lesson: the second question is announced as practice.
     fireEvent.change(screen.getByLabelText('Lesson position'), { target: { value: '4400' } });
+    await waitFor(() => {
+      expect(screen.getByLabelText('Lesson position')).toHaveValue('4400');
+    });
     await user.click(screen.getByRole('button', { name: 'Play' }));
     await screen.findByRole('heading', { name: /Practice question/ });
     expect(screen.getByText(/this attempt is practice rather than a first try/)).toBeInTheDocument();
@@ -233,6 +265,9 @@ describe('clearing local progress', () => {
     // Answering again after the reset is a first attempt once more.
     await user.click(screen.getByRole('button', { name: 'Next step' }));
     fireEvent.change(screen.getByLabelText('Lesson position'), { target: { value: '2700' } });
+    await waitFor(() => {
+      expect(screen.getByLabelText('Lesson position')).toHaveValue('2700');
+    });
     await user.click(screen.getByRole('button', { name: 'Play' }));
     await screen.findByRole('heading', { name: /Practice question/ });
     expect(

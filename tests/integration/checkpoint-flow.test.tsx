@@ -35,6 +35,9 @@ async function openBeforeFirstCheckpoint(user: ReturnType<typeof userEvent.setup
     );
   });
   fireEvent.change(screen.getByLabelText('Lesson position'), { target: { value: '2700' } });
+  await waitFor(() => {
+    expect(screen.getByLabelText('Lesson position')).toHaveValue('2700');
+  });
   await user.click(screen.getByRole('button', { name: 'Play' }));
   await screen.findByRole('heading', { name: /Practice question/ });
 }
@@ -100,12 +103,16 @@ describe('reaching a checkpoint', () => {
     await user.click(screen.getByRole('button', { name: 'Check answer' }));
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
+    // Playback resumes, so the cursor moves on from the reveal point; pause to measure it.
     await waitFor(() => {
-      expect(screen.getByLabelText('Lesson position')).toHaveValue('3000');
+      expect(screen.getByRole('button', { name: 'Pause' })).toBeInTheDocument();
     });
-    // Motion is allowed in this environment, so continue resumes playback.
-    expect(screen.getByRole('button', { name: 'Pause' })).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Pause' }));
+    await waitFor(() => {
+      expect(Number(screen.getByLabelText('Lesson position').getAttribute('value'))).toBeGreaterThan(
+        2800,
+      );
+    });
   });
 
   it('never autoplays under reduced motion, so stepping bypasses the checkpoint quietly', async () => {
@@ -130,6 +137,9 @@ describe('reaching a checkpoint', () => {
       );
     });
     fireEvent.change(screen.getByLabelText('Lesson position'), { target: { value: '2700' } });
+    await waitFor(() => {
+      expect(screen.getByLabelText('Lesson position')).toHaveValue('2700');
+    });
     await user.click(screen.getByRole('button', { name: 'Play' }));
 
     // Reduced motion never starts the clock (D4): no question can interrupt.

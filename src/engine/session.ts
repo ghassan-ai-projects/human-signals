@@ -145,6 +145,22 @@ function union(list: readonly string[], values: readonly string[]): string[] {
 }
 
 /**
+ * Completing a lesson shows the causal summary, which gives every answer away (document 06).
+ * Returns the families that were not yet exposed, so the caller can add the effect.
+ */
+function completeLesson(
+  session: Session,
+  ctx: SessionContext,
+  effects: SessionEffect[],
+): Session {
+  const all = checkpointsOf(ctx).map((prediction) => prediction.familyId);
+  const remaining = all.filter((familyId) => !session.exposedFamilyIds.includes(familyId));
+  const next: Session = { ...session, exposedFamilyIds: union(session.exposedFamilyIds, all) };
+  if (remaining.length > 0) effects.push({ type: 'mark-exposed', familyIds: remaining });
+  return next;
+}
+
+/**
  * Seeking never interrupts with a question. Every checkpoint at or before the destination counts
  * as bypassed, and a family becomes exposed once the destination crosses its reveal boundary.
  * Seeking backwards never clears exposure or handled state.
@@ -179,13 +195,7 @@ function applySeek(
   if (newlyExposed.length > 0) effects.push({ type: 'mark-exposed', familyIds: newlyExposed });
   if (next.status === 'completed' && session.status !== 'completed') {
     effects.push({ type: 'record-completion', timelineId: ctx.timeline.id });
-    // Opening the completed summary exposes every answer family in the lesson.
-    const all = checkpoints.map((prediction) => prediction.familyId);
-    const remaining = all.filter((familyId) => !next.exposedFamilyIds.includes(familyId));
-    if (remaining.length > 0) {
-      next.exposedFamilyIds = union(next.exposedFamilyIds, remaining);
-      effects.push({ type: 'mark-exposed', familyIds: remaining });
-    }
+    next.exposedFamilyIds = completeLesson(next, ctx, effects).exposedFamilyIds;
   }
   return { session: next, effects };
 }
@@ -255,10 +265,28 @@ export function reduce(session: Session, action: SessionAction, ctx: SessionCont
         return none(next);
       }
       if (proposed >= ctx.timeline.durationMs) {
-        const finished: Session = { ...session, status: 'completed', cursorMs: ctx.timeline.durationMs };
+        const effects: SessionEffect[] = [
+          { type: 'record-completion', timelineId: ctx.timeline.id },
+        ];
+        const finished = completeLesson(
+          { ...session, status: 'completed', cursorMs: ctx.timeline.durationMs },
+          ctx,
+          effects,
+        );
+        return { session: finished, effects };
+      }
+      // Crossing a reveal boundary while playing records exposure. This matters when
+      // interruptions are off: the setting controls interruptions, not assessment integrity.
+      const newlyExposed = checkpointsOf(ctx)
+        .filter(
+          (prediction) =>
+            prediction.revealAtMs <= proposed && !session.exposedFamilyIds.includes(prediction.familyId),
+        )
+        .map((prediction) => prediction.familyId);
+      if (newlyExposed.length > 0) {
         return {
-          session: finished,
-          effects: [{ type: 'record-completion', timelineId: ctx.timeline.id }],
+          session: { ...session, cursorMs: proposed, exposedFamilyIds: union(session.exposedFamilyIds, newlyExposed) },
+          effects: [{ type: 'mark-exposed', familyIds: newlyExposed }],
         };
       }
       return none({ ...session, cursorMs: proposed });
@@ -346,10 +374,15 @@ export function reduce(session: Session, action: SessionAction, ctx: SessionCont
       delete next.activePredictionId;
       delete next.selectedOptionId;
       if (next.cursorMs >= ctx.timeline.durationMs) {
-        return {
-          session: { ...next, status: 'completed', cursorMs: ctx.timeline.durationMs },
-          effects: [{ type: 'record-completion', timelineId: ctx.timeline.id }],
-        };
+        const effects: SessionEffect[] = [
+          { type: 'record-completion', timelineId: ctx.timeline.id },
+        ];
+        const completed = completeLesson(
+          { ...next, status: 'completed', cursorMs: ctx.timeline.durationMs },
+          ctx,
+          effects,
+        );
+        return { session: completed, effects };
       }
       return none(next);
     }

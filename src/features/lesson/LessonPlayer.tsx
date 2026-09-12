@@ -162,6 +162,11 @@ export function LessonPlayer({
     [repository, onExposeFamilies],
   );
 
+  const closeEvidence = useCallback(() => {
+    setEvidence(null);
+    lastInvoker.current?.focus();
+  }, []);
+
   const closePanels = useCallback(() => {
     setOpenRelationshipId(null);
     setEvidence(null);
@@ -172,7 +177,7 @@ export function LessonPlayer({
     const onKeyDown = (event: KeyboardEvent): void => {
       if (event.key !== 'Escape') return;
       if (evidence !== null) {
-        setEvidence(null);
+        closeEvidence();
         return;
       }
       if (openRelationshipId !== null) closePanels();
@@ -181,7 +186,7 @@ export function LessonPlayer({
     return () => {
       document.removeEventListener('keydown', onKeyDown);
     };
-  }, [evidence, openRelationshipId, closePanels]);
+  }, [evidence, openRelationshipId, closePanels, closeEvidence]);
 
   const completed = session.status === 'completed';
 
@@ -344,9 +349,7 @@ export function LessonPlayer({
           repository={repository}
           claimIds={evidence.claimIds}
           title={evidence.title}
-          onClose={() => {
-            setEvidence(null);
-          }}
+          onClose={closeEvidence}
         />
       )}
 

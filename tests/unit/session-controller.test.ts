@@ -133,6 +133,28 @@ describe('checkpoints', () => {
     );
   });
 
+  it('records exposure while playing past a reveal with interruptions disabled', () => {
+    const quiet = { ...session, predictionsEnabled: false, status: 'playing' as const };
+    const result = reduce(quiet, { type: 'TICK', elapsedMs: 3100 }, context());
+    expect(result.session.cursorMs).toBe(3100);
+    expect(result.session.exposedFamilyIds).toContain(FIRST.familyId);
+    expect(result.effects).toEqual([
+      { type: 'mark-exposed', familyIds: [FIRST.familyId] },
+    ]);
+  });
+
+  it('finishing playback by ticking to the end exposes every family, like the summary', () => {
+    const quiet = { ...session, predictionsEnabled: false, status: 'playing' as const };
+    const result = reduce(quiet, { type: 'TICK', elapsedMs: 7000 }, context());
+    expect(result.session.status).toBe('completed');
+    expect(result.effects.map((effect) => effect.type)).toEqual(
+      expect.arrayContaining(['record-completion', 'mark-exposed']),
+    );
+    expect(result.session.exposedFamilyIds).toEqual(
+      expect.arrayContaining([FIRST.familyId, SECOND.familyId]),
+    );
+  });
+
   it('restart makes checkpoints available again but keeps exposure history', () => {
     const seen = reduce(session, { type: 'SEEK', cursorMs: timeline.durationMs }, context()).session;
     const restarted = reduce(seen, { type: 'RESTART' }, context()).session;

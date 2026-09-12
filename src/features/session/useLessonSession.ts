@@ -38,6 +38,14 @@ export interface UseLessonSessionOptions {
   onEffect?: (effect: SessionEffect) => void;
 }
 
+interface SessionState {
+  session: Session;
+  /** Effects produced by the latest transition, drained exactly once after commit. */
+  effects: SessionEffect[];
+  /** Monotonic count of applied transitions; grows when effects accumulate. */
+  transitions: number;
+}
+
 export function useLessonSession(options: UseLessonSessionOptions): LessonSession {
   const {
     timeline,
@@ -63,23 +71,41 @@ export function useLessonSession(options: UseLessonSessionOptions): LessonSessio
   const effectSink = useRef(onEffect);
   effectSink.current = onEffect;
 
-  const [session, rawDispatch] = useReducer(
-    (current: Session, action: SessionAction): Session => {
-      const result = reduce(current, action, contextRef.current);
-      for (const effect of result.effects) effectSink.current?.(effect);
-      return result.session;
+  // The reducer stays pure: effects travel with the state and are delivered after commit.
+  // Firing them inside the reducer would record attempts twice whenever React re-invokes a
+  // dispatch (StrictMode development, or a discarded concurrent render).
+  const [state, rawDispatch] = useReducer(
+    (current: SessionState, action: SessionAction): SessionState => {
+      const result = reduce(current.session, action, contextRef.current);
+      return {
+        session: result.session,
+        effects: [...current.effects, ...result.effects],
+        transitions: current.transitions + 1,
+      };
     },
     undefined,
-    () =>
-      createSession(timeline.id, contentVersion, {
+    () => ({
+      session: createSession(timeline.id, contentVersion, {
         predictionsEnabled,
         ...(priorExposedFamilyIds ? { exposedFamilyIds: priorExposedFamilyIds } : {}),
       }),
+      effects: [],
+      transitions: 0,
+    }),
   );
+
+  const deliveredRef = useRef(0);
+  useEffect(() => {
+    const pending = state.effects.slice(deliveredRef.current);
+    deliveredRef.current = state.effects.length;
+    for (const effect of pending) effectSink.current?.(effect);
+  }, [state.effects]);
 
   const dispatch = useCallback((action: SessionAction) => {
     rawDispatch(action);
   }, []);
+
+  const { session } = state;
 
   // Loading a different lesson resets the cursor and applies deep-link exposure rules.
   const loadedRef = useRef<string | null>(null);

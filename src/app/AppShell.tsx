@@ -5,13 +5,14 @@ import { SettingsPanel } from '../features/settings/SettingsPanel.tsx';
 import { usePreferences } from './PreferencesProvider.tsx';
 import { useContent } from './ContentProvider.tsx';
 import { ProgressProvider, useOptionalProgress } from './ProgressProvider.tsx';
+import { learnUrl } from './urls.ts';
 import styles from './AppShell.module.css';
 import { cx } from '../styles/cx.ts';
 
 const NAV = [
   { to: '/explore', label: 'Explore' },
   { to: '/states', label: 'Human States' },
-  { to: '/learn', label: 'Learn' },
+  { to: learnUrl(), label: 'Learn' },
   { to: '/about', label: 'About & sources' },
 ] as const;
 

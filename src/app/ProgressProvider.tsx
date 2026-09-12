@@ -45,13 +45,17 @@ const ProgressContext = createContext<ProgressState | null>(null);
 export function ProgressProvider({
   children,
   contentVersion,
-  store = createProgressStore(),
+  store,
 }: {
   children: ReactNode;
   contentVersion: string;
   store?: ProgressStore;
 }): React.JSX.Element {
-  const initial = useMemo(() => store.read(), [store]);
+  // One store for the provider's lifetime: creating one per render would re-read storage and
+  // re-create every callback each time. Tests inject their own store through the prop.
+  const [stableStore] = useState<ProgressStore>(() => store ?? createProgressStore());
+
+  const initial = useMemo(() => stableStore.read(), [stableStore]);
   const [progress, setProgress] = useState<ProgressRecord>(() =>
     adoptContentVersion(
       initial.progress.contentVersion === 'unknown'
@@ -73,7 +77,7 @@ export function ProgressProvider({
 
   const persist = useCallback(
     (next: ProgressRecord) => {
-      const status = store.write(next);
+      const status = stableStore.write(next);
       if (status === 'ok') {
         setSavedOnThisDevice(true);
         return;
@@ -82,29 +86,47 @@ export function ProgressProvider({
       recordDiagnostic('STORAGE_UNAVAILABLE', 'learn');
       setStorageNotice((current) => current ?? 'Progress cannot be saved in this browser.');
     },
-    [store],
+    [stableStore],
   );
 
   const apply = useCallback(
     (change: (current: ProgressRecord) => ProgressRecord) => {
-      setProgress((current) => {
-        const next = change(current);
-        if (next === current) return current;
-        persist(next);
-        return next;
-      });
+      // Computed from the ref and persisted outside any state updater: updaters must stay pure,
+      // and successive applies within one tick have to chain off each other's result.
+      const next = change(progressRef.current);
+      if (next === progressRef.current) return;
+      progressRef.current = next;
+      setProgress(next);
+      persist(next);
     },
     [persist],
   );
 
+  const clear = useCallback(() => {
+    const cleared = emptyProgress(contentVersion);
+    progressRef.current = cleared;
+    setProgress(cleared);
+    stableStore.clear();
+    setSavedOnThisDevice(false);
+    setEpoch((current) => current + 1);
+  }, [stableStore, contentVersion]);
+
   // Another tab wrote progress: merge rather than overwrite, and keep the active question.
+  // A null newValue is the other tab clearing itself; erasure must stick here too.
   useEffect(() => {
     const onStorage = (event: StorageEvent): void => {
-      if (event.key !== PROGRESS_KEY || event.newValue === null) return;
+      if (event.key !== PROGRESS_KEY) return;
+      if (event.newValue === null) {
+        clear();
+        return;
+      }
       try {
         const parsed = ProgressSchema.safeParse(JSON.parse(event.newValue));
         if (!parsed.success) return;
-        setProgress((current) => mergeProgress(current, parsed.data));
+        const next = mergeProgress(progressRef.current, parsed.data);
+        if (next === progressRef.current) return;
+        progressRef.current = next;
+        setProgress(next);
       } catch {
         // A malformed write from another tab is ignored; this tab keeps working.
       }
@@ -113,7 +135,7 @@ export function ProgressProvider({
     return () => {
       globalThis.removeEventListener('storage', onStorage);
     };
-  }, []);
+  }, [clear]);
 
   const value = useMemo<ProgressState>(
     () => ({
@@ -127,13 +149,7 @@ export function ProgressProvider({
       addCompletion: (timelineId) => {
         apply((current) => recordCompletion(current, timelineId));
       },
-      clearProgress: () => {
-        const cleared = emptyProgress(contentVersion);
-        setProgress(cleared);
-        store.clear();
-        setSavedOnThisDevice(false);
-        setEpoch((current) => current + 1);
-      },
+      clearProgress: clear,
       epoch,
       storageNotice,
       dismissStorageNotice: () => {
@@ -141,7 +157,7 @@ export function ProgressProvider({
       },
       savedOnThisDevice,
     }),
-    [progress, apply, store, contentVersion, epoch, storageNotice, savedOnThisDevice],
+    [progress, apply, clear, epoch, storageNotice, savedOnThisDevice],
   );
 
   return <ProgressContext.Provider value={value}>{children}</ProgressContext.Provider>;
