@@ -63,7 +63,7 @@ static host. Preview shell 126 KB gzip.
 Defect found and fixed during testing: nested tree items both handled one keyboard event, so
 Enter on a child also selected its parent.
 
-### W4 — 3D anatomy and spatial navigation (this commit)
+### W4 — 3D anatomy and spatial navigation (`ac45793`)
 
 Lazy-loaded React Three Fiber renderer built from project-authored primitive meshes and semantic
 anchors: no external asset, no licence question, and no mesh name dictating anatomy. Bounded
@@ -82,6 +82,38 @@ chunk 245 KB against the 500 KB budget.
 
 Defect found and fixed during the browser check: changing only the `step` parameter of an address
 already open did not move the cursor, because the lesson only applied a step on load.
+
+### W6 — Predictions and local learning state (`182cee8`..`8b73a9d`)
+
+Checkpoint question/feedback interface shared by journeys, states and exercises: assumptions,
+2–4 options, explicit Check answer that never submits on selection, feedback with words and an
+icon, the chosen option's authored mechanism feedback, the best answer and the evidence; Skip
+and continue; depth changes reword without touching the answer. Local learner record under
+`human-signals:progress:v1` per document 05 — 500 attempts and 500 families with conservative
+overflow, version adoption into bounded history with exposure carried forward, multi-tab merge
+by stable attempt id — plus the exposure reverse index over the authored
+timeline/relationship/exposure-explanation IDs, wired to lesson opens, Why relationships and the
+explanation on screen. Learn page (`/learn`, primary nav) with local-only explanation, suggested
+sequence, practice/transfer exercises and per-objective counts that always carry denominator and
+exposure rule; no percentage, score or badge. Storage unavailable/full/corrupt leave every
+teaching action working with one nonblocking notice; one confirmed reset clears the key and the
+live session's exposure (epoch remount); a cross-tab reset clears this tab too.
+
+Defects found and fixed during review and browser checks: the effect-firing reducer stored two
+attempts per submit under StrictMode (effects now travel with session state and drain once after
+commit); playing past a reveal with interruptions off recorded no exposure and finishing by any
+route now exposes every family like the summary (document 06); the card showed the practice note
+on a first answer, so repeat classification moved into the engine, decided at checkpoint open;
+integrated tests waited on exact values of a moving cursor and raced the initial seek.
+
+Executed at `8b73a9d`: `npm run verify` (typecheck, lint at zero warnings with boundary check,
+content validation, coverage) and 446 tests including the checkpoint, progress and Learn
+integration flows over the real app, one acceptance-map traceability test for AC-01..AC-18, and
+an 11-check Playwright pass against the built preview (`scripts/w6-browser-check.mjs`):
+interrupt, no auto-submit, wrong-answer correction, evidence open/close, continue, Learn counts,
+reset, storage-denied teaching. Preview build at this commit: shell 129 KB gzip, lazy 3D chunk
+240 KB gzip. Not run here: physical-device performance (G5), screen readers (G5), and e2e specs
+beyond the Playwright smoke (tests/e2e from quality bar sections C4/D remain W9 work).
 
 ## Blocked, and why
 
