@@ -146,7 +146,9 @@ export function recordAttempt(progress: ProgressRecord, attempt: Attempt): Progr
 }
 
 export function markExposed(progress: ProgressRecord, familyIds: readonly string[]): ProgressRecord {
-  return { ...progress, ...markExposedFields(progress, familyIds) };
+  const fields = markExposedFields(progress, familyIds);
+  if (fields.exposedFamilyIds === progress.exposedFamilyIds) return progress;
+  return { ...progress, ...fields };
 }
 
 function markExposedFields(
@@ -155,6 +157,12 @@ function markExposedFields(
 ): Pick<ProgressRecord, 'exposedFamilyIds' | 'exposureTruncated'> {
   const merged = [...progress.exposedFamilyIds];
   for (const familyId of familyIds) if (!merged.includes(familyId)) merged.push(familyId);
+  if (
+    merged.length === progress.exposedFamilyIds.length &&
+    merged.every((id, index) => id === progress.exposedFamilyIds[index])
+  ) {
+    return { exposedFamilyIds: progress.exposedFamilyIds, exposureTruncated: progress.exposureTruncated };
+  }
   if (merged.length <= MAX_EXPOSED_FAMILIES) {
     return { exposedFamilyIds: merged, exposureTruncated: progress.exposureTruncated };
   }

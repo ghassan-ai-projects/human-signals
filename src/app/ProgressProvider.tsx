@@ -30,6 +30,11 @@ interface ProgressState {
   addExposure: (familyIds: readonly string[]) => void;
   addCompletion: (timelineId: string) => void;
   clearProgress: () => void;
+  /**
+   * Rises by one on every clear, so a lesson can drop its in-memory exposure with the stored
+   * record (document 11, AC-10: the reset clears the key and the current session's state).
+   */
+  epoch: number;
   storageNotice: string | null;
   dismissStorageNotice: () => void;
   savedOnThisDevice: boolean;
@@ -56,6 +61,7 @@ export function ProgressProvider({
     ),
   );
   const [savedOnThisDevice, setSavedOnThisDevice] = useState(false);
+  const [epoch, setEpoch] = useState(0);
   const [storageNotice, setStorageNotice] = useState<string | null>(
     initial.reset ? 'Saved progress could not be read and has been reset on this device.' : null,
   );
@@ -126,14 +132,16 @@ export function ProgressProvider({
         setProgress(cleared);
         store.clear();
         setSavedOnThisDevice(false);
+        setEpoch((current) => current + 1);
       },
+      epoch,
       storageNotice,
       dismissStorageNotice: () => {
         setStorageNotice(null);
       },
       savedOnThisDevice,
     }),
-    [progress, apply, store, contentVersion, storageNotice, savedOnThisDevice],
+    [progress, apply, store, contentVersion, epoch, storageNotice, savedOnThisDevice],
   );
 
   return <ProgressContext.Provider value={value}>{children}</ProgressContext.Provider>;
@@ -143,4 +151,12 @@ export function useProgress(): ProgressState {
   const value = useContext(ProgressContext);
   if (!value) throw new Error('useProgress must be used inside ProgressProvider');
   return value;
+}
+
+/**
+ * Progress is available only once content (and therefore the content version) is ready. Pages
+ * that can render before that use this and keep working without progress.
+ */
+export function useOptionalProgress(): ProgressState | null {
+  return useContext(ProgressContext);
 }

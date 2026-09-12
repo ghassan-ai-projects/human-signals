@@ -32,6 +32,8 @@ export interface LessonPlayerProps {
   onEffect?: (effect: SessionEffect) => void;
   priorExposedFamilyIds?: readonly string[];
   priorAnsweredQuestionIds?: readonly string[];
+  /** Families revealed by source material the learner opens, from the exposure map. */
+  onExposeFamilies?: (familyIds: readonly string[]) => void;
   /** The learner's stored view preference; 3D is still only used when WebGL is available. */
   prefers3D: boolean;
 }
@@ -45,6 +47,7 @@ export function LessonPlayer({
   onEffect,
   priorExposedFamilyIds,
   priorAnsweredQuestionIds,
+  onExposeFamilies,
   prefers3D,
 }: LessonPlayerProps): React.JSX.Element {
   const [params, setParams] = useSearchParams();
@@ -141,6 +144,22 @@ export function LessonPlayer({
       setOpenRelationshipId(relationshipId);
     },
     [dispatch],
+  );
+
+  // Inspecting source material applies the exposure map: any family whose authored exposure
+  // list contains this relationship or the explanations now on screen counts as seen.
+  useEffect(() => {
+    if (openRelationshipId === null) return;
+    const families = repository.exposureIndex.familiesFor('relationship', openRelationshipId);
+    if (families.length > 0) onExposeFamilies?.(families);
+  }, [openRelationshipId, repository, onExposeFamilies]);
+
+  const onExplanationOpened = useCallback(
+    (explanationId: string) => {
+      const families = repository.exposureIndex.familiesFor('explanation', explanationId);
+      if (families.length > 0) onExposeFamilies?.(families);
+    },
+    [repository, onExposeFamilies],
   );
 
   const closePanels = useCallback(() => {
@@ -316,6 +335,7 @@ export function LessonPlayer({
             setEvidence({ claimIds, title });
           }}
           onOpenRelationship={setOpenRelationshipId}
+          onExplanationOpened={onExplanationOpened}
         />
       )}
 

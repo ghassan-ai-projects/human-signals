@@ -6,10 +6,13 @@
  * from the current active step.
  */
 import { Link, useParams } from 'react-router-dom';
-import { useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRepository } from '../../app/ContentProvider.tsx';
 import { usePreferences } from '../../app/PreferencesProvider.tsx';
+import { useOptionalProgress } from '../../app/ProgressProvider.tsx';
 import { useDepth } from '../../app/useDepth.ts';
+import { newAttemptId } from '../../platform/progress.ts';
+import type { SessionEffect } from '../../engine/session.ts';
 import { DepthControl } from '../settings/DepthControl.tsx';
 import { timelineUrl } from '../../app/urls.ts';
 import { LessonPlayer } from './LessonPlayer.tsx';
@@ -26,9 +29,58 @@ export function TimelinePage({ kind }: { kind: 'journey' | 'state' | 'exercise' 
   const repository = useRepository();
   const [depth, setDepth] = useDepth();
   const { preferences, reducedMotion } = usePreferences();
+  const progressState = useOptionalProgress();
   const [copied, setCopied] = useState(false);
 
   const timeline = repository.getTimeline(id);
+  const contentVersion = repository.manifest.contentVersion;
+
+  // Engine effects become local records. Timestamps order records only; they never score.
+  const onEffect = useCallback(
+    (effect: SessionEffect) => {
+      if (!progressState) return;
+      if (effect.type === 'record-attempt') {
+        progressState.addAttempt({
+          ...effect.attempt,
+          attemptId: newAttemptId(),
+          contentVersion,
+          timelineId: id,
+          at: Date.now(),
+        });
+      } else if (effect.type === 'mark-exposed') {
+        progressState.addExposure(effect.familyIds);
+      } else {
+        progressState.addCompletion(effect.timelineId);
+      }
+    },
+    [progressState, contentVersion, id],
+  );
+
+  const priorExposedFamilyIds = progressState?.progress.exposedFamilyIds;
+  const priorAnsweredQuestionIds = useMemo(
+    () =>
+      progressState
+        ? Array.from(
+            new Set<string>(
+              progressState.progress.attempts
+                .filter((attempt) => attempt.contentVersion === contentVersion)
+                .map((attempt) => attempt.questionId),
+            ),
+          )
+        : undefined,
+    [progressState, contentVersion],
+  );
+
+  // A clear drops the stored record and the live session's exposure; remounting the player
+  // gives the lesson a fresh engine state without disturbing anything else on the page.
+  const progressEpoch = progressState?.epoch ?? 0;
+
+  // Opening the lesson applies the authored exposure map for its timeline (document 05).
+  useEffect(() => {
+    if (!timeline || timeline.kind !== kind) return;
+    const families = repository.exposureIndex.familiesFor('timeline', timeline.id);
+    if (families.length > 0) progressState?.addExposure(families);
+  }, [repository, timeline, kind, progressState]);
 
   if (!timeline || timeline.kind !== kind) {
     return (
@@ -104,12 +156,17 @@ export function TimelinePage({ kind }: { kind: 'journey' | 'state' | 'exercise' 
       )}
 
       <LessonPlayer
+        key={`${timeline.id}:${progressEpoch}`}
         repository={repository}
         timeline={timeline}
         depth={depth}
         reducedMotion={reducedMotion}
         predictionsEnabled={preferences.predictionsEnabled}
         prefers3D={preferences.view === '3d'}
+        onEffect={onEffect}
+        {...(priorExposedFamilyIds ? { priorExposedFamilyIds } : {})}
+        {...(priorAnsweredQuestionIds ? { priorAnsweredQuestionIds } : {})}
+        {...(progressState ? { onExposeFamilies: progressState.addExposure } : {})}
       />
 
       {timeline.relatedTimelineIds.length > 0 && (

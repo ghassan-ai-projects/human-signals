@@ -190,6 +190,12 @@ describe('bounds', () => {
     record = markExposed(record, ['f-0']);
     expect(record.exposureTruncated).toBe(true);
   });
+
+  it('returns the same record when the families were already exposed', () => {
+    const record = markExposed(emptyProgress('0.1.0'), ['family-a']);
+    expect(markExposed(record, ['family-a'])).toBe(record);
+    expect(markExposed(record, [])).toBe(record);
+  });
 });
 
 describe('merge across tabs', () => {

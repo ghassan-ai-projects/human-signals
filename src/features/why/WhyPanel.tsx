@@ -22,6 +22,8 @@ export interface WhyPanelProps {
   onClose: () => void;
   onOpenEvidence: (claimIds: string[], title: string) => void;
   onOpenRelationship: (relationshipId: string) => void;
+  /** The explanation currently on screen; the exposure map may mark its families as seen. */
+  onExplanationOpened?: (explanationId: string) => void;
 }
 
 export function WhyPanel({
@@ -31,6 +33,7 @@ export function WhyPanel({
   onClose,
   onOpenEvidence,
   onOpenRelationship,
+  onExplanationOpened,
 }: WhyPanelProps): React.JSX.Element | null {
   const relationship = repository.getRelationship(relationshipId);
   const headingRef = useRef<HTMLHeadingElement>(null);
@@ -56,6 +59,13 @@ export function WhyPanel({
   }, [relationshipId]);
 
   const current = repository.getExplanation(trail[trail.length - 1] ?? '');
+
+  // Reading an answer-revealing explanation counts as exposure (document 06), so the panel
+  // reports which explanation is on screen. The effect re-runs only when the trail moves.
+  const currentId = current?.id;
+  useEffect(() => {
+    if (currentId !== undefined) onExplanationOpened?.(currentId);
+  }, [currentId, onExplanationOpened]);
 
   const deeper = useMemo(() => {
     return (current?.deeperIds ?? [])

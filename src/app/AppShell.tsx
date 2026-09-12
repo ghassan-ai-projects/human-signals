@@ -3,6 +3,8 @@ import type { ReactNode } from 'react';
 import { SearchPalette } from '../features/search/SearchPalette.tsx';
 import { SettingsPanel } from '../features/settings/SettingsPanel.tsx';
 import { usePreferences } from './PreferencesProvider.tsx';
+import { useContent } from './ContentProvider.tsx';
+import { ProgressProvider, useOptionalProgress } from './ProgressProvider.tsx';
 import styles from './AppShell.module.css';
 import { cx } from '../styles/cx.ts';
 
@@ -15,9 +17,18 @@ const NAV = [
 /**
  * The persistent application frame. It survives a content failure so that navigation, About and
  * retry always remain available (document 02, Home empty/error behaviour).
+ *
+ * Progress mounts once the content version is known, around the header as well as the page, so
+ * the settings panel and the storage notices see it; until then everything renders without it.
  */
 export function AppShell({ children }: { children: ReactNode }): React.JSX.Element {
-  const { storageNotice, dismissStorageNotice } = usePreferences();
+  const content = useContent();
+  const frame = (
+    <>
+      <ShellHeader />
+      <div className={styles.body}>{children}</div>
+    </>
+  );
 
   return (
     <div className={styles.shell}>
@@ -30,6 +41,23 @@ export function AppShell({ children }: { children: ReactNode }): React.JSX.Eleme
           be used as a reference.
         </p>
       )}
+      {content.repository ? (
+        <ProgressProvider contentVersion={content.repository.manifest.contentVersion}>
+          {frame}
+        </ProgressProvider>
+      ) : (
+        frame
+      )}
+    </div>
+  );
+}
+
+function ShellHeader(): React.JSX.Element {
+  const { storageNotice, dismissStorageNotice, resetPreferences } = usePreferences();
+  const progress = useOptionalProgress();
+
+  return (
+    <>
       <header className={styles.header}>
         <NavLink to="/" className={cx(styles.brand)}>
           Human&nbsp;Signals
@@ -50,7 +78,17 @@ export function AppShell({ children }: { children: ReactNode }): React.JSX.Eleme
         </nav>
         <div className={styles.tools}>
           <SearchPalette />
-          <SettingsPanel />
+          <SettingsPanel
+            {...(progress
+              ? {
+                  onClearProgress: progress.clearProgress,
+                  onClearAll: () => {
+                    progress.clearProgress();
+                    resetPreferences();
+                  },
+                }
+              : {})}
+          />
         </div>
       </header>
       {storageNotice !== null && (
@@ -61,7 +99,18 @@ export function AppShell({ children }: { children: ReactNode }): React.JSX.Eleme
           </button>
         </p>
       )}
-      <div className={styles.body}>{children}</div>
-    </div>
+      {progress?.storageNotice != null && (
+        <p className={styles.storageNotice} role="status">
+          {progress.storageNotice}{' '}
+          <button
+            type="button"
+            onClick={progress.dismissStorageNotice}
+            className={styles.noticeDismiss}
+          >
+            Dismiss
+          </button>
+        </p>
+      )}
+    </>
   );
 }

@@ -23,6 +23,7 @@ import type {
   Context as ContentContext,
   Anchor,
 } from './schema.ts';
+import { createExposureIndex, type ExposureIndex } from './exposure.ts';
 
 export type SearchKind = 'signal' | 'journey' | 'state' | 'exercise' | 'anatomy' | 'concept';
 
@@ -38,6 +39,8 @@ export interface SearchResult {
 export interface ContentRepository {
   readonly bundle: ContentBundle;
   readonly manifest: ContentManifest;
+  /** Reverse index from source material to the answer families it reveals (document 05). */
+  readonly exposureIndex: ExposureIndex;
   getSignal(id: string): Signal | undefined;
   getAnatomy(id: string): Anatomy | undefined;
   getConcept(id: string): Concept | undefined;
@@ -135,6 +138,7 @@ export function createRepository(bundle: ContentBundle, manifest: ContentManifes
   return {
     bundle,
     manifest,
+    exposureIndex: createExposureIndex(bundle),
     getSignal: (id) => signals.get(id),
     getAnatomy: (id) => anatomy.get(id),
     getConcept: (id) => concepts.get(id),

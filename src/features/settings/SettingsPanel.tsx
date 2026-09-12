@@ -8,6 +8,7 @@
  */
 import { useState } from 'react';
 import { usePreferences } from '../../app/PreferencesProvider.tsx';
+import { useOptionalProgress } from '../../app/ProgressProvider.tsx';
 import styles from './SettingsPanel.module.css';
 
 export interface SettingsPanelProps {
@@ -22,6 +23,9 @@ export function SettingsPanel({
 }: SettingsPanelProps = {}): React.JSX.Element {
   const { preferences, update, resetPreferences, reducedMotion, systemPrefersReduce, savedOnThisDevice } =
     usePreferences();
+  const progress = useOptionalProgress();
+  const saved =
+    savedOnThisDevice || (progress?.savedOnThisDevice ?? false) ? 'Saved on this device.' : null;
   const [confirming, setConfirming] = useState<null | 'progress' | 'all'>(null);
 
   return (
@@ -98,9 +102,7 @@ export function SettingsPanel({
         <fieldset>
           <legend>Local data</legend>
           <p className={styles.hint}>
-            {savedOnThisDevice
-              ? 'Saved on this device.'
-              : 'Nothing has been written to this browser in this session yet.'}
+            {saved ?? 'Nothing has been written to this browser in this session yet.'}
           </p>
           <div className={styles.actions}>
             <button
