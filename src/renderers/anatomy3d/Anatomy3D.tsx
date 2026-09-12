@@ -28,6 +28,7 @@ import {
 import { layoutLabels, toScreen, type LabelCandidate } from './labels.ts';
 import { pixelRatioFor, QualityWatchdog } from './webgl.ts';
 import { BodyShell, BrainShell, RegionMesh, RouteMesh, type PlacedRegion } from './scene-parts.tsx';
+import { BodyModel, type BodyModelState } from './BodyModel.tsx';
 import styles from './Anatomy3D.module.css';
 
 export interface Anatomy3DProps {
@@ -40,6 +41,7 @@ export interface Anatomy3DProps {
   onSelect: (anatomyId: string) => void;
   onOpenRelationship?: (relationshipId: string) => void;
   onContextLost: () => void;
+  onAssetLoadFailure: () => void;
   onChangeView?: (view: 'body' | 'brain') => void;
 }
 
@@ -214,6 +216,7 @@ export default function Anatomy3D({
   onSelect,
   onOpenRelationship,
   onContextLost,
+  onAssetLoadFailure,
   onChangeView,
 }: Anatomy3DProps): React.JSX.Element {
   const presets = view === 'body' ? BODY_PRESETS : BRAIN_PRESETS;
@@ -222,7 +225,10 @@ export default function Anatomy3D({
   const [quality, setQuality] = useState<'normal' | 'low'>('normal');
   const [collapsedIds, setCollapsedIds] = useState<string[]>([]);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [bodyModelState, setBodyModelState] = useState<BodyModelState>('loading');
   const bindings = useRef(new Map<string, LabelBinding>());
+
+  const bodyAsset = repository.bundle.assets.find((asset) => asset.kind === 'body-model');
 
   // Each view keeps its own last orientation during a session (document 07).
   const poseByView = useRef<Record<'body' | 'brain', CameraPose>>({
@@ -305,7 +311,15 @@ export default function Anatomy3D({
               setQuality('low');
             }}
           />
-          {view === 'body' ? <BodyShell /> : <BrainShell />}
+          {view === 'body' && bodyAsset !== undefined && (
+            <BodyModel
+              asset={bodyAsset}
+              onStateChange={setBodyModelState}
+              onFailure={onAssetLoadFailure}
+            />
+          )}
+          {view === 'body' && (bodyAsset === undefined || bodyModelState !== 'ready') && <BodyShell />}
+          {view === 'brain' && <BrainShell />}
           {regions.map((region) => (
             <RegionMesh
               key={region.record.id}
@@ -341,6 +355,12 @@ export default function Anatomy3D({
             </span>
           ))}
         </div>
+
+        {view === 'body' && bodyAsset !== undefined && bodyModelState === 'loading' && (
+          <p className={styles.modelNote} role="status">
+            Loading the body model…
+          </p>
+        )}
 
         {hoveredId !== null && (
           <p className={styles.hover} role="status">

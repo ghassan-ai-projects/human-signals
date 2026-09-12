@@ -63,6 +63,9 @@ export function SceneHost({
     recordDiagnostic(reason === 'context-lost' ? 'WEBGL_CONTEXT_LOST' : 'ASSET_LOAD', 'journey');
     setOverride({ kind: 'two-d', reason });
   }, []);
+  const fallBackForAsset = useCallback(() => {
+    fallBackTo2D('failed');
+  }, [fallBackTo2D]);
 
   const hasBrainContent = repository.bundle.anatomy.some((record) => record.view === 'brain');
 
@@ -169,6 +172,7 @@ export function SceneHost({
             onContextLost={() => {
               fallBackTo2D('context-lost');
             }}
+            onAssetLoadFailure={fallBackForAsset}
             {...(hasBrainContent ? { onChangeView: setView } : {})}
           />
         </Suspense>
