@@ -11,6 +11,7 @@ import { cx } from '../styles/cx.ts';
 const NAV = [
   { to: '/explore', label: 'Explore' },
   { to: '/states', label: 'Human States' },
+  { to: '/learn', label: 'Learn' },
   { to: '/about', label: 'About & sources' },
 ] as const;
 

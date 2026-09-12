@@ -76,6 +76,10 @@ export function timelineUrl(
   return journeyUrl(id, options);
 }
 
+export function learnUrl(): string {
+  return '/learn';
+}
+
 export function compareUrl(a?: string, b?: string, depth?: Depth): string {
   const params = new URLSearchParams();
   if (a !== undefined) params.set('a', a);

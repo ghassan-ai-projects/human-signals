@@ -10,6 +10,7 @@ import { AboutPage } from '../features/about/AboutPage.tsx';
 import { ExplorePage } from '../features/explore/ExplorePage.tsx';
 import { TimelinePage } from '../features/lesson/TimelinePage.tsx';
 import { StatesPage } from '../features/states/StatesPage.tsx';
+import { LearnPage } from '../features/learn/LearnPage.tsx';
 import { RouteRecoveryPage } from './RouteRecoveryPage.tsx';
 
 /**
@@ -42,6 +43,14 @@ export function App(): React.JSX.Element {
                       element={
                         <RequireContent>
                           <StatesPage />
+                        </RequireContent>
+                      }
+                    />
+                    <Route
+                      path="/learn"
+                      element={
+                        <RequireContent>
+                          <LearnPage />
                         </RequireContent>
                       }
                     />
