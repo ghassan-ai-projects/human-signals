@@ -400,9 +400,12 @@ export const AssetSchema = z.strictObject({
   bytes: z.int().min(0).max(100000000),
   kind: z.enum(['body-model', 'brain-model', 'texture', 'font', 'diagram']),
   source: z.string().min(1).max(500),
+  sourceRevision: z.string().min(1).max(200),
   license: z.string().min(1).max(200),
-  attribution: z.string().max(500),
+  licenseUrl: httpsUrl,
+  attribution: z.string().min(1).max(500),
   modified: z.boolean(),
+  modificationNote: z.string().min(1).max(500),
 });
 
 export const ReviewSchema = z.strictObject({

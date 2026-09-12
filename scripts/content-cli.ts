@@ -12,8 +12,17 @@
  * There is no environment variable that skips review. Production is fail-closed by construction:
  * the same validator runs, with the publication gate switched on.
  */
-import { readdirSync, readFileSync, mkdirSync, rmSync, writeFileSync, existsSync } from 'node:fs';
-import { join, relative } from 'node:path';
+import {
+  copyFileSync,
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  readdirSync,
+  rmSync,
+  statSync,
+  writeFileSync,
+} from 'node:fs';
+import { dirname, join, relative } from 'node:path';
 import {
   parseBundle,
   validateBundle,
@@ -22,6 +31,7 @@ import {
   type ValidationIssue,
 } from '../src/content/validate.ts';
 import { scientificHash, serialiseBundle, sha256Hex, sortBundleRecords } from '../src/content/hash.ts';
+import { verifyAssetBytes } from '../src/content/assets.ts';
 import type { ContentBundle, ContentManifest } from '../src/content/schema.ts';
 
 const ROOT = join(import.meta.dirname, '..');
@@ -209,6 +219,63 @@ function report(issues: readonly ValidationIssue[], fileOf: Map<string, string>)
   console.error(formatIssues(located));
 }
 
+interface PreparedAsset {
+  asset: ContentBundle['assets'][number];
+  sourcePath: string;
+}
+
+/** Finds assets in the tracked production directory or the fixture-only asset directory. */
+function assetCandidates(assetPath: string): string[] {
+  const relativePath = assetPath.startsWith('content/') ? assetPath.slice('content/'.length) : assetPath;
+  return [
+    join(ROOT, assetPath),
+    join(ROOT, 'content', relativePath),
+    join(ROOT, 'content', 'fixtures', relativePath),
+  ];
+}
+
+async function verifyAssetFiles(bundle: ContentBundle): Promise<{
+  issues: ValidationIssue[];
+  assets: PreparedAsset[];
+}> {
+  const issues: ValidationIssue[] = [];
+  const assets: PreparedAsset[] = [];
+  for (const asset of bundle.assets) {
+    const sourcePath = assetCandidates(asset.path).find((candidate) => existsSync(candidate));
+    if (sourcePath === undefined) {
+      issues.push({
+        rule: 'VAL-015',
+        path: `$.assets.${asset.id}.path`,
+        message: `asset file is missing: ${asset.path}`,
+        recordId: asset.id,
+      });
+      continue;
+    }
+    if (!statSync(sourcePath).isFile()) {
+      issues.push({
+        rule: 'VAL-015',
+        path: `$.assets.${asset.id}.path`,
+        message: `asset path is not a regular file: ${asset.path}`,
+        recordId: asset.id,
+      });
+      continue;
+    }
+    const bytes = readFileSync(sourcePath);
+    const integrity = await verifyAssetBytes(asset, bytes);
+    if (!integrity.ok) {
+      issues.push({
+        rule: 'VAL-015',
+        path: `$.assets.${asset.id}`,
+        message: integrity.detail ?? `asset ${asset.id} failed integrity verification`,
+        recordId: asset.id,
+      });
+      continue;
+    }
+    assets.push({ asset, sourcePath });
+  }
+  return { issues, assets };
+}
+
 async function main(): Promise<void> {
   const args = parseArgs(process.argv.slice(2));
   const dirs = args.includeFixtures ? [RECORDS_DIR, FIXTURES_DIR] : [RECORDS_DIR];
@@ -238,6 +305,21 @@ async function main(): Promise<void> {
   const bytes = serialiseBundle(sorted);
   const bundleSha = await sha256Hex(bytes);
   const scientificSha = await scientificHash(sorted);
+  const hashBoundIssues = validateBundle(sorted, {
+    mode: args.mode,
+    scientificSha256: scientificSha,
+  });
+  if (hashBoundIssues.length > 0) {
+    report(hashBoundIssues, fileOf);
+    console.error(`\ncontent: ${hashBoundIssues.length} validation error(s) in ${args.mode} mode.`);
+    process.exit(1);
+  }
+  const verifiedAssets = await verifyAssetFiles(sorted);
+  if (verifiedAssets.issues.length > 0) {
+    report(verifiedAssets.issues, fileOf);
+    console.error(`\ncontent: ${verifiedAssets.issues.length} asset integrity error(s).`);
+    process.exit(1);
+  }
   const bundleFile = `bundle.${bundleSha.slice(0, 16)}.json`;
   const manifest = buildManifest(sorted, `content/${bundleFile}`, bundleSha, scientificSha);
 
@@ -277,6 +359,11 @@ async function main(): Promise<void> {
     )}\n`,
     'utf8',
   );
+  for (const { asset, sourcePath } of verifiedAssets.assets) {
+    const destination = join(ROOT, 'public', asset.path);
+    mkdirSync(dirname(destination), { recursive: true });
+    copyFileSync(sourcePath, destination);
+  }
 
   console.log(`content: built ${args.mode} bundle.\n  ${counts}`);
   console.log(`  ${relative(ROOT, join(OUT_DIR, bundleFile))}  ${(bytes.length / 1024).toFixed(1)} KB`);

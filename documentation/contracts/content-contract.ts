@@ -256,9 +256,12 @@ export interface Asset {
   bytes: number;
   kind: 'body-model' | 'brain-model' | 'texture' | 'font' | 'diagram';
   source: string; // Origin URL or project-authored provenance
+  sourceRevision: string; // Immutable upstream commit, release or project revision
   license: string;
+  licenseUrl: string; // HTTPS licence text or canonical deed
   attribution: string;
   modified: boolean;
+  modificationNote: string; // What the build/import changed, even for a no-op export
 }
 
 export interface Review {

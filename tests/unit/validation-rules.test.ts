@@ -294,9 +294,12 @@ describe('content validation rules', () => {
         bytes: 10,
         kind: 'body-model',
         source: 'project-authored',
+        sourceRevision: 'fixture',
         license: 'CC0-1.0',
-        attribution: '',
+        licenseUrl: 'https://creativecommons.org/publicdomain/zero/1.0/',
+        attribution: 'Fixture asset; no third-party attribution required.',
         modified: false,
+        modificationNote: 'Synthetic test metadata.',
       });
     });
   });

@@ -199,9 +199,12 @@ describe('bounds and paths', () => {
           bytes: 1,
           kind: 'body-model',
           source: 'project-authored',
+          sourceRevision: 'fixture',
           license: 'CC0-1.0',
-          attribution: '',
+          licenseUrl: 'https://creativecommons.org/publicdomain/zero/1.0/',
+          attribution: 'Fixture asset; no third-party attribution required.',
           modified: false,
+          modificationNote: 'Synthetic test metadata.',
         }).success,
       ).toBe(false);
     }
@@ -216,9 +219,12 @@ describe('bounds and paths', () => {
         bytes: 1,
         kind: 'body-model',
         source: 'project-authored',
+        sourceRevision: 'fixture',
         license: 'CC0-1.0',
-        attribution: '',
+        licenseUrl: 'https://creativecommons.org/publicdomain/zero/1.0/',
+        attribution: 'Fixture asset; no third-party attribution required.',
         modified: false,
+        modificationNote: 'Synthetic test metadata.',
       });
       b.references.push({
         id: 'ref-unsafe',

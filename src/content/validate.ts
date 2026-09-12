@@ -73,6 +73,8 @@ export interface ValidateOptions {
   mode: 'preview' | 'production';
   /** Injected so review staleness is testable without touching the clock. */
   now?: Date;
+  /** Supplied by the compiler after canonical scientific hashing. */
+  scientificSha256?: string;
 }
 
 export const MAX_GRAPH_RECORDS = 10_000;
@@ -84,6 +86,7 @@ interface Ctx {
   issues: ValidationIssue[];
   mode: 'preview' | 'production';
   now: Date;
+  scientificSha256?: string;
   ids: Map<string, EntityKind | 'timeline'>;
   claims: Map<string, Claim>;
   explanations: Map<string, Explanation>;
@@ -147,6 +150,7 @@ export function validateBundle(bundle: ContentBundle, options: ValidateOptions):
     issues: [],
     mode: options.mode,
     now: options.now ?? new Date(),
+    ...(options.scientificSha256 === undefined ? {} : { scientificSha256: options.scientificSha256 }),
     ids: new Map(),
     claims: new Map(bundle.claims.map((claim) => [claim.id, claim])),
     explanations: new Map(bundle.explanations.map((item) => [item.id, item])),
@@ -992,6 +996,15 @@ function checkPublicationGate(ctx: Ctx): void {
   }
   const maxAgeMs = REVIEW_MAX_AGE_DAYS * 24 * 60 * 60 * 1000;
   for (const review of approvals) {
+    if (ctx.scientificSha256 !== undefined && review.bundleSha256 !== ctx.scientificSha256) {
+      add(
+        ctx,
+        'VAL-015',
+        `$.reviews.${review.id}.bundleSha256`,
+        'approval hash does not match the current scientific bundle hash',
+        review.id,
+      );
+    }
     const reviewedOn = Date.parse(`${review.reviewedOn}T00:00:00Z`);
     if (Number.isNaN(reviewedOn)) {
       add(ctx, 'VAL-015', `$.reviews.${review.id}.reviewedOn`, 'unreadable review date', review.id);

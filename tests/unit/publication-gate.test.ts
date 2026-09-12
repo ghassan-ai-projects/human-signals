@@ -69,6 +69,30 @@ describe('publication gate', () => {
     expect(messages(stale).some((message) => message.includes(String(REVIEW_MAX_AGE_DAYS)))).toBe(true);
   });
 
+  it('blocks an approval whose hash does not cover the current scientific bundle', () => {
+    const candidate = releaseCandidate((bundle) => {
+      bundle.reviews.push({
+        id: 'review-mismatched-hash',
+        bundleSha256: 'a'.repeat(64),
+        reviewerId: 'reviewer-fixture',
+        reviewerRole: 'fixture',
+        qualification: 'fixture record, not a real reviewer',
+        reviewedOn: '2026-09-01',
+        disposition: 'approved',
+        visualReviewBuildId: 'fixture',
+        notes: '',
+      });
+    });
+    const found = validateBundle(candidate, {
+      mode: 'production',
+      now: NOW,
+      scientificSha256: 'b'.repeat(64),
+    });
+    expect(found.map((issue) => issue.message)).toContain(
+      'approval hash does not match the current scientific bundle hash',
+    );
+  });
+
   it('rejects an unreadable review date rather than treating it as current', () => {
     const broken = releaseCandidate((bundle) => {
       bundle.reviews.push({
@@ -95,9 +119,12 @@ describe('publication gate', () => {
         bytes: 1024,
         kind: 'body-model',
         source: 'project-authored',
+        sourceRevision: 'fixture',
         license: '   ',
-        attribution: '',
+        licenseUrl: 'https://creativecommons.org/publicdomain/zero/1.0/',
+        attribution: 'Fixture asset; no third-party attribution required.',
         modified: false,
+        modificationNote: 'Synthetic test metadata.',
       });
     });
     expect(messages(unlicensed)).toContain('assets need an explicit licence');
