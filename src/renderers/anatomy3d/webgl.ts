@@ -5,19 +5,7 @@
  * cap the device pixel ratio, disable shadows and postprocessing, and reduce quality once if
  * sustained frame time is poor — without changing lesson state or removing any relationship.
  */
-export type WebglSupport = 'webgl2' | 'unsupported';
-
-export function detectWebgl2(
-  createCanvas: () => HTMLCanvasElement = () => document.createElement('canvas'),
-): WebglSupport {
-  try {
-    const canvas = createCanvas();
-    const context = canvas.getContext('webgl2');
-    return context === null ? 'unsupported' : 'webgl2';
-  } catch {
-    return 'unsupported';
-  }
-}
+export { detectWebgl2, type WebglSupport } from '../../platform/webgl.ts';
 
 export const QUALITY = {
   normalMaxPixelRatio: 2,

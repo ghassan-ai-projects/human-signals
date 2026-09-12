@@ -224,24 +224,25 @@ interface PreparedAsset {
   sourcePath: string;
 }
 
-/** Finds assets in the tracked production directory or the fixture-only asset directory. */
-function assetCandidates(assetPath: string): string[] {
+/** Finds assets in the tracked production directory, with fixtures allowed only in preview. */
+function assetCandidates(assetPath: string, allowFixtures: boolean): string[] {
   const relativePath = assetPath.startsWith('content/') ? assetPath.slice('content/'.length) : assetPath;
-  return [
+  const candidates = [
     join(ROOT, assetPath),
     join(ROOT, 'content', relativePath),
-    join(ROOT, 'content', 'fixtures', relativePath),
   ];
+  if (allowFixtures) candidates.push(join(ROOT, 'content', 'fixtures', relativePath));
+  return candidates;
 }
 
-async function verifyAssetFiles(bundle: ContentBundle): Promise<{
+async function verifyAssetFiles(bundle: ContentBundle, mode: Args['mode']): Promise<{
   issues: ValidationIssue[];
   assets: PreparedAsset[];
 }> {
   const issues: ValidationIssue[] = [];
   const assets: PreparedAsset[] = [];
   for (const asset of bundle.assets) {
-    const sourcePath = assetCandidates(asset.path).find((candidate) => existsSync(candidate));
+    const sourcePath = assetCandidates(asset.path, mode === 'preview').find((candidate) => existsSync(candidate));
     if (sourcePath === undefined) {
       issues.push({
         rule: 'VAL-015',
@@ -314,7 +315,7 @@ async function main(): Promise<void> {
     console.error(`\ncontent: ${hashBoundIssues.length} validation error(s) in ${args.mode} mode.`);
     process.exit(1);
   }
-  const verifiedAssets = await verifyAssetFiles(sorted);
+  const verifiedAssets = await verifyAssetFiles(sorted, args.mode);
   if (verifiedAssets.issues.length > 0) {
     report(verifiedAssets.issues, fileOf);
     console.error(`\ncontent: ${verifiedAssets.issues.length} asset integrity error(s).`);

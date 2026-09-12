@@ -10,7 +10,7 @@ import { Suspense, lazy, useCallback, useEffect, useMemo, useState } from 'react
 import type { ContentRepository } from '../../content/repository.ts';
 import type { Frame } from '../../engine/frame.ts';
 import { Diagram2D } from '../../renderers/diagram2d/Diagram2D.tsx';
-import { detectWebgl2 } from '../../renderers/anatomy3d/webgl.ts';
+import { detectWebgl2 } from '../../platform/webgl.ts';
 import { ErrorBoundary } from '../../app/ErrorBoundary.tsx';
 import { recordDiagnostic } from '../../platform/diagnostics.ts';
 import styles from './SceneHost.module.css';

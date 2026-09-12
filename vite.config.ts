@@ -62,7 +62,7 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         output: {
           manualChunks(id) {
-            if (id.includes('node_modules/three') || id.includes('@react-three')) return 'anatomy3d';
+            if (id.includes('node_modules/three')) return 'anatomy3d';
             return undefined;
           },
         },

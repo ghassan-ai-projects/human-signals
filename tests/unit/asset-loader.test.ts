@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { loadVerifiedAsset } from '../../src/renderers/anatomy3d/asset-loader.ts';
 import { validBundle } from '../fixtures/bundle.ts';
 
@@ -50,6 +50,27 @@ describe('verified model loader', () => {
 
     const pending = loadVerifiedAsset(asset, { fetchImpl, signal: controller.signal });
     controller.abort();
-    await expect(pending).rejects.toThrow('aborted');
+    await expect(pending).rejects.toThrow('model load aborted');
+  });
+
+  it('does not start a request when the caller signal is already aborted', async () => {
+    const asset = validBundle().assets[0]!;
+    const controller = new AbortController();
+    controller.abort();
+    const fetchImpl = vi.fn<typeof fetch>();
+
+    await expect(loadVerifiedAsset(asset, { fetchImpl, signal: controller.signal })).rejects.toThrow(
+      'before it started',
+    );
+    expect(fetchImpl).not.toHaveBeenCalled();
+  });
+
+  it('rejects on timeout even when a fetch implementation ignores abort', async () => {
+    const asset = validBundle().assets[0]!;
+    const fetchImpl: typeof fetch = () => new Promise<Response>(() => {});
+
+    await expect(loadVerifiedAsset(asset, { fetchImpl, timeoutMs: 5 })).rejects.toThrow(
+      'timed out after 5 ms',
+    );
   });
 });

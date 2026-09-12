@@ -42,10 +42,11 @@ export function BodyModel({ asset, onStateChange, onFailure }: BodyModelProps): 
   useEffect(() => {
     let cancelled = false;
     let loadedScene: Group | null = null;
+    const controller = new AbortController();
     onStateChange('loading');
 
     const loader = new GLTFLoader();
-    loadVerifiedAsset(asset)
+    loadVerifiedAsset(asset, { signal: controller.signal })
       .then(
         (bytes) =>
           new Promise<Group>((resolve, reject) => {
@@ -84,6 +85,7 @@ export function BodyModel({ asset, onStateChange, onFailure }: BodyModelProps): 
 
     return () => {
       cancelled = true;
+      controller.abort();
       if (loadedScene !== null) disposeScene(loadedScene);
     };
   }, [asset, onFailure, onStateChange]);
