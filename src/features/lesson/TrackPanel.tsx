@@ -10,6 +10,8 @@ import type { Frame } from '../../engine/frame.ts';
 import type { ContentRepository } from '../../content/repository.ts';
 import styles from './TrackPanel.module.css';
 
+const NOT_STARTED = 'This track has not started in this lesson yet.';
+
 const TREND_TEXT: Record<Trend, { label: string; glyph: string }> = {
   baseline: { label: 'at its baseline in this scenario', glyph: '=' },
   increasing: { label: 'increasing in this scenario', glyph: '▲' },
@@ -80,7 +82,7 @@ export function TrackPanel({
                   // Focused view: other tracks collapse to a summary line. Nothing is removed
                   // from the lesson text; the transcript still carries their full contribution.
                   <p className={styles.dimmedCaption}>
-                    {step ? step.label : 'This track has not started in this lesson yet.'}
+                    {step ? step.label : NOT_STARTED}
                   </p>
                 ) : step ? (
                   <>
@@ -92,7 +94,7 @@ export function TrackPanel({
                     )}
                   </>
                 ) : (
-                  <p className={styles.caption}>This track has not started in this lesson yet.</p>
+                  <p className={styles.caption}>{NOT_STARTED}</p>
                 )}
               </article>
             );
@@ -100,7 +102,7 @@ export function TrackPanel({
       </div>
 
       {focusedTrackId !== null && (
-        <p className={styles.focusNote}>
+        <p className={styles.focusNote} role="status">
           Focused view: the other tracks are summarised here and remain in full in the causal
           transcript.
         </p>

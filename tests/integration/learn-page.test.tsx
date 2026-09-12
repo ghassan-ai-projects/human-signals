@@ -6,10 +6,11 @@
  * percentage or a mastery claim.
  */
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { App } from '../../src/app/App.tsx';
 import { serveContent, type ServedContent } from '../fixtures/serve-content.ts';
+import { seekScrubber } from '../fixtures/seek.ts';
 
 let served: ServedContent;
 
@@ -40,14 +41,14 @@ async function completeFirstCheckpoint(user: ReturnType<typeof userEvent.setup>)
       'Abstract exercise: an invented signalling loop',
     );
   });
-  fireEvent.change(screen.getByLabelText('Lesson position'), { target: { value: '2700' } });
+  await seekScrubber(2700);
   await user.click(screen.getByRole('button', { name: 'Play' }));
   await screen.findByRole('heading', { name: /Practice question/ });
   await user.click(screen.getByRole('radio', { name: 'The Peripheral structure releases Gamma.' }));
   await user.click(screen.getByRole('button', { name: 'Check answer' }));
   await user.click(screen.getByRole('button', { name: 'Continue' }));
   await user.click(screen.getByRole('button', { name: 'Pause' }));
-  fireEvent.change(screen.getByLabelText('Lesson position'), { target: { value: '6000' } });
+  await seekScrubber(6000);
   await waitFor(() => {
     expect(screen.getByText(/Journey completed/)).toBeInTheDocument();
   });

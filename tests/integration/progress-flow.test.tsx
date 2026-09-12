@@ -11,6 +11,7 @@ import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-li
 import userEvent from '@testing-library/user-event';
 import { App } from '../../src/app/App.tsx';
 import { serveContent, type ServedContent } from '../fixtures/serve-content.ts';
+import { seekScrubber } from '../fixtures/seek.ts';
 import { PROGRESS_KEY } from '../../src/platform/progress.ts';
 
 const LESSON_PATH = '#/exercise/exercise-synthetic-feedback';
@@ -44,10 +45,7 @@ async function answerFirstCheckpointCorrectly(
       'Abstract exercise: an invented signalling loop',
     );
   });
-  fireEvent.change(screen.getByLabelText('Lesson position'), { target: { value: '2700' } });
-  await waitFor(() => {
-    expect(screen.getByLabelText('Lesson position')).toHaveValue('2700');
-  });
+  await seekScrubber(2700);
   await user.click(screen.getByRole('button', { name: 'Play' }));
   await screen.findByRole('heading', { name: /Practice question/ });
   await user.click(screen.getByRole('radio', { name: 'The Peripheral structure releases Gamma.' }));
@@ -69,10 +67,7 @@ describe('attempts reach local storage', () => {
         'Abstract exercise: an invented signalling loop',
       );
     });
-    fireEvent.change(screen.getByLabelText('Lesson position'), { target: { value: '2700' } });
-    await waitFor(() => {
-      expect(screen.getByLabelText('Lesson position')).toHaveValue('2700');
-    });
+    await seekScrubber(2700);
     await user.click(screen.getByRole('button', { name: 'Play' }));
     await screen.findByRole('heading', { name: /Practice question/ });
     await user.click(screen.getByRole('radio', { name: 'The Peripheral structure releases Gamma.' }));
@@ -217,10 +212,7 @@ describe('storage that fails', () => {
     );
 
     // The merged exposure reaches this lesson: the second question is announced as practice.
-    fireEvent.change(screen.getByLabelText('Lesson position'), { target: { value: '4400' } });
-    await waitFor(() => {
-      expect(screen.getByLabelText('Lesson position')).toHaveValue('4400');
-    });
+    await seekScrubber(4400);
     await user.click(screen.getByRole('button', { name: 'Play' }));
     await screen.findByRole('heading', { name: /Practice question/ });
     expect(screen.getByText(/this attempt is practice rather than a first try/)).toBeInTheDocument();
@@ -264,10 +256,7 @@ describe('clearing local progress', () => {
 
     // Answering again after the reset is a first attempt once more.
     await user.click(screen.getByRole('button', { name: 'Next step' }));
-    fireEvent.change(screen.getByLabelText('Lesson position'), { target: { value: '2700' } });
-    await waitFor(() => {
-      expect(screen.getByLabelText('Lesson position')).toHaveValue('2700');
-    });
+    await seekScrubber(2700);
     await user.click(screen.getByRole('button', { name: 'Play' }));
     await screen.findByRole('heading', { name: /Practice question/ });
     expect(

@@ -47,8 +47,9 @@ describe('persistence on the shared frame', () => {
     const late = project(state, state.durationMs);
     // The fast route's highlight on the shared structure persists past its own track.
     expect(early.highlights['anat-fictional-source']).toBeDefined();
-    // The carried route's later authored write replaced the shared highlight value.
-    expect(late.highlights['anat-fictional-intermediary']).toBe('target');
+    // The carried route's later authored write replaced the fast route's value: the
+    // intermediary is now the source of the carried signal rather than the fast target.
+    expect(late.highlights['anat-fictional-intermediary']).toBe('source');
     // End of scenario: the authored end state stays; nothing returns to baseline by itself.
     expect(late.trends['sig-alpha']).toBe('decreasing');
     expect(late.trends['sig-gamma']).toBe('increasing');
@@ -63,7 +64,7 @@ describe('persistence on the shared frame', () => {
 });
 
 describe('one frame for every renderer', () => {
-  it('reaches the same frame by playing through and by seeking', () => {
+  it('reaches the same frame by seeking through every step time', () => {
     // Direct projection vs. step-through: walk every distinct step time with the reducer.
     const session = createSession(state.id, bundle.contentVersion);
     const walked = reduceAll(
@@ -95,7 +96,7 @@ describe('authored shared-organ resolution', () => {
     expect(issues.filter((issue) => issue.rule === 'VAL-008')).toHaveLength(0);
 
     const mutated = validBundle();
-    mutated.timelines[1]!.events.push({
+    mutated.timelines.find((timeline) => timeline.id === state.id)!.events.push({
       id: `${state.id}-e-dup`,
       atMs: 5000,
       order: 999,

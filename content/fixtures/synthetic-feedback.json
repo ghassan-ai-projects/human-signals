@@ -2023,8 +2023,8 @@
           "label": "The fast route acts on the intermediary",
           "caption": {
             "intro": "The fast route reaches the intermediary structure first.",
-            "standard": "The fast route acts on the intermediary structure while the carried route is still travelling.",
-            "mechanism": "Authored as the earliest action in the scenario. The highlight on the intermediary structure is the fast route acting; it stays lit because nothing clears it."
+            "standard": "The fast route was the first to act on the intermediary structure; the carried route arrives later in the scenario.",
+            "mechanism": "Authored as the earliest action in the scenario: the first highlight on the intermediary structure is the fast route acting. Later authored events may re-highlight the same structure, which replaces the earlier one by schedule."
           },
           "relationIds": [
             "rel-alpha-beta"
@@ -2223,12 +2223,12 @@
         {
           "id": "state-fictional-alarm-e6",
           "atMs": 30000,
-          "order": 6,
+          "order": 7,
           "trackId": "state-fictional-alarm-track-carried",
           "command": {
             "type": "set-highlight",
             "anatomyId": "anat-fictional-intermediary",
-            "value": "target"
+            "value": "source"
           },
           "claimIds": [
             "claim-fictional-beta-response"
@@ -2237,7 +2237,7 @@
         {
           "id": "state-fictional-alarm-e7",
           "atMs": 45000,
-          "order": 7,
+          "order": 8,
           "trackId": "state-fictional-alarm-track-carried",
           "command": {
             "type": "set-trend",
@@ -2251,7 +2251,7 @@
         {
           "id": "state-fictional-alarm-e8",
           "atMs": 60000,
-          "order": 8,
+          "order": 9,
           "trackId": "state-fictional-alarm-track-regulating",
           "command": {
             "type": "set-relation",
@@ -2265,7 +2265,7 @@
         {
           "id": "state-fictional-alarm-e9",
           "atMs": 60000,
-          "order": 9,
+          "order": 10,
           "trackId": "state-fictional-alarm-track-regulating",
           "command": {
             "type": "set-trend",
@@ -2279,7 +2279,7 @@
         {
           "id": "state-fictional-alarm-e10",
           "atMs": 60000,
-          "order": 10,
+          "order": 11,
           "trackId": "state-fictional-alarm-track-regulating",
           "command": {
             "type": "set-trend",
@@ -2293,7 +2293,7 @@
         {
           "id": "state-fictional-alarm-e11",
           "atMs": 85000,
-          "order": 11,
+          "order": 12,
           "trackId": "state-fictional-alarm-track-regulating",
           "command": {
             "type": "set-highlight",
@@ -2302,6 +2302,20 @@
           },
           "claimIds": [
             "claim-fictional-gamma-feedback"
+          ]
+        },
+        {
+          "id": "state-fictional-alarm-e12",
+          "atMs": 25000,
+          "order": 6,
+          "trackId": "state-fictional-alarm-track-carried",
+          "command": {
+            "type": "set-relation",
+            "relationshipId": "rel-beta-gamma",
+            "visible": true
+          },
+          "claimIds": [
+            "claim-fictional-beta-response"
           ]
         }
       ],

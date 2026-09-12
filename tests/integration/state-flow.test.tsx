@@ -8,10 +8,11 @@
  * ever shown.
  */
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { App } from '../../src/app/App.tsx';
 import { serveContent, type ServedContent } from '../fixtures/serve-content.ts';
+import { seekScrubber } from '../fixtures/seek.ts';
 
 let served: ServedContent;
 
@@ -79,7 +80,7 @@ describe('playing the parallel state', () => {
   it('keeps biological timing qualitative and independent per track', async () => {
     await openState();
 
-    fireEvent.change(screen.getByLabelText('Lesson position'), { target: { value: '5000' } });
+    await seekScrubber(5000);
     const panel = screen.getByRole('region', { name: 'What is happening now' });
     expect(within(panel).getAllByText(/First: the fast route/).length).toBeGreaterThan(0);
     expect(within(panel).getAllByText(/Ordering only/).length).toBeGreaterThan(0);
@@ -92,12 +93,12 @@ describe('playing the parallel state', () => {
     await openState();
 
     // After the fast route acts, its caption names the shared structure.
-    fireEventSeek(20000);
+    await seekScrubber(20000);
     let panel = screen.getByRole('region', { name: 'What is happening now' });
     expect(within(panel).getByText(/The fast route reaches the intermediary structure first/)).toBeInTheDocument();
 
     // After the carried route acts on the same structure, the carried track says so.
-    fireEventSeek(45000);
+    await seekScrubber(45000);
     panel = screen.getByRole('region', { name: 'What is happening now' });
     expect(within(panel).getByText(/The slower route now acts on the intermediary structure too/)).toBeInTheDocument();
     // The regulating track has still not joined at this point.
@@ -107,18 +108,18 @@ describe('playing the parallel state', () => {
   it('changes trends only at authored events and never resets by itself', async () => {
     await openState();
 
-    fireEventSeek(5000);
+    await seekScrubber(5000);
     let panel = screen.getByRole('region', { name: 'What is happening now' });
     expect(trendItem(panel, 'Alpha (invented) is increasing in this scenario')).toBeDefined();
 
     // The regulating track overwrites the carried trend at 60 s (authored, not automatic).
-    fireEventSeek(60000);
+    await seekScrubber(60000);
     panel = screen.getByRole('region', { name: 'What is happening now' });
     expect(trendItem(panel, 'Beta (invented) is staying raised in this scenario')).toBeDefined();
     expect(trendItem(panel, 'Alpha (invented) is decreasing in this scenario')).toBeDefined();
 
     // At the very end, the authored end state persists; no invented return to baseline.
-    fireEventSeek(90000);
+    await seekScrubber(90000);
     panel = screen.getByRole('region', { name: 'What is happening now' });
     expect(trendItem(panel, 'Alpha (invented) is decreasing in this scenario')).toBeDefined();
   });
@@ -127,7 +128,7 @@ describe('playing the parallel state', () => {
     const user = userEvent.setup();
     await openState();
 
-    fireEventSeek(19900);
+    await seekScrubber(19900);
     await user.click(screen.getByRole('button', { name: 'Play' }));
     await screen.findByRole('heading', { name: /Practice question/ });
     expect(screen.getByText(/Which one acts on the target first/)).toBeInTheDocument();
@@ -146,7 +147,7 @@ describe('playing the parallel state', () => {
 
     // A fresh pass: the previously answered family opens as practice.
     await openState();
-    fireEventSeek(19900);
+    await seekScrubber(19900);
     await user.click(screen.getByRole('button', { name: 'Play' }));
     await screen.findByRole('heading', { name: /Practice question/ });
     expect(screen.getByText(/this attempt is practice rather than a first try/)).toBeInTheDocument();
@@ -192,8 +193,4 @@ function trendItem(panel: HTMLElement, includes: string): HTMLElement | undefine
     .find((item) => item.textContent?.includes(includes));
 }
 
-/** Seeks by setting the scrubber, which pauses at the destination like a learner drag would. */
-function fireEventSeek(ms: number): void {
-  fireEvent.change(screen.getByLabelText('Lesson position'), { target: { value: String(ms) } });
-  void waitFor;
-}
+

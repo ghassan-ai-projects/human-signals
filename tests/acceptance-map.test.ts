@@ -38,9 +38,9 @@ const ACCEPTANCE: AcceptanceEntry[] = [
   {
     id: 'AC-04',
     title: 'Stress tells a coherent causal story',
-    automated: ['unit/fixture-checks.test.ts'],
+    automated: ['unit/fixture-checks.test.ts', 'integration/state-flow.test.tsx', 'unit/state-engine.test.ts'],
     humanGate:
-      'blocked — the Stress scenario itself is W7/W8 content; only the fixture mechanism is testable today',
+      'blocked — real Stress biology needs W8 review; the automated tests cover the invented alarm fixture only (90 s by design; released states follow the 120–180 s norm of document 03)',
   },
   {
     id: 'AC-05',

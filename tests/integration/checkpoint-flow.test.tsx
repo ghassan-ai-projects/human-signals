@@ -6,10 +6,11 @@
  * continue and depth changes behave as document 02 specifies.
  */
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { App } from '../../src/app/App.tsx';
 import { serveContent, type ServedContent } from '../fixtures/serve-content.ts';
+import { seekScrubber } from '../fixtures/seek.ts';
 
 const LESSON_PATH = '#/exercise/exercise-synthetic-feedback';
 
@@ -34,10 +35,7 @@ async function openBeforeFirstCheckpoint(user: ReturnType<typeof userEvent.setup
       'Abstract exercise: an invented signalling loop',
     );
   });
-  fireEvent.change(screen.getByLabelText('Lesson position'), { target: { value: '2700' } });
-  await waitFor(() => {
-    expect(screen.getByLabelText('Lesson position')).toHaveValue('2700');
-  });
+  await seekScrubber(2700);
   await user.click(screen.getByRole('button', { name: 'Play' }));
   await screen.findByRole('heading', { name: /Practice question/ });
 }
@@ -136,10 +134,7 @@ describe('reaching a checkpoint', () => {
         'Abstract exercise: an invented signalling loop',
       );
     });
-    fireEvent.change(screen.getByLabelText('Lesson position'), { target: { value: '2700' } });
-    await waitFor(() => {
-      expect(screen.getByLabelText('Lesson position')).toHaveValue('2700');
-    });
+    await seekScrubber(2700);
     await user.click(screen.getByRole('button', { name: 'Play' }));
 
     // Reduced motion never starts the clock (D4): no question can interrupt.
