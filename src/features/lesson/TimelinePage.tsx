@@ -109,6 +109,7 @@ export function TimelinePage({ kind }: { kind: 'journey' | 'state' | 'exercise' 
         depth={depth}
         reducedMotion={reducedMotion}
         predictionsEnabled={preferences.predictionsEnabled}
+        prefers3D={preferences.view === '3d'}
       />
 
       {timeline.relatedTimelineIds.length > 0 && (

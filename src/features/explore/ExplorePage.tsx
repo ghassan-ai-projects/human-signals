@@ -11,7 +11,7 @@ import { useRepository } from '../../app/ContentProvider.tsx';
 import { usePreferences } from '../../app/PreferencesProvider.tsx';
 import { useDepth } from '../../app/useDepth.ts';
 import { DepthControl } from '../settings/DepthControl.tsx';
-import { Diagram2D } from '../../renderers/diagram2d/Diagram2D.tsx';
+import { SceneHost } from '../lesson/SceneHost.tsx';
 import { AnatomyTree } from './AnatomyTree.tsx';
 import { EntityPanel } from './EntityPanel.tsx';
 import { parseExploreSelection, exploreUrl } from '../../app/urls.ts';
@@ -32,7 +32,7 @@ export function ExplorePage(): React.JSX.Element {
   const repository = useRepository();
   const [params, setParams] = useSearchParams();
   const [depth, setDepth] = useDepth();
-  const { reducedMotion } = usePreferences();
+  const { preferences, reducedMotion } = usePreferences();
 
   const selection = parseExploreSelection(params);
 
@@ -99,16 +99,20 @@ export function ExplorePage(): React.JSX.Element {
         </aside>
 
         <div className={styles.canvas}>
-          <Diagram2D
+          <SceneHost
             repository={repository}
             frame={frame}
-            view="body"
             selectedId={selectedAnatomyId}
             reducedMotion={reducedMotion}
+            playing={false}
+            prefers3D={preferences.view === '3d'}
             onSelect={(anatomyId) => {
               select('anatomy', anatomyId);
             }}
-            onOpenRelationship={() => undefined}
+            onOpenRelationship={(relationshipId) => {
+              const relationship = repository.getRelationship(relationshipId);
+              if (relationship) select(relationship.target.kind, relationship.target.id);
+            }}
           />
         </div>
 

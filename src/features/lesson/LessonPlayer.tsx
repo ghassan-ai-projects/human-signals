@@ -11,7 +11,7 @@ import type { Depth, Timeline } from '../../content/schema.ts';
 import type { ContentRepository } from '../../content/repository.ts';
 import type { SessionEffect, Speed } from '../../engine/session.ts';
 import { distinctStepTimes } from '../../engine/frame.ts';
-import { Diagram2D } from '../../renderers/diagram2d/Diagram2D.tsx';
+import { SceneHost } from './SceneHost.tsx';
 import { WhyPanel } from '../why/WhyPanel.tsx';
 import { EvidencePanel } from '../evidence/EvidencePanel.tsx';
 import { useAnnouncer } from '../../components/Announcer.tsx';
@@ -31,12 +31,8 @@ export interface LessonPlayerProps {
   onEffect?: (effect: SessionEffect) => void;
   priorExposedFamilyIds?: readonly string[];
   priorAnsweredQuestionIds?: readonly string[];
-  /** Rendered above the diagram; the 3D renderer is supplied by the page in work package 4. */
-  renderScene?: (props: {
-    frame: ReturnType<typeof useLessonSession>['frame'];
-    selectedId: string | null;
-    onSelect: (anatomyId: string) => void;
-  }) => React.JSX.Element | null;
+  /** The learner's stored view preference; 3D is still only used when WebGL is available. */
+  prefers3D: boolean;
 }
 
 export function LessonPlayer({
@@ -48,7 +44,7 @@ export function LessonPlayer({
   onEffect,
   priorExposedFamilyIds,
   priorAnsweredQuestionIds,
-  renderScene,
+  prefers3D,
 }: LessonPlayerProps): React.JSX.Element {
   const [params, setParams] = useSearchParams();
   const { announce } = useAnnouncer();
@@ -103,8 +99,13 @@ export function LessonPlayer({
     announce(currentStepLabel, { throttleMs: session.status === 'playing' ? 2000 : 0 });
   }, [currentStepLabel, session.status, announce]);
 
+  // Remembers what this component last wrote, so an address the learner changed by hand is
+  // distinguishable from the URL updates playback makes for itself.
+  const lastWrittenStep = useRef<string | null>(requestedStepId);
+
   const writeStepToUrl = useCallback(
     (stepId: string | null) => {
+      lastWrittenStep.current = stepId;
       const next = new URLSearchParams(params);
       if (stepId === null) next.delete('step');
       else next.set('step', stepId);
@@ -123,6 +124,14 @@ export function LessonPlayer({
     },
     [timeline.steps, dispatch, writeStepToUrl],
   );
+
+  useEffect(() => {
+    if (requestedStepId === lastWrittenStep.current) return;
+    lastWrittenStep.current = requestedStepId;
+    if (requestedStepId === null) return;
+    const step = timeline.steps.find((item) => item.id === requestedStepId);
+    if (step) dispatch({ type: 'SEEK', cursorMs: step.atMs });
+  }, [requestedStepId, timeline.steps, dispatch]);
 
   const openRelationship = useCallback(
     (relationshipId: string) => {
@@ -216,17 +225,16 @@ export function LessonPlayer({
       <StageStrip timeline={timeline} frame={frame} depth={depth} onSelectStep={seekToStep} />
 
       <div className={styles.stage}>
-        {renderScene?.({ frame, selectedId: selectedAnatomyId, onSelect: setSelectedAnatomyId }) ?? (
-          <Diagram2D
-            repository={repository}
-            frame={frame}
-            view="body"
-            selectedId={selectedAnatomyId}
-            reducedMotion={reducedMotion}
-            onSelect={setSelectedAnatomyId}
-            onOpenRelationship={openRelationship}
-          />
-        )}
+        <SceneHost
+          repository={repository}
+          frame={frame}
+          selectedId={selectedAnatomyId}
+          reducedMotion={reducedMotion}
+          playing={session.status === 'playing'}
+          prefers3D={prefers3D}
+          onSelect={setSelectedAnatomyId}
+          onOpenRelationship={openRelationship}
+        />
       </div>
 
       <PlaybackControls

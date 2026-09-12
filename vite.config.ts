@@ -29,8 +29,8 @@ function securityHeaders(mode: string): PluginOption {
     "worker-src 'self' blob:",
     "object-src 'none'",
     "base-uri 'self'",
-    "frame-ancestors 'none'",
     "form-action 'none'",
+    // frame-ancestors is ignored in a meta element; document 13 puts it in the host headers.
   ].join('; ');
   return {
     name: 'human-signals-security-headers',
