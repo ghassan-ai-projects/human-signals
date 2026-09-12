@@ -1,0 +1,1500 @@
+{
+  "contexts": [
+    {
+      "id": "ctx-fictional-baseline",
+      "label": "Illustrative Alpha system at rest",
+      "description": {
+        "intro": "An invented system that is not doing anything in particular.",
+        "standard": "The resting condition of a deliberately fictional three-signal system used to test the lesson player.",
+        "mechanism": "Baseline condition of the fictional Alpha/Beta/Gamma system. No physiological meaning is intended or implied by any part of this record."
+      },
+      "assumptions": [
+        "The system is entirely invented and describes no organism."
+      ],
+      "exclusions": [
+        "Every real physiological pathway."
+      ],
+      "variability": "Not applicable: this system does not exist.",
+      "claimIds": []
+    },
+    {
+      "id": "ctx-fictional-episode",
+      "label": "Illustrative Alpha system during an episode",
+      "description": {
+        "intro": "The invented system responding to an invented trigger.",
+        "standard": "A single illustrative episode in the fictional system, from trigger through to a regulating response.",
+        "mechanism": "Episode condition of the fictional Alpha/Beta/Gamma system, authored to exercise sequence, parallel tracks and an inhibitory feedback edge."
+      },
+      "assumptions": [
+        "One trigger occurs at the start of the lesson.",
+        "Nothing else in the invented system changes."
+      ],
+      "exclusions": [
+        "Any claim about a real body."
+      ],
+      "variability": "Not applicable: this system does not exist.",
+      "claimIds": []
+    }
+  ],
+  "references": [],
+  "claims": [
+    {
+      "id": "claim-fictional-alpha-release",
+      "statement": "In this invented system, the Source structure releases Alpha when the episode begins.",
+      "contextIds": [
+        "ctx-fictional-episode"
+      ],
+      "relationKind": "causal",
+      "support": "supported",
+      "contextDependent": true,
+      "basis": [
+        "educational-consensus"
+      ],
+      "applicability": "Applies only inside this fictional teaching system.",
+      "limitations": [
+        "The system is invented; no reference exists or could exist."
+      ],
+      "references": [],
+      "status": "draft"
+    },
+    {
+      "id": "claim-fictional-beta-response",
+      "statement": "In this invented system, Alpha reaching the Intermediary structure causes Beta release.",
+      "contextIds": [
+        "ctx-fictional-episode"
+      ],
+      "relationKind": "causal",
+      "support": "supported",
+      "contextDependent": true,
+      "basis": [
+        "educational-consensus"
+      ],
+      "applicability": "Applies only inside this fictional teaching system.",
+      "limitations": [
+        "The system is invented; no reference exists or could exist."
+      ],
+      "references": [],
+      "status": "draft"
+    },
+    {
+      "id": "claim-fictional-gamma-output",
+      "statement": "In this invented system, Beta causes the Peripheral structure to release Gamma.",
+      "contextIds": [
+        "ctx-fictional-episode"
+      ],
+      "relationKind": "causal",
+      "support": "supported",
+      "contextDependent": true,
+      "basis": [
+        "educational-consensus"
+      ],
+      "applicability": "Applies only inside this fictional teaching system.",
+      "limitations": [
+        "The system is invented; no reference exists or could exist."
+      ],
+      "references": [],
+      "status": "draft"
+    },
+    {
+      "id": "claim-fictional-gamma-feedback",
+      "statement": "In this invented system, Gamma inhibits further Alpha release from the Source structure.",
+      "contextIds": [
+        "ctx-fictional-episode"
+      ],
+      "relationKind": "causal",
+      "support": "supported",
+      "contextDependent": true,
+      "basis": [
+        "educational-consensus"
+      ],
+      "applicability": "Applies only inside this fictional teaching system.",
+      "limitations": [
+        "The system is invented; no reference exists or could exist."
+      ],
+      "references": [],
+      "status": "draft"
+    },
+    {
+      "id": "claim-fictional-parallel-track",
+      "statement": "In this invented system, the episode causes a second structure to respond on its own schedule.",
+      "contextIds": [
+        "ctx-fictional-episode"
+      ],
+      "relationKind": "causal",
+      "support": "supported",
+      "contextDependent": true,
+      "basis": [
+        "educational-consensus"
+      ],
+      "applicability": "Applies only inside this fictional teaching system.",
+      "limitations": [
+        "The system is invented; the parallel track exists to test multi-track playback."
+      ],
+      "references": [],
+      "status": "draft"
+    },
+    {
+      "id": "claim-fictional-timing",
+      "statement": "In this invented system, the regulating response is described as arriving later than the first response.",
+      "contextIds": [
+        "ctx-fictional-episode",
+        "ctx-fictional-baseline"
+      ],
+      "relationKind": "descriptive",
+      "support": "supported",
+      "contextDependent": true,
+      "basis": [
+        "educational-consensus"
+      ],
+      "applicability": "Applies only inside this fictional teaching system.",
+      "limitations": [
+        "Ordering is authored for teaching; no duration is claimed."
+      ],
+      "references": [],
+      "status": "draft"
+    },
+    {
+      "id": "claim-fictional-association",
+      "statement": "In this invented system, the Peripheral structure is associated with the idea of a regulated loop.",
+      "contextIds": [
+        "ctx-fictional-episode"
+      ],
+      "relationKind": "associative",
+      "support": "emerging",
+      "contextDependent": true,
+      "basis": [
+        "educational-consensus"
+      ],
+      "applicability": "Applies only inside this fictional teaching system.",
+      "limitations": [
+        "An association, deliberately included so association styling can be tested."
+      ],
+      "references": [],
+      "status": "draft"
+    },
+    {
+      "id": "claim-fictional-overview",
+      "statement": "This lesson is an abstract exercise and depicts no real anatomy.",
+      "contextIds": [
+        "ctx-fictional-baseline",
+        "ctx-fictional-episode"
+      ],
+      "relationKind": "descriptive",
+      "support": "established",
+      "contextDependent": false,
+      "basis": [
+        "educational-consensus"
+      ],
+      "applicability": "Applies to the fixture lesson itself.",
+      "limitations": [],
+      "references": [],
+      "status": "draft"
+    }
+  ],
+  "anchors": [
+    {
+      "id": "anchor-fictional-source",
+      "view": "body",
+      "position": [
+        0,
+        0.72,
+        0.05
+      ],
+      "diagramPosition": [
+        0.5,
+        0.16
+      ],
+      "meshNames": [],
+      "representation": "schematic-inset"
+    },
+    {
+      "id": "anchor-fictional-intermediary",
+      "view": "body",
+      "position": [
+        0,
+        0.2,
+        0.08
+      ],
+      "diagramPosition": [
+        0.5,
+        0.45
+      ],
+      "meshNames": [],
+      "representation": "schematic-inset"
+    },
+    {
+      "id": "anchor-fictional-peripheral",
+      "view": "body",
+      "position": [
+        0.32,
+        -0.3,
+        0.05
+      ],
+      "diagramPosition": [
+        0.8,
+        0.75
+      ],
+      "meshNames": [],
+      "representation": "schematic-inset"
+    },
+    {
+      "id": "anchor-fictional-parallel",
+      "view": "body",
+      "position": [
+        -0.32,
+        -0.1,
+        0.05
+      ],
+      "diagramPosition": [
+        0.2,
+        0.62
+      ],
+      "meshNames": [],
+      "representation": "schematic-inset"
+    }
+  ],
+  "anatomy": [
+    {
+      "id": "anat-fictional-source",
+      "label": "Source structure (invented)",
+      "aliases": [
+        "alpha source"
+      ],
+      "view": "body",
+      "laterality": "midline",
+      "description": {
+        "intro": "Where the invented Alpha signal starts.",
+        "standard": "The invented structure that releases Alpha at the start of the fixture episode.",
+        "mechanism": "Fictional origin structure for the fixture lesson. It is a schematic placeholder and corresponds to no real organ."
+      },
+      "anchorId": "anchor-fictional-source",
+      "claimIds": [
+        "claim-fictional-overview"
+      ]
+    },
+    {
+      "id": "anat-fictional-intermediary",
+      "label": "Intermediary structure (invented)",
+      "aliases": [
+        "beta relay"
+      ],
+      "parentId": "anat-fictional-source",
+      "view": "body",
+      "laterality": "midline",
+      "description": {
+        "intro": "The invented middle step of the chain.",
+        "standard": "The invented structure that receives Alpha and releases Beta.",
+        "mechanism": "Fictional relay structure. Its parent link exists so the anatomy tree has more than one level."
+      },
+      "anchorId": "anchor-fictional-intermediary",
+      "claimIds": [
+        "claim-fictional-overview"
+      ]
+    },
+    {
+      "id": "anat-fictional-peripheral",
+      "label": "Peripheral structure (invented)",
+      "aliases": [
+        "gamma source"
+      ],
+      "view": "body",
+      "laterality": "not-applicable",
+      "description": {
+        "intro": "The invented structure at the end of the chain.",
+        "standard": "The invented structure that releases Gamma and closes the loop back to the source.",
+        "mechanism": "Fictional output structure. It carries the inhibitory feedback edge used to test signed routes."
+      },
+      "anchorId": "anchor-fictional-peripheral",
+      "claimIds": [
+        "claim-fictional-overview"
+      ]
+    },
+    {
+      "id": "anat-fictional-parallel",
+      "label": "Parallel structure (invented)",
+      "aliases": [
+        "second track"
+      ],
+      "view": "body",
+      "laterality": "not-applicable",
+      "description": {
+        "intro": "An invented structure that responds at the same time on its own track.",
+        "standard": "The invented structure used to demonstrate two systems responding during one episode.",
+        "mechanism": "Fictional parallel structure. It exists to test that two tracks write into one shared semantic frame."
+      },
+      "anchorId": "anchor-fictional-parallel",
+      "claimIds": [
+        "claim-fictional-parallel-track"
+      ]
+    }
+  ],
+  "concepts": [
+    {
+      "id": "concept-fictional-loop",
+      "label": "Regulated loop (teaching idea)",
+      "aliases": [
+        "feedback loop",
+        "closed loop"
+      ],
+      "definition": {
+        "intro": "A chain where the end of the chain can turn the start back down.",
+        "standard": "A pattern in which a downstream output acts back on an upstream source, reducing further output.",
+        "mechanism": "A signed cycle in the relationship graph: one edge carries an inhibitory effect from a downstream node back to an upstream source, so continued output reduces its own trigger."
+      },
+      "relatedConceptIds": [],
+      "claimIds": [
+        "claim-fictional-overview"
+      ]
+    }
+  ],
+  "routes": [
+    {
+      "id": "route-fictional-alpha",
+      "fromAnchorId": "anchor-fictional-source",
+      "toAnchorId": "anchor-fictional-intermediary",
+      "controlPoints": [
+        [
+          0.06,
+          0.45,
+          0.08
+        ]
+      ],
+      "fidelity": "schematic",
+      "view": "body",
+      "claimIds": [
+        "claim-fictional-alpha-release"
+      ]
+    },
+    {
+      "id": "route-fictional-beta",
+      "fromAnchorId": "anchor-fictional-intermediary",
+      "toAnchorId": "anchor-fictional-peripheral",
+      "controlPoints": [
+        [
+          0.2,
+          -0.05,
+          0.08
+        ]
+      ],
+      "fidelity": "schematic",
+      "view": "body",
+      "claimIds": [
+        "claim-fictional-gamma-output"
+      ]
+    },
+    {
+      "id": "route-fictional-gamma",
+      "fromAnchorId": "anchor-fictional-peripheral",
+      "toAnchorId": "anchor-fictional-source",
+      "controlPoints": [
+        [
+          0.45,
+          0.3,
+          -0.05
+        ]
+      ],
+      "fidelity": "schematic",
+      "view": "body",
+      "claimIds": [
+        "claim-fictional-gamma-feedback"
+      ]
+    }
+  ],
+  "explanations": [
+    {
+      "id": "why-fictional-alpha-root",
+      "question": "Why does the Source structure act on the Intermediary structure?",
+      "answer": {
+        "intro": "Because the invented episode makes the Source release Alpha, and Alpha reaches the Intermediary.",
+        "standard": "The authored trigger causes Alpha release. Alpha is carried to the Intermediary structure, which responds by releasing Beta.",
+        "mechanism": "In the fixture, the trigger event sets the Source highlight and marks Alpha increasing. The edge is causal and its route is schematic, so the pulse shown on it is presentation emphasis and not a measured transit."
+      },
+      "contextIds": [
+        "ctx-fictional-episode"
+      ],
+      "claimIds": [
+        "claim-fictional-alpha-release"
+      ],
+      "deeperIds": [
+        "why-fictional-alpha-transport",
+        "why-fictional-alpha-sign"
+      ],
+      "relatedConceptIds": [
+        "concept-fictional-loop"
+      ]
+    },
+    {
+      "id": "why-fictional-alpha-transport",
+      "question": "How does Alpha reach the Intermediary structure?",
+      "answer": {
+        "intro": "It is carried along an invented route drawn as a schematic line.",
+        "standard": "The fixture models transport as a schematic circulation route between two anchors.",
+        "mechanism": "This is the deepest explanation in this lesson. The route stores anchor identifiers and control points only; it is not a depiction of any vessel."
+      },
+      "contextIds": [
+        "ctx-fictional-episode"
+      ],
+      "claimIds": [
+        "claim-fictional-alpha-release"
+      ],
+      "deeperIds": [],
+      "relatedConceptIds": []
+    },
+    {
+      "id": "why-fictional-alpha-sign",
+      "question": "Why is this edge drawn with an arrowhead rather than a bar?",
+      "answer": {
+        "intro": "Because in this invented system Alpha increases the Intermediary's activity.",
+        "standard": "An arrowhead with the word stimulates marks an increasing effect; a terminal bar with the word inhibits marks a decreasing one.",
+        "mechanism": "This is the deepest explanation in this lesson. Sign belongs to the relationship record, so the same sign appears in the scene, the diagram and the transcript."
+      },
+      "contextIds": [
+        "ctx-fictional-episode"
+      ],
+      "claimIds": [
+        "claim-fictional-beta-response"
+      ],
+      "deeperIds": [],
+      "relatedConceptIds": [
+        "concept-fictional-loop"
+      ]
+    },
+    {
+      "id": "why-fictional-beta-root",
+      "question": "Why does the Intermediary structure act on the Peripheral structure?",
+      "answer": {
+        "intro": "Because Beta travels onward and makes the Peripheral structure release Gamma.",
+        "standard": "Beta is released in response to Alpha and acts on the Peripheral structure, whose output is Gamma.",
+        "mechanism": "The fixture authors this as a second causal edge so that a chain of at least three nodes can be tested end to end."
+      },
+      "contextIds": [
+        "ctx-fictional-episode"
+      ],
+      "claimIds": [
+        "claim-fictional-gamma-output"
+      ],
+      "deeperIds": [
+        "why-fictional-alpha-sign"
+      ],
+      "relatedConceptIds": []
+    },
+    {
+      "id": "why-fictional-gamma-root",
+      "question": "Why does Gamma reduce Alpha instead of increasing it?",
+      "answer": {
+        "intro": "Because this invented loop turns itself down once the output has been produced.",
+        "standard": "Gamma acts back on the Source structure with an inhibitory effect, so continued output reduces the signal that started it.",
+        "mechanism": "The feedback flag and the inhibitory effect both live on the relationship record. The renderer draws a terminal bar and the word inhibits; it does not infer a sign by drawing a circle."
+      },
+      "contextIds": [
+        "ctx-fictional-episode"
+      ],
+      "claimIds": [
+        "claim-fictional-gamma-feedback"
+      ],
+      "deeperIds": [
+        "why-fictional-gamma-timing"
+      ],
+      "relatedConceptIds": [
+        "concept-fictional-loop"
+      ]
+    },
+    {
+      "id": "why-fictional-gamma-timing",
+      "question": "Does the lesson say how long this takes?",
+      "answer": {
+        "intro": "No. It only says which response is described as arriving later.",
+        "standard": "The lesson position scrubber measures presentation time. Biological timing labels sit beside the tracks and say only earlier or later.",
+        "mechanism": "This is the deepest explanation in this lesson. No conversion exists between presentation milliseconds and any real duration, and none can be derived from this fixture."
+      },
+      "contextIds": [
+        "ctx-fictional-episode",
+        "ctx-fictional-baseline"
+      ],
+      "claimIds": [
+        "claim-fictional-timing"
+      ],
+      "deeperIds": [],
+      "relatedConceptIds": []
+    },
+    {
+      "id": "why-fictional-parallel-root",
+      "question": "Why does a second structure light up at the same time?",
+      "answer": {
+        "intro": "Because a second invented track responds during the same episode.",
+        "standard": "Two authored tracks share one presentation cursor, so their events are shown together rather than as two separate players.",
+        "mechanism": "Both tracks write into one semantic frame. Two commands writing the same property at the same instant fail validation, so the picture cannot depend on render order."
+      },
+      "contextIds": [
+        "ctx-fictional-episode"
+      ],
+      "claimIds": [
+        "claim-fictional-parallel-track"
+      ],
+      "deeperIds": [],
+      "relatedConceptIds": []
+    },
+    {
+      "id": "why-fictional-association-root",
+      "question": "Why is this connector dashed and without an arrow?",
+      "answer": {
+        "intro": "Because it shows that two things go together, not that one causes the other.",
+        "standard": "Association is drawn as a non-directional dashed connector and never carries a travelling pulse.",
+        "mechanism": "An associative edge may only use the associated-with effect, so it cannot drive a causal animation even if an author tries."
+      },
+      "contextIds": [
+        "ctx-fictional-episode"
+      ],
+      "claimIds": [
+        "claim-fictional-association"
+      ],
+      "deeperIds": [],
+      "relatedConceptIds": [
+        "concept-fictional-loop"
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "id": "rel-alpha-beta",
+      "source": {
+        "kind": "anatomy",
+        "id": "anat-fictional-source"
+      },
+      "target": {
+        "kind": "anatomy",
+        "id": "anat-fictional-intermediary"
+      },
+      "label": "Alpha stimulates the Intermediary structure",
+      "kind": "causal",
+      "effect": "stimulates",
+      "transport": "circulation",
+      "feedback": false,
+      "contextIds": [
+        "ctx-fictional-episode"
+      ],
+      "mechanism": {
+        "intro": "Alpha leaves the Source and switches the Intermediary on.",
+        "standard": "Alpha is released by the Source structure and stimulates Beta release from the Intermediary structure.",
+        "mechanism": "Authored causal edge with a schematic circulation route. The pulse drawn along it is presentation emphasis derived from the cursor and route identifier."
+      },
+      "claimIds": [
+        "claim-fictional-alpha-release",
+        "claim-fictional-beta-response"
+      ],
+      "whyRootId": "why-fictional-alpha-root",
+      "routeId": "route-fictional-alpha"
+    },
+    {
+      "id": "rel-beta-gamma",
+      "source": {
+        "kind": "anatomy",
+        "id": "anat-fictional-intermediary"
+      },
+      "target": {
+        "kind": "anatomy",
+        "id": "anat-fictional-peripheral"
+      },
+      "label": "Beta stimulates the Peripheral structure",
+      "kind": "causal",
+      "effect": "stimulates",
+      "transport": "circulation",
+      "feedback": false,
+      "contextIds": [
+        "ctx-fictional-episode"
+      ],
+      "mechanism": {
+        "intro": "Beta travels onward and switches the Peripheral structure on.",
+        "standard": "Beta stimulates the Peripheral structure, whose output signal is Gamma.",
+        "mechanism": "Second causal edge of the fixture chain, authored so that a three-node sequence and its regulation can be inspected separately."
+      },
+      "claimIds": [
+        "claim-fictional-gamma-output"
+      ],
+      "whyRootId": "why-fictional-beta-root",
+      "routeId": "route-fictional-beta"
+    },
+    {
+      "id": "rel-gamma-inhibits-alpha",
+      "source": {
+        "kind": "anatomy",
+        "id": "anat-fictional-peripheral"
+      },
+      "target": {
+        "kind": "anatomy",
+        "id": "anat-fictional-source"
+      },
+      "label": "Gamma inhibits the Source structure",
+      "kind": "causal",
+      "effect": "inhibits",
+      "transport": "circulation",
+      "feedback": true,
+      "contextIds": [
+        "ctx-fictional-episode"
+      ],
+      "mechanism": {
+        "intro": "Gamma turns the Source structure back down.",
+        "standard": "Gamma acts back on the Source structure and reduces further Alpha release, closing the invented loop.",
+        "mechanism": "Inhibitory feedback edge. Sign and feedback are stored on the record and drawn as a terminal bar with the word inhibits in every renderer."
+      },
+      "claimIds": [
+        "claim-fictional-gamma-feedback"
+      ],
+      "whyRootId": "why-fictional-gamma-root",
+      "routeId": "route-fictional-gamma"
+    },
+    {
+      "id": "rel-parallel-response",
+      "source": {
+        "kind": "anatomy",
+        "id": "anat-fictional-source"
+      },
+      "target": {
+        "kind": "anatomy",
+        "id": "anat-fictional-parallel"
+      },
+      "label": "The episode also engages the Parallel structure",
+      "kind": "causal",
+      "effect": "stimulates",
+      "transport": "schematic",
+      "feedback": false,
+      "contextIds": [
+        "ctx-fictional-episode"
+      ],
+      "mechanism": {
+        "intro": "A second invented structure responds during the same episode.",
+        "standard": "The Parallel structure responds on its own track during the same episode, on a schematic route.",
+        "mechanism": "Authored to exercise simultaneous independent tracks. The route is labelled schematic so it cannot be read as an anatomical path."
+      },
+      "claimIds": [
+        "claim-fictional-parallel-track"
+      ],
+      "whyRootId": "why-fictional-parallel-root"
+    },
+    {
+      "id": "rel-peripheral-loop-association",
+      "source": {
+        "kind": "anatomy",
+        "id": "anat-fictional-peripheral"
+      },
+      "target": {
+        "kind": "concept",
+        "id": "concept-fictional-loop"
+      },
+      "label": "The Peripheral structure is associated with the regulated-loop idea",
+      "kind": "associative",
+      "effect": "associated-with",
+      "transport": "not-applicable",
+      "feedback": false,
+      "contextIds": [
+        "ctx-fictional-episode"
+      ],
+      "mechanism": {
+        "intro": "These two go together in the lesson; one does not cause the other.",
+        "standard": "An associative link between a structure and a teaching idea, shown as a dashed non-directional connector.",
+        "mechanism": "Associative edges cannot drive causal animation: validation rejects any effect other than associated-with on this kind of edge."
+      },
+      "claimIds": [
+        "claim-fictional-association"
+      ],
+      "whyRootId": "why-fictional-association-root"
+    }
+  ],
+  "signals": [
+    {
+      "id": "sig-alpha",
+      "label": "Alpha (invented)",
+      "aliases": [
+        "alpha signal"
+      ],
+      "description": {
+        "intro": "The first invented signal in the fixture chain.",
+        "standard": "Alpha is released by the Source structure at the start of the fixture episode and acts on the Intermediary structure.",
+        "mechanism": "Fictional signal. Alpha exists to test source, route and trend rendering, and carries no physiological meaning."
+      },
+      "roles": [
+        {
+          "kind": "other-signal",
+          "contextIds": [
+            "ctx-fictional-episode"
+          ],
+          "sourceAnatomyIds": [
+            "anat-fictional-source"
+          ],
+          "claimIds": [
+            "claim-fictional-alpha-release"
+          ]
+        }
+      ],
+      "misconception": {
+        "intro": "Alpha is not a real substance.",
+        "standard": "Alpha is an invented label. It must never be read as a stand-in for a real hormone or neurotransmitter.",
+        "mechanism": "Fixture entities are excluded from production builds precisely so that an invented label can never reach a public catalog."
+      },
+      "claimIds": [
+        "claim-fictional-alpha-release"
+      ],
+      "comparison": [
+        {
+          "dimension": "type",
+          "contextIds": [
+            "ctx-fictional-episode"
+          ],
+          "text": {
+            "intro": "An invented signal.",
+            "standard": "Invented signal used for engineering tests.",
+            "mechanism": "Invented signal; classified as other-signal because no real class applies."
+          },
+          "applicability": "applicable",
+          "claimIds": [
+            "claim-fictional-overview"
+          ]
+        },
+        {
+          "dimension": "sources",
+          "contextIds": [
+            "ctx-fictional-episode"
+          ],
+          "text": {
+            "intro": "The Source structure.",
+            "standard": "Released by the invented Source structure.",
+            "mechanism": "Released by the invented Source structure in the episode context only."
+          },
+          "applicability": "applicable",
+          "claimIds": [
+            "claim-fictional-alpha-release"
+          ]
+        },
+        {
+          "dimension": "transport",
+          "contextIds": [
+            "ctx-fictional-episode"
+          ],
+          "text": {
+            "intro": "Carried along an invented route.",
+            "standard": "Schematic circulation route between two anchors.",
+            "mechanism": "Route stores anchors and control points; it depicts no vessel."
+          },
+          "applicability": "applicable",
+          "claimIds": [
+            "claim-fictional-alpha-release"
+          ]
+        },
+        {
+          "dimension": "targets",
+          "contextIds": [
+            "ctx-fictional-episode"
+          ],
+          "text": {
+            "intro": "The Intermediary structure.",
+            "standard": "Acts on the invented Intermediary structure.",
+            "mechanism": "Single authored target; no other target is implied."
+          },
+          "applicability": "applicable",
+          "claimIds": [
+            "claim-fictional-beta-response"
+          ]
+        },
+        {
+          "dimension": "effects",
+          "contextIds": [
+            "ctx-fictional-episode"
+          ],
+          "text": {
+            "intro": "Turns the Intermediary structure on.",
+            "standard": "Stimulates Beta release from the Intermediary structure.",
+            "mechanism": "Stimulatory effect recorded on the relationship, not on the molecule."
+          },
+          "applicability": "applicable",
+          "claimIds": [
+            "claim-fictional-beta-response"
+          ]
+        },
+        {
+          "dimension": "timing",
+          "contextIds": [
+            "ctx-fictional-episode"
+          ],
+          "text": {
+            "intro": "Happens first in the lesson.",
+            "standard": "Described as the earlier response in this authored episode.",
+            "mechanism": "Ordering only; no duration is claimed anywhere in this fixture."
+          },
+          "applicability": "applicable",
+          "claimIds": [
+            "claim-fictional-timing"
+          ]
+        },
+        {
+          "dimension": "regulation",
+          "contextIds": [
+            "ctx-fictional-episode"
+          ],
+          "text": {
+            "intro": "Turned down later by Gamma.",
+            "standard": "Reduced by the inhibitory feedback edge from the Peripheral structure.",
+            "mechanism": "Regulation is expressed as a signed feedback edge in the graph."
+          },
+          "applicability": "applicable",
+          "claimIds": [
+            "claim-fictional-gamma-feedback"
+          ]
+        },
+        {
+          "dimension": "misconception",
+          "contextIds": [
+            "ctx-fictional-episode"
+          ],
+          "text": {
+            "intro": "Alpha is not real.",
+            "standard": "Alpha must not be read as any real signal.",
+            "mechanism": "Fixtures are excluded from production builds by the publication gate."
+          },
+          "applicability": "applicable",
+          "claimIds": [
+            "claim-fictional-overview"
+          ]
+        }
+      ],
+      "journeyIds": [
+        "exercise-synthetic-feedback"
+      ]
+    },
+    {
+      "id": "sig-beta",
+      "label": "Beta (invented)",
+      "aliases": [
+        "beta signal"
+      ],
+      "description": {
+        "intro": "The middle invented signal in the fixture chain.",
+        "standard": "Beta is released by the Intermediary structure in response to Alpha and acts on the Peripheral structure.",
+        "mechanism": "Fictional signal used to test a three-node chain with a distinct intermediate step."
+      },
+      "roles": [
+        {
+          "kind": "other-signal",
+          "contextIds": [
+            "ctx-fictional-episode"
+          ],
+          "sourceAnatomyIds": [
+            "anat-fictional-intermediary"
+          ],
+          "claimIds": [
+            "claim-fictional-beta-response"
+          ]
+        }
+      ],
+      "misconception": {
+        "intro": "Beta is not a real substance.",
+        "standard": "Beta is an invented label with no physiological meaning.",
+        "mechanism": "Fixture entities never appear in a public catalog."
+      },
+      "claimIds": [
+        "claim-fictional-beta-response"
+      ],
+      "comparison": [],
+      "journeyIds": [
+        "exercise-synthetic-feedback"
+      ]
+    },
+    {
+      "id": "sig-gamma",
+      "label": "Gamma (invented)",
+      "aliases": [
+        "gamma signal"
+      ],
+      "description": {
+        "intro": "The invented output signal that turns the chain back down.",
+        "standard": "Gamma is released by the Peripheral structure and inhibits further Alpha release.",
+        "mechanism": "Fictional signal that carries the inhibitory feedback edge of the fixture."
+      },
+      "roles": [
+        {
+          "kind": "other-signal",
+          "contextIds": [
+            "ctx-fictional-episode"
+          ],
+          "sourceAnatomyIds": [
+            "anat-fictional-peripheral"
+          ],
+          "claimIds": [
+            "claim-fictional-gamma-output"
+          ]
+        }
+      ],
+      "misconception": {
+        "intro": "Gamma is not a real substance.",
+        "standard": "Gamma is an invented label used to demonstrate feedback.",
+        "mechanism": "Feedback here is an authored signed edge, not an inference from a drawn circle."
+      },
+      "claimIds": [
+        "claim-fictional-gamma-output",
+        "claim-fictional-gamma-feedback"
+      ],
+      "comparison": [],
+      "journeyIds": [
+        "exercise-synthetic-feedback"
+      ]
+    }
+  ],
+  "objectives": [
+    {
+      "id": "obj-fictional-sequence",
+      "statement": "Predict the next communication in an invented chain from its source and target.",
+      "pattern": "sequence",
+      "prerequisiteConceptIds": []
+    },
+    {
+      "id": "obj-fictional-feedback",
+      "statement": "Predict the direction of a regulating response in an invented loop.",
+      "pattern": "feedback",
+      "prerequisiteConceptIds": [
+        "concept-fictional-loop"
+      ]
+    }
+  ],
+  "predictions": [
+    {
+      "id": "pred-fictional-next",
+      "timelineId": "exercise-synthetic-feedback",
+      "objectiveId": "obj-fictional-sequence",
+      "atMs": 2800,
+      "revealAtMs": 3000,
+      "kind": "mechanism",
+      "prompt": {
+        "intro": "Beta has reached the Peripheral structure. What happens next?",
+        "standard": "Beta has reached the Peripheral structure. Under the stated assumptions, what happens next in this invented system?",
+        "mechanism": "Beta has acted on the Peripheral structure. Given the authored edges and their signs, what is the next communication in this invented system?"
+      },
+      "assumptions": [
+        "Only the authored edges exist.",
+        "The episode continues without a new trigger."
+      ],
+      "contextIds": [
+        "ctx-fictional-episode"
+      ],
+      "options": [
+        {
+          "id": "pred-fictional-next-gamma",
+          "text": {
+            "intro": "The Peripheral structure releases Gamma.",
+            "standard": "The Peripheral structure releases Gamma.",
+            "mechanism": "The Peripheral structure releases Gamma, its authored output."
+          },
+          "feedback": {
+            "intro": "Correct. Beta acts on the Peripheral structure, whose output is Gamma.",
+            "standard": "Correct. The authored causal edge from Beta reaches the Peripheral structure, and its output signal is Gamma.",
+            "mechanism": "Correct. The next authored event makes the forward route visible and marks Gamma increasing."
+          },
+          "claimIds": [
+            "claim-fictional-gamma-output"
+          ]
+        },
+        {
+          "id": "pred-fictional-next-alpha",
+          "text": {
+            "intro": "The Source structure releases more Alpha.",
+            "standard": "The Source structure immediately releases more Alpha.",
+            "mechanism": "The Source structure increases Alpha release again straight away."
+          },
+          "feedback": {
+            "intro": "Not in this system. Nothing here tells the Source to release more Alpha at this point.",
+            "standard": "Not under these assumptions. No authored edge runs from the Peripheral structure back to increased Alpha; the only return edge reduces it.",
+            "mechanism": "Not under these assumptions. The single return edge carries an inhibitory effect, so it cannot raise Alpha."
+          },
+          "claimIds": [
+            "claim-fictional-gamma-feedback"
+          ]
+        },
+        {
+          "id": "pred-fictional-next-stop",
+          "text": {
+            "intro": "Nothing else happens.",
+            "standard": "The episode ends with no further communication.",
+            "mechanism": "No further authored communication occurs in this episode."
+          },
+          "feedback": {
+            "intro": "Not quite. There is still one more step, and then a step that turns the chain down.",
+            "standard": "Not quite. Two authored events remain: the output signal, and the regulating edge that follows it.",
+            "mechanism": "Not quite. Events remain at later timestamps, including the inhibitory feedback edge."
+          },
+          "claimIds": [
+            "claim-fictional-gamma-output"
+          ]
+        }
+      ],
+      "correctOptionId": "pred-fictional-next-gamma",
+      "explanation": {
+        "intro": "Beta acts on the Peripheral structure, and that structure's signal is Gamma.",
+        "standard": "The authored chain runs Source to Intermediary to Peripheral. Beta acting on the Peripheral structure produces Gamma.",
+        "mechanism": "The next authored event pair makes the forward route visible and sets the Gamma trend to increasing at 3000 ms."
+      },
+      "claimIds": [
+        "claim-fictional-gamma-output"
+      ],
+      "explanationIds": [
+        "why-fictional-beta-root"
+      ],
+      "revealsStepIds": [
+        "exercise-synthetic-feedback-step-output"
+      ],
+      "familyId": "family-fictional-sequence",
+      "exposureTimelineIds": [],
+      "exposureRelationshipIds": [
+        "rel-beta-gamma"
+      ],
+      "exposureExplanationIds": [
+        "why-fictional-beta-root"
+      ]
+    },
+    {
+      "id": "pred-fictional-feedback",
+      "timelineId": "exercise-synthetic-feedback",
+      "objectiveId": "obj-fictional-feedback",
+      "atMs": 4500,
+      "revealAtMs": 5000,
+      "kind": "mechanism",
+      "prompt": {
+        "intro": "Gamma is now present. What does it do to Alpha?",
+        "standard": "Gamma is now present in this invented system. Under the stated assumptions, what happens to Alpha release?",
+        "mechanism": "Gamma is present and the return edge becomes active. Under the stated assumptions, what happens to Alpha release from the Source structure?"
+      },
+      "assumptions": [
+        "Only the authored edges exist.",
+        "No new trigger arrives during the episode."
+      ],
+      "contextIds": [
+        "ctx-fictional-episode"
+      ],
+      "options": [
+        {
+          "id": "pred-fictional-feedback-down",
+          "text": {
+            "intro": "Alpha release goes down.",
+            "standard": "Alpha release decreases.",
+            "mechanism": "Alpha release decreases through the inhibitory return edge."
+          },
+          "feedback": {
+            "intro": "Correct. The return edge turns the source down.",
+            "standard": "Correct. The authored return edge is inhibitory, so Alpha release decreases.",
+            "mechanism": "Correct. The inhibitory edge becomes visible and the Alpha trend is set to decreasing at the same authored instant."
+          },
+          "claimIds": [
+            "claim-fictional-gamma-feedback"
+          ]
+        },
+        {
+          "id": "pred-fictional-feedback-up",
+          "text": {
+            "intro": "Alpha release goes up.",
+            "standard": "Alpha release increases further.",
+            "mechanism": "Alpha release increases through a stimulatory return edge."
+          },
+          "feedback": {
+            "intro": "No. The return edge has a bar, not an arrow: it reduces Alpha.",
+            "standard": "No. The return edge is drawn with a terminal bar and labelled inhibits, so it reduces Alpha rather than raising it.",
+            "mechanism": "No. The effect recorded on the return relationship is inhibits, and validation forbids an inhibitory edge from raising a trend."
+          },
+          "claimIds": [
+            "claim-fictional-gamma-feedback"
+          ]
+        },
+        {
+          "id": "pred-fictional-feedback-none",
+          "text": {
+            "intro": "Nothing changes for Alpha.",
+            "standard": "Alpha release is unaffected by Gamma.",
+            "mechanism": "Gamma has no authored effect on Alpha release."
+          },
+          "feedback": {
+            "intro": "Not here. This invented loop is closed, so the end acts on the start.",
+            "standard": "Not here. The fixture authors a closed loop specifically so that a regulating edge can be inspected.",
+            "mechanism": "Not here. A feedback relationship exists from the Peripheral structure to the Source structure and is marked as feedback."
+          },
+          "claimIds": [
+            "claim-fictional-gamma-feedback"
+          ]
+        }
+      ],
+      "correctOptionId": "pred-fictional-feedback-down",
+      "explanation": {
+        "intro": "The loop turns itself down: Gamma reduces Alpha.",
+        "standard": "The authored return edge is inhibitory, so the arrival of Gamma reduces further Alpha release.",
+        "mechanism": "At 5000 ms the inhibitory route becomes visible and the Alpha trend changes to decreasing; both are authored events, not inferred from geometry."
+      },
+      "claimIds": [
+        "claim-fictional-gamma-feedback"
+      ],
+      "explanationIds": [
+        "why-fictional-gamma-root"
+      ],
+      "revealsStepIds": [
+        "exercise-synthetic-feedback-step-feedback"
+      ],
+      "familyId": "family-fictional-feedback",
+      "exposureTimelineIds": [],
+      "exposureRelationshipIds": [
+        "rel-gamma-inhibits-alpha"
+      ],
+      "exposureExplanationIds": [
+        "why-fictional-gamma-root"
+      ]
+    }
+  ],
+  "timelines": [
+    {
+      "id": "exercise-synthetic-feedback",
+      "kind": "exercise",
+      "label": "Abstract exercise: an invented signalling loop",
+      "description": {
+        "intro": "A made-up system with three signals, used to practise reading a chain and its feedback.",
+        "standard": "An abstract exercise using invented structures and signals. It practises the shape of a signalling chain and its regulation without depicting any real anatomy.",
+        "mechanism": "Engineering fixture and abstract exercise. It exercises sequence, parallel tracks, an inhibitory feedback edge and two checkpoint predictions, using entities that deliberately do not exist."
+      },
+      "objectiveIds": [
+        "obj-fictional-sequence",
+        "obj-fictional-feedback"
+      ],
+      "contextIds": [
+        "ctx-fictional-episode",
+        "ctx-fictional-baseline"
+      ],
+      "overviewClaimIds": [
+        "claim-fictional-overview"
+      ],
+      "prerequisiteConceptIds": [
+        "concept-fictional-loop"
+      ],
+      "durationMs": 6000,
+      "tracks": [
+        {
+          "id": "exercise-synthetic-feedback-track-main",
+          "label": "Main chain",
+          "order": 0,
+          "contextIds": [
+            "ctx-fictional-episode"
+          ]
+        },
+        {
+          "id": "exercise-synthetic-feedback-track-parallel",
+          "label": "Parallel structure",
+          "order": 1,
+          "contextIds": [
+            "ctx-fictional-episode"
+          ]
+        }
+      ],
+      "timingBands": [
+        {
+          "id": "exercise-synthetic-feedback-band-earlier",
+          "label": "Earlier in this invented episode",
+          "note": "Ordering only. This lesson claims no duration of any kind.",
+          "claimIds": [
+            "claim-fictional-timing"
+          ]
+        },
+        {
+          "id": "exercise-synthetic-feedback-band-later",
+          "label": "Later in this invented episode",
+          "note": "Ordering only. Presentation time is not biological time.",
+          "claimIds": [
+            "claim-fictional-timing"
+          ]
+        }
+      ],
+      "steps": [
+        {
+          "id": "exercise-synthetic-feedback-step-source",
+          "atMs": 0,
+          "trackId": "exercise-synthetic-feedback-track-main",
+          "stage": "source",
+          "label": "The Source structure releases Alpha",
+          "caption": {
+            "intro": "The made-up episode begins and the Source structure sends out Alpha.",
+            "standard": "The episode begins. The Source structure is highlighted as the origin and releases Alpha.",
+            "mechanism": "Authored trigger and source state. The highlight command marks the Source structure as the origin of the chain."
+          },
+          "relationIds": [
+            "rel-alpha-beta"
+          ],
+          "claimIds": [
+            "claim-fictional-alpha-release"
+          ],
+          "timingBandId": "exercise-synthetic-feedback-band-earlier"
+        },
+        {
+          "id": "exercise-synthetic-feedback-step-parallel-start",
+          "atMs": 0,
+          "trackId": "exercise-synthetic-feedback-track-parallel",
+          "stage": "trigger",
+          "label": "The Parallel structure waits",
+          "caption": {
+            "intro": "A second structure is watching the same episode.",
+            "standard": "The parallel track starts at rest and responds later during the same episode.",
+            "mechanism": "Every track carries an initial step at zero so the projection has a defined state for each track at any cursor."
+          },
+          "relationIds": [
+            "rel-parallel-response"
+          ],
+          "claimIds": [
+            "claim-fictional-parallel-track"
+          ],
+          "timingBandId": "exercise-synthetic-feedback-band-earlier"
+        },
+        {
+          "id": "exercise-synthetic-feedback-step-signal",
+          "atMs": 1000,
+          "trackId": "exercise-synthetic-feedback-track-main",
+          "stage": "signal",
+          "label": "Alpha travels to the Intermediary structure",
+          "caption": {
+            "intro": "Alpha moves along the drawn route towards the middle structure.",
+            "standard": "Alpha is communicated along a schematic route to the Intermediary structure. The route legend explains what the line does and does not mean.",
+            "mechanism": "The route becomes visible and the Alpha trend is set to increasing. Pulse motion along the route is presentation emphasis only."
+          },
+          "relationIds": [
+            "rel-alpha-beta"
+          ],
+          "claimIds": [
+            "claim-fictional-alpha-release"
+          ],
+          "timingBandId": "exercise-synthetic-feedback-band-earlier"
+        },
+        {
+          "id": "exercise-synthetic-feedback-step-intermediary",
+          "atMs": 2000,
+          "trackId": "exercise-synthetic-feedback-track-main",
+          "stage": "target",
+          "label": "The Intermediary structure responds",
+          "caption": {
+            "intro": "The middle structure receives Alpha and responds.",
+            "standard": "The Intermediary structure is marked as a target and releases Beta in response to Alpha.",
+            "mechanism": "Target highlight command. The step names the relationship so the semantic state is readable without watching the animation."
+          },
+          "relationIds": [
+            "rel-alpha-beta",
+            "rel-beta-gamma"
+          ],
+          "claimIds": [
+            "claim-fictional-beta-response"
+          ],
+          "timingBandId": "exercise-synthetic-feedback-band-earlier"
+        },
+        {
+          "id": "exercise-synthetic-feedback-step-parallel-target",
+          "atMs": 2000,
+          "trackId": "exercise-synthetic-feedback-track-parallel",
+          "stage": "target",
+          "label": "The Parallel structure responds",
+          "caption": {
+            "intro": "At the same time, the second structure responds too.",
+            "standard": "The parallel track reaches its own target state during the same episode, independently of the main chain.",
+            "mechanism": "Two tracks write different properties at the same timestamp. Writing the same property at one timestamp would fail validation."
+          },
+          "relationIds": [
+            "rel-parallel-response"
+          ],
+          "claimIds": [
+            "claim-fictional-parallel-track"
+          ],
+          "timingBandId": "exercise-synthetic-feedback-band-earlier"
+        },
+        {
+          "id": "exercise-synthetic-feedback-step-output",
+          "atMs": 3000,
+          "trackId": "exercise-synthetic-feedback-track-main",
+          "stage": "effect",
+          "label": "The Peripheral structure releases Gamma",
+          "caption": {
+            "intro": "The end of the chain sends out Gamma.",
+            "standard": "Beta stimulates the Peripheral structure, whose output signal Gamma begins to increase.",
+            "mechanism": "The forward route becomes visible and the Gamma trend is set to increasing. Trends are ordinal teaching cues with no units."
+          },
+          "relationIds": [
+            "rel-beta-gamma"
+          ],
+          "claimIds": [
+            "claim-fictional-gamma-output"
+          ],
+          "timingBandId": "exercise-synthetic-feedback-band-later"
+        },
+        {
+          "id": "exercise-synthetic-feedback-step-feedback",
+          "atMs": 5000,
+          "trackId": "exercise-synthetic-feedback-track-main",
+          "stage": "feedback",
+          "label": "Gamma inhibits the Source structure",
+          "caption": {
+            "intro": "Gamma turns the start of the chain back down.",
+            "standard": "The regulating edge becomes visible: Gamma inhibits further Alpha release, and the Alpha trend turns to decreasing.",
+            "mechanism": "Inhibitory feedback edge with a terminal bar and the word inhibits. Sign and feedback come from the relationship record, not from the drawn shape."
+          },
+          "relationIds": [
+            "rel-gamma-inhibits-alpha"
+          ],
+          "claimIds": [
+            "claim-fictional-gamma-feedback"
+          ],
+          "timingBandId": "exercise-synthetic-feedback-band-later"
+        }
+      ],
+      "events": [
+        {
+          "id": "exercise-synthetic-feedback-e0",
+          "atMs": 0,
+          "order": 0,
+          "trackId": "exercise-synthetic-feedback-track-main",
+          "command": {
+            "type": "set-highlight",
+            "anatomyId": "anat-fictional-source",
+            "value": "source"
+          },
+          "claimIds": [
+            "claim-fictional-alpha-release"
+          ]
+        },
+        {
+          "id": "exercise-synthetic-feedback-e1",
+          "atMs": 1000,
+          "order": 1,
+          "trackId": "exercise-synthetic-feedback-track-main",
+          "command": {
+            "type": "set-relation",
+            "relationshipId": "rel-alpha-beta",
+            "visible": true
+          },
+          "claimIds": [
+            "claim-fictional-alpha-release"
+          ]
+        },
+        {
+          "id": "exercise-synthetic-feedback-e2",
+          "atMs": 1000,
+          "order": 2,
+          "trackId": "exercise-synthetic-feedback-track-main",
+          "command": {
+            "type": "set-trend",
+            "signalId": "sig-alpha",
+            "value": "increasing"
+          },
+          "claimIds": [
+            "claim-fictional-alpha-release"
+          ]
+        },
+        {
+          "id": "exercise-synthetic-feedback-e3",
+          "atMs": 2000,
+          "order": 3,
+          "trackId": "exercise-synthetic-feedback-track-main",
+          "command": {
+            "type": "set-highlight",
+            "anatomyId": "anat-fictional-intermediary",
+            "value": "target"
+          },
+          "claimIds": [
+            "claim-fictional-beta-response"
+          ]
+        },
+        {
+          "id": "exercise-synthetic-feedback-e4",
+          "atMs": 2000,
+          "order": 4,
+          "trackId": "exercise-synthetic-feedback-track-parallel",
+          "command": {
+            "type": "set-highlight",
+            "anatomyId": "anat-fictional-parallel",
+            "value": "target"
+          },
+          "claimIds": [
+            "claim-fictional-parallel-track"
+          ]
+        },
+        {
+          "id": "exercise-synthetic-feedback-e5",
+          "atMs": 3000,
+          "order": 5,
+          "trackId": "exercise-synthetic-feedback-track-main",
+          "command": {
+            "type": "set-relation",
+            "relationshipId": "rel-beta-gamma",
+            "visible": true
+          },
+          "claimIds": [
+            "claim-fictional-gamma-output"
+          ]
+        },
+        {
+          "id": "exercise-synthetic-feedback-e6",
+          "atMs": 3000,
+          "order": 6,
+          "trackId": "exercise-synthetic-feedback-track-main",
+          "command": {
+            "type": "set-trend",
+            "signalId": "sig-gamma",
+            "value": "increasing"
+          },
+          "claimIds": [
+            "claim-fictional-gamma-output"
+          ]
+        },
+        {
+          "id": "exercise-synthetic-feedback-e7",
+          "atMs": 5000,
+          "order": 7,
+          "trackId": "exercise-synthetic-feedback-track-main",
+          "command": {
+            "type": "set-relation",
+            "relationshipId": "rel-gamma-inhibits-alpha",
+            "visible": true
+          },
+          "claimIds": [
+            "claim-fictional-gamma-feedback"
+          ]
+        },
+        {
+          "id": "exercise-synthetic-feedback-e8",
+          "atMs": 5000,
+          "order": 8,
+          "trackId": "exercise-synthetic-feedback-track-main",
+          "command": {
+            "type": "set-trend",
+            "signalId": "sig-alpha",
+            "value": "decreasing"
+          },
+          "claimIds": [
+            "claim-fictional-gamma-feedback"
+          ]
+        }
+      ],
+      "predictionIds": [
+        "pred-fictional-next",
+        "pred-fictional-feedback"
+      ],
+      "relatedTimelineIds": [],
+      "feedbackCoverage": {
+        "kind": "depicted",
+        "relationshipIds": [
+          "rel-gamma-inhibits-alpha"
+        ]
+      },
+      "limitations": {
+        "intro": "Everything here is invented. It teaches the shape of a loop, not a real body.",
+        "standard": "This exercise uses invented structures and signals. It is included so the lesson player can be tested without publishing unreviewed physiology.",
+        "mechanism": "Abstract exercise. The publication gate rejects any build that includes fixture content, so these entities cannot reach a public catalog."
+      },
+      "summary": {
+        "intro": "A made-up signal went down a chain, produced an output, and that output turned the start back down.",
+        "standard": "Alpha from the Source structure stimulated the Intermediary structure, Beta stimulated the Peripheral structure, and Gamma acted back on the Source structure to reduce further Alpha release.",
+        "mechanism": "Sequence with one regulating edge: two forward causal edges on a schematic route, one parallel descriptive track, and an inhibitory feedback edge that changes an ordinal trend rather than any quantity."
+      },
+      "summaryClaimIds": [
+        "claim-fictional-overview",
+        "claim-fictional-gamma-feedback"
+      ]
+    }
+  ],
+  "comparisons": [],
+  "assets": [],
+  "reviews": []
+}
