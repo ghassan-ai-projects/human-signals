@@ -34,6 +34,28 @@
       ],
       "variability": "Not applicable: this system does not exist.",
       "claimIds": []
+    },
+    {
+      "id": "ctx-fictional-alarm",
+      "label": "Illustrative alarm episode in the invented system",
+      "description": {
+        "intro": "The invented system reacts to one invented trigger through routes of different speeds.",
+        "standard": "One invented trigger engages a fast route and a slower carried route at the same moment, and a slowest regulating route turns the response back down.",
+        "mechanism": "Alarm-shaped scenario of the fictional system, authored to exercise parallel communication with different speeds: an immediate neural-style route, a fluid-carried route, and a slowest regulation route. Nothing here describes a real body."
+      },
+      "assumptions": [
+        "Exactly one trigger occurs, once.",
+        "The fast route and the carried route leave the trigger together.",
+        "No time value in this lesson is a real-world duration."
+      ],
+      "exclusions": [
+        "No other trigger, no repeated stimulation, and no varying intensity.",
+        "Nothing here models a real hormone, nerve or organ."
+      ],
+      "variability": "Not applicable: this system does not exist.",
+      "claimIds": [
+        "claim-fictional-overview"
+      ]
     }
   ],
   "references": [],
@@ -1378,6 +1400,172 @@
       "exposureExplanationIds": [
         "why-fictional-gamma-root"
       ]
+    },
+    {
+      "id": "pred-alarm-first",
+      "timelineId": "state-fictional-alarm",
+      "objectiveId": "obj-fictional-sequence",
+      "atMs": 20000,
+      "revealAtMs": 25000,
+      "kind": "mechanism",
+      "prompt": {
+        "intro": "Both routes left the trigger together. Which one acts on the target first?",
+        "standard": "The fast and the carried route left the trigger at the same moment. Which route acts on the intermediary structure first?",
+        "mechanism": "Given one trigger feeding both an immediate route and a fluid-carried route, which route writes its effect on the shared structure first?"
+      },
+      "assumptions": [
+        "Exactly one trigger occurs.",
+        "No time value in this scenario is a real-world duration."
+      ],
+      "contextIds": [
+        "ctx-fictional-alarm"
+      ],
+      "options": [
+        {
+          "id": "pred-alarm-first-fast",
+          "text": {
+            "intro": "The fast route, before the carried route arrives.",
+            "standard": "The fast route acts on the intermediary first; the carried route arrives later.",
+            "mechanism": "The immediate route writes its effect at its own authored step, earlier than the carried route."
+          },
+          "feedback": {
+            "intro": "Right for this scenario: the fast route acts first.",
+            "standard": "Right: the fast route acts first and the carried route arrives later by authored schedule.",
+            "mechanism": "Right: the immediate route is authored to act at the earlier step; the carried route only mobilises later."
+          },
+          "claimIds": []
+        },
+        {
+          "id": "pred-alarm-first-carried",
+          "text": {
+            "intro": "The carried route, because it is engaged just as firmly.",
+            "standard": "The carried route, because it leaves with the same trigger.",
+            "mechanism": "The carried route, on the claim that equal engagement implies equal speed."
+          },
+          "feedback": {
+            "intro": "Not in this scenario: the carried route acts later.",
+            "standard": "Not in this scenario: both routes leave together but the carried one acts later by authored schedule.",
+            "mechanism": "Equal engagement at the trigger does not imply equal arrival; the carried route is authored to act at its later step."
+          },
+          "claimIds": []
+        },
+        {
+          "id": "pred-alarm-first-same",
+          "text": {
+            "intro": "They act at exactly the same moment.",
+            "standard": "Both act on the intermediary at the same time.",
+            "mechanism": "The two routes write their effects in the same instant."
+          },
+          "feedback": {
+            "intro": "Not in this scenario: the two routes act at different steps.",
+            "standard": "Not in this scenario: the routes act at different authored steps; the lesson never claims equal speed.",
+            "mechanism": "Same-instant writes to one structure are not authored here; the routes act at distinct steps."
+          },
+          "claimIds": []
+        }
+      ],
+      "correctOptionId": "pred-alarm-first-fast",
+      "explanation": {
+        "intro": "The fast route acts first; the slower carried route arrives afterwards.",
+        "standard": "The fast route writes its effect earlier in the scenario; the carried route mobilises later and arrives at the shared structure afterwards.",
+        "mechanism": "Authored speeds differ: the immediate route acts at its own step, and the carried route only at its later authored step. Ordering, not measured time."
+      },
+      "claimIds": [
+        "claim-fictional-timing"
+      ],
+      "explanationIds": [
+        "why-fictional-alpha-root"
+      ],
+      "revealsStepIds": [
+        "state-fictional-alarm-step-carried-mobilises"
+      ],
+      "familyId": "family-fictional-alarm-order",
+      "exposureTimelineIds": [],
+      "exposureRelationshipIds": [],
+      "exposureExplanationIds": []
+    },
+    {
+      "id": "pred-alarm-turn-down",
+      "timelineId": "state-fictional-alarm",
+      "objectiveId": "obj-fictional-feedback",
+      "atMs": 45000,
+      "revealAtMs": 60000,
+      "kind": "transfer",
+      "prompt": {
+        "intro": "Both fast routes have acted. What turns the whole response back down?",
+        "standard": "The fast and the carried route have both acted on the target. What reduces the response now?",
+        "mechanism": "After two routes of different speeds have acted, which authored route reduces the response, and does anything reset by itself?"
+      },
+      "assumptions": [
+        "The scenario has no further trigger.",
+        "Nothing in the scenario resets by itself at the end."
+      ],
+      "contextIds": [
+        "ctx-fictional-alarm"
+      ],
+      "options": [
+        {
+          "id": "pred-alarm-turn-down-regulation",
+          "text": {
+            "intro": "The slowest regulation route turns it down.",
+            "standard": "The slowest regulation route turns the response down.",
+            "mechanism": "The slowest track carries the authored turn-down."
+          },
+          "feedback": {
+            "intro": "Right for this scenario: the slowest track carries the turn-down.",
+            "standard": "Right: the slowest route turns it down after both faster routes have acted.",
+            "mechanism": "Right: authored feedback rides the slowest track; the response changes only at authored events."
+          },
+          "claimIds": []
+        },
+        {
+          "id": "pred-alarm-turn-down-fast",
+          "text": {
+            "intro": "The fast route undoes its own effect.",
+            "standard": "The fast route reverses its own action.",
+            "mechanism": "The fast route actively cancels what it did."
+          },
+          "feedback": {
+            "intro": "Not in this scenario: the fast route has no turn-down.",
+            "standard": "Not in this scenario: the fast effect stays until an authored event changes it.",
+            "mechanism": "No authored event reverses the fast effect; highlights and trends persist until overwritten."
+          },
+          "claimIds": []
+        },
+        {
+          "id": "pred-alarm-turn-down-baseline",
+          "text": {
+            "intro": "Nothing; everything returns to rest by itself.",
+            "standard": "Nothing turns it down; the system returns to baseline on its own.",
+            "mechanism": "The response decays automatically once the trigger is gone."
+          },
+          "feedback": {
+            "intro": "Not in this scenario: nothing resets by itself.",
+            "standard": "Not in this scenario: the end state is authored; there is no automatic return to rest.",
+            "mechanism": "The engine never invents a return to baseline; states persist until an authored event overwrites them."
+          },
+          "claimIds": []
+        }
+      ],
+      "correctOptionId": "pred-alarm-turn-down-regulation",
+      "explanation": {
+        "intro": "The slowest regulation route turns the response down; nothing resets by itself.",
+        "standard": "The slowest track carries the turn-down once both faster routes have acted. Trends change only at authored events.",
+        "mechanism": "Authored feedback rides the slowest track. The engine never invents a return to baseline: states persist until an authored event overwrites them."
+      },
+      "claimIds": [
+        "claim-fictional-gamma-feedback"
+      ],
+      "explanationIds": [
+        "why-fictional-gamma-root"
+      ],
+      "revealsStepIds": [
+        "state-fictional-alarm-step-regulating-engages"
+      ],
+      "familyId": "family-fictional-alarm-regulation",
+      "exposureTimelineIds": [],
+      "exposureRelationshipIds": [],
+      "exposureExplanationIds": []
     }
   ],
   "timelines": [
@@ -1729,6 +1917,420 @@
       "summaryClaimIds": [
         "claim-fictional-overview",
         "claim-fictional-gamma-feedback"
+      ]
+    },
+    {
+      "id": "state-fictional-alarm",
+      "kind": "state",
+      "label": "The invented alarm state",
+      "description": {
+        "intro": "One invented trigger, two responses of different speeds, and a slowest turn-down.",
+        "standard": "An invented alarm episode: a fast route acts first, a slower carried route follows, and the slowest regulation route turns the response down.",
+        "mechanism": "A fictional parallel-state scenario shaped like an acute alarm: immediate neural-style communication, a slower fluid-carried cascade, and a slowest regulation loop, authored to teach relative timing without any real biology or measured durations."
+      },
+      "objectiveIds": [
+        "obj-fictional-sequence",
+        "obj-fictional-feedback"
+      ],
+      "contextIds": [
+        "ctx-fictional-alarm",
+        "ctx-fictional-episode"
+      ],
+      "overviewClaimIds": [
+        "claim-fictional-overview"
+      ],
+      "prerequisiteConceptIds": [
+        "concept-fictional-loop"
+      ],
+      "durationMs": 90000,
+      "tracks": [
+        {
+          "id": "state-fictional-alarm-track-fast",
+          "label": "Fast route (invented)",
+          "order": 0,
+          "contextIds": [
+            "ctx-fictional-alarm"
+          ]
+        },
+        {
+          "id": "state-fictional-alarm-track-carried",
+          "label": "Slower carried route (invented)",
+          "order": 1,
+          "contextIds": [
+            "ctx-fictional-alarm"
+          ]
+        },
+        {
+          "id": "state-fictional-alarm-track-regulating",
+          "label": "Slowest regulation (invented)",
+          "order": 2,
+          "contextIds": [
+            "ctx-fictional-alarm"
+          ]
+        }
+      ],
+      "timingBands": [
+        {
+          "id": "state-fictional-alarm-band-first",
+          "label": "First: the fast route",
+          "note": "Ordering only. Presentation time is not biological time, and no duration is claimed.",
+          "claimIds": [
+            "claim-fictional-timing"
+          ]
+        },
+        {
+          "id": "state-fictional-alarm-band-later",
+          "label": "Later: the carried route",
+          "note": "Ordering only. This lesson claims no duration of any kind.",
+          "claimIds": [
+            "claim-fictional-timing"
+          ]
+        },
+        {
+          "id": "state-fictional-alarm-band-latest",
+          "label": "Latest: regulation",
+          "note": "Ordering only. The slowest track is not a measured delay.",
+          "claimIds": [
+            "claim-fictional-timing"
+          ]
+        }
+      ],
+      "steps": [
+        {
+          "id": "state-fictional-alarm-step-fast-start",
+          "atMs": 0,
+          "trackId": "state-fictional-alarm-track-fast",
+          "stage": "trigger",
+          "label": "The trigger fires",
+          "caption": {
+            "intro": "One trigger starts both routes at once.",
+            "standard": "A single invented trigger engages the fast route and the carried route in the same instant.",
+            "mechanism": "The authored starting condition of every track: one trigger, two routes leaving together, and a regulation route still at rest."
+          },
+          "relationIds": [
+            "rel-alpha-beta"
+          ],
+          "claimIds": [
+            "claim-fictional-alpha-release"
+          ],
+          "timingBandId": "state-fictional-alarm-band-first"
+        },
+        {
+          "id": "state-fictional-alarm-step-fast-arrives",
+          "atMs": 5000,
+          "trackId": "state-fictional-alarm-track-fast",
+          "stage": "effect",
+          "label": "The fast route acts on the intermediary",
+          "caption": {
+            "intro": "The fast route reaches the intermediary structure first.",
+            "standard": "The fast route acts on the intermediary structure while the carried route is still travelling.",
+            "mechanism": "Authored as the earliest action in the scenario. The highlight on the intermediary structure is the fast route acting; it stays lit because nothing clears it."
+          },
+          "relationIds": [
+            "rel-alpha-beta"
+          ],
+          "claimIds": [
+            "claim-fictional-alpha-release"
+          ],
+          "timingBandId": "state-fictional-alarm-band-first"
+        },
+        {
+          "id": "state-fictional-alarm-step-carried-start",
+          "atMs": 0,
+          "trackId": "state-fictional-alarm-track-carried",
+          "stage": "trigger",
+          "label": "The carried route leaves too",
+          "caption": {
+            "intro": "The slower route leaves the trigger at the same time as the fast one.",
+            "standard": "The carried route is engaged by the same trigger and begins travelling later-arriving messages.",
+            "mechanism": "Each track carries an initial step at zero so the projection has a defined state for this track at any cursor."
+          },
+          "relationIds": [
+            "rel-beta-gamma"
+          ],
+          "claimIds": [
+            "claim-fictional-beta-response"
+          ],
+          "timingBandId": "state-fictional-alarm-band-later"
+        },
+        {
+          "id": "state-fictional-alarm-step-carried-mobilises",
+          "atMs": 25000,
+          "trackId": "state-fictional-alarm-track-carried",
+          "stage": "signal",
+          "label": "The carried response is on its way",
+          "caption": {
+            "intro": "The slower carried response is travelling while the fast effect is already in place.",
+            "standard": "The carried route mobilises its signal; the fast route effect on the intermediary has been in place since earlier.",
+            "mechanism": "Authored ordering: the carried signal is visible only from this step onward, later than the fast route action."
+          },
+          "relationIds": [
+            "rel-beta-gamma"
+          ],
+          "claimIds": [
+            "claim-fictional-beta-response"
+          ],
+          "timingBandId": "state-fictional-alarm-band-later"
+        },
+        {
+          "id": "state-fictional-alarm-step-carried-arrives",
+          "atMs": 45000,
+          "trackId": "state-fictional-alarm-track-carried",
+          "stage": "effect",
+          "label": "The carried route acts on the same structure",
+          "caption": {
+            "intro": "The slower route now acts on the intermediary structure too.",
+            "standard": "The carried route reaches the intermediary structure and adds its effect there, on a structure the fast route touched much earlier.",
+            "mechanism": "Authored shared-organ resolution: the second system writes its own highlight on the intermediary at a later authored time, replacing the earlier one by schedule."
+          },
+          "relationIds": [
+            "rel-beta-gamma"
+          ],
+          "claimIds": [
+            "claim-fictional-beta-response"
+          ],
+          "timingBandId": "state-fictional-alarm-band-later"
+        },
+        {
+          "id": "state-fictional-alarm-step-regulating-start",
+          "atMs": 0,
+          "trackId": "state-fictional-alarm-track-regulating",
+          "stage": "trigger",
+          "label": "Regulation is resting",
+          "caption": {
+            "intro": "The slowest track has not joined yet.",
+            "standard": "The regulating route starts at rest and waits for the response to be in place.",
+            "mechanism": "Each track carries an initial step at zero so the projection has a defined state for this track at any cursor."
+          },
+          "relationIds": [
+            "rel-gamma-inhibits-alpha"
+          ],
+          "claimIds": [
+            "claim-fictional-gamma-feedback"
+          ],
+          "timingBandId": "state-fictional-alarm-band-latest"
+        },
+        {
+          "id": "state-fictional-alarm-step-regulating-engages",
+          "atMs": 60000,
+          "trackId": "state-fictional-alarm-track-regulating",
+          "stage": "feedback",
+          "label": "Regulation turns the response down",
+          "caption": {
+            "intro": "The slowest route begins turning the response down.",
+            "standard": "The regulating route engages and starts reducing the response that the two faster routes built up.",
+            "mechanism": "Authored as the slowest track: its effects appear only after both faster routes have acted."
+          },
+          "relationIds": [
+            "rel-gamma-inhibits-alpha"
+          ],
+          "claimIds": [
+            "claim-fictional-gamma-feedback"
+          ],
+          "timingBandId": "state-fictional-alarm-band-latest"
+        },
+        {
+          "id": "state-fictional-alarm-step-regulating-lands",
+          "atMs": 85000,
+          "trackId": "state-fictional-alarm-track-regulating",
+          "stage": "regulation",
+          "label": "The turn-down is in place",
+          "caption": {
+            "intro": "The slowest track has turned the response down.",
+            "standard": "The regulating effect is in place at the end of the scenario. Nothing resets by itself at the end; the last authored state simply stays.",
+            "mechanism": "End-of-scenario state is authored. Completion does not invent a return to baseline."
+          },
+          "relationIds": [
+            "rel-gamma-inhibits-alpha"
+          ],
+          "claimIds": [
+            "claim-fictional-gamma-feedback"
+          ],
+          "timingBandId": "state-fictional-alarm-band-latest"
+        }
+      ],
+      "events": [
+        {
+          "id": "state-fictional-alarm-e1",
+          "atMs": 0,
+          "order": 1,
+          "trackId": "state-fictional-alarm-track-fast",
+          "command": {
+            "type": "set-highlight",
+            "anatomyId": "anat-fictional-source",
+            "value": "source"
+          },
+          "claimIds": [
+            "claim-fictional-alpha-release"
+          ]
+        },
+        {
+          "id": "state-fictional-alarm-e2",
+          "atMs": 1000,
+          "order": 2,
+          "trackId": "state-fictional-alarm-track-fast",
+          "command": {
+            "type": "set-relation",
+            "relationshipId": "rel-alpha-beta",
+            "visible": true
+          },
+          "claimIds": [
+            "claim-fictional-alpha-release"
+          ]
+        },
+        {
+          "id": "state-fictional-alarm-e3",
+          "atMs": 5000,
+          "order": 3,
+          "trackId": "state-fictional-alarm-track-fast",
+          "command": {
+            "type": "set-highlight",
+            "anatomyId": "anat-fictional-intermediary",
+            "value": "target"
+          },
+          "claimIds": [
+            "claim-fictional-alpha-release"
+          ]
+        },
+        {
+          "id": "state-fictional-alarm-e4",
+          "atMs": 5000,
+          "order": 4,
+          "trackId": "state-fictional-alarm-track-carried",
+          "command": {
+            "type": "set-trend",
+            "signalId": "sig-alpha",
+            "value": "increasing"
+          },
+          "claimIds": [
+            "claim-fictional-alpha-release"
+          ]
+        },
+        {
+          "id": "state-fictional-alarm-e5",
+          "atMs": 25000,
+          "order": 5,
+          "trackId": "state-fictional-alarm-track-carried",
+          "command": {
+            "type": "set-trend",
+            "signalId": "sig-beta",
+            "value": "increasing"
+          },
+          "claimIds": [
+            "claim-fictional-beta-response"
+          ]
+        },
+        {
+          "id": "state-fictional-alarm-e6",
+          "atMs": 30000,
+          "order": 6,
+          "trackId": "state-fictional-alarm-track-carried",
+          "command": {
+            "type": "set-highlight",
+            "anatomyId": "anat-fictional-intermediary",
+            "value": "target"
+          },
+          "claimIds": [
+            "claim-fictional-beta-response"
+          ]
+        },
+        {
+          "id": "state-fictional-alarm-e7",
+          "atMs": 45000,
+          "order": 7,
+          "trackId": "state-fictional-alarm-track-carried",
+          "command": {
+            "type": "set-trend",
+            "signalId": "sig-gamma",
+            "value": "increasing"
+          },
+          "claimIds": [
+            "claim-fictional-gamma-output"
+          ]
+        },
+        {
+          "id": "state-fictional-alarm-e8",
+          "atMs": 60000,
+          "order": 8,
+          "trackId": "state-fictional-alarm-track-regulating",
+          "command": {
+            "type": "set-relation",
+            "relationshipId": "rel-gamma-inhibits-alpha",
+            "visible": true
+          },
+          "claimIds": [
+            "claim-fictional-gamma-feedback"
+          ]
+        },
+        {
+          "id": "state-fictional-alarm-e9",
+          "atMs": 60000,
+          "order": 9,
+          "trackId": "state-fictional-alarm-track-regulating",
+          "command": {
+            "type": "set-trend",
+            "signalId": "sig-beta",
+            "value": "sustained"
+          },
+          "claimIds": [
+            "claim-fictional-gamma-feedback"
+          ]
+        },
+        {
+          "id": "state-fictional-alarm-e10",
+          "atMs": 60000,
+          "order": 10,
+          "trackId": "state-fictional-alarm-track-regulating",
+          "command": {
+            "type": "set-trend",
+            "signalId": "sig-alpha",
+            "value": "decreasing"
+          },
+          "claimIds": [
+            "claim-fictional-gamma-feedback"
+          ]
+        },
+        {
+          "id": "state-fictional-alarm-e11",
+          "atMs": 85000,
+          "order": 11,
+          "trackId": "state-fictional-alarm-track-regulating",
+          "command": {
+            "type": "set-highlight",
+            "anatomyId": "anat-fictional-source",
+            "value": "target"
+          },
+          "claimIds": [
+            "claim-fictional-gamma-feedback"
+          ]
+        }
+      ],
+      "predictionIds": [
+        "pred-alarm-first",
+        "pred-alarm-turn-down"
+      ],
+      "relatedTimelineIds": [
+        "exercise-synthetic-feedback"
+      ],
+      "feedbackCoverage": {
+        "kind": "depicted",
+        "relationshipIds": [
+          "rel-gamma-inhibits-alpha"
+        ]
+      },
+      "limitations": {
+        "intro": "Everything here is invented. It teaches fast-versus-slow parallel routes, not a real body.",
+        "standard": "All structures, signals and timings are invented for teaching. The tracks show ordering only; no duration, concentration or measured response exists.",
+        "mechanism": "The scenario exercises parallel-timing mechanics: shared cursor, absolute visual commands, and authored shared-organ scheduling. It is not a model of any real axis, and no numeric conversion from playback time to biology is claimed."
+      },
+      "summary": {
+        "intro": "The fast route acted first, the carried route later, and the slowest route turned it all down.",
+        "standard": "In this invented alarm, both routes left together: the fast one acted early, the carried one arrived later on the same structure, and the slowest regulation route finally turned the response down.",
+        "mechanism": "The scenario demonstrates parallel timing on one shared cursor: per-track steps, persistent highlights with an authored shared-organ schedule, and trends that change only at authored events. Real stress biology is a reviewed lesson, not this fixture."
+      },
+      "summaryClaimIds": [
+        "claim-fictional-gamma-feedback",
+        "claim-fictional-timing"
       ]
     }
   ],
