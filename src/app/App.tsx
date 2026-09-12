@@ -11,6 +11,7 @@ import { ExplorePage } from '../features/explore/ExplorePage.tsx';
 import { TimelinePage } from '../features/lesson/TimelinePage.tsx';
 import { StatesPage } from '../features/states/StatesPage.tsx';
 import { LearnPage } from '../features/learn/LearnPage.tsx';
+import { ComparePage } from '../features/compare/ComparePage.tsx';
 import { RouteRecoveryPage } from './RouteRecoveryPage.tsx';
 
 /**
@@ -51,6 +52,14 @@ export function App(): React.JSX.Element {
                       element={
                         <RequireContent>
                           <LearnPage />
+                        </RequireContent>
+                      }
+                    />
+                    <Route
+                      path="/compare"
+                      element={
+                        <RequireContent>
+                          <ComparePage />
                         </RequireContent>
                       }
                     />
