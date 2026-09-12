@@ -190,6 +190,13 @@ export function LessonPlayer({
 
   const completed = session.status === 'completed';
 
+  // The engine decides at checkpoint open whether this pass can only be practice; reading it
+  // after submission would classify every attempt as practice, because submitting exposes
+  // the family.
+  const isPractice = activePrediction
+    ? session.repeatPredictionIds.includes(activePrediction.id)
+    : false;
+
   return (
     <div className={styles.player}>
       {unknownStep && (
@@ -298,10 +305,7 @@ export function LessonPlayer({
           status={session.status}
           depth={depth}
           selectedOptionId={session.selectedOptionId}
-          isPractice={
-            session.exposedFamilyIds.includes(activePrediction.familyId) ||
-            (priorAnsweredQuestionIds?.includes(activePrediction.id) ?? false)
-          }
+          isPractice={isPractice}
           onChoose={(optionId) => {
             dispatch({ type: 'CHOOSE', optionId });
           }}

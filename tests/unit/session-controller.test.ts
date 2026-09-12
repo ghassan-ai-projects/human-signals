@@ -251,6 +251,18 @@ describe('answering', () => {
     expect(attempt.attempt.firstAttempt).toBe(false);
   });
 
+  it('decides at checkpoint open whether the question can only be practice', () => {
+    // Fresh question: not a repeat, even though submitting will expose the family.
+    const asked = askFirst();
+    expect(asked.repeatPredictionIds).toEqual([]);
+
+    // An already-exposed family opens as practice, and stays marked through feedback.
+    const exposed = { ...session, exposedFamilyIds: [FIRST.familyId], status: 'playing' as const };
+    const repeat = reduce(exposed, { type: 'TICK', elapsedMs: 60_000 }, context()).session;
+    expect(repeat.status).toBe('question');
+    expect(repeat.repeatPredictionIds).toContain(FIRST.id);
+  });
+
   it('skipping advances to the reveal, records a skip and exposes the family', () => {
     const asked = askFirst();
     const result = reduce(asked, { type: 'SKIP' }, context());

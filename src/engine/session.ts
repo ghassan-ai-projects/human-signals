@@ -37,6 +37,12 @@ export interface Session {
    * specification's illustrative Session type does not name the field, so it is added here.
    */
   assistedPredictionIds: string[];
+  /**
+   * Checkpoints that were already practice at the moment they opened: the answer family had
+   * been exposed or the question answered before. Decided when the question opens, because
+   * submitting itself exposes the family.
+   */
+  repeatPredictionIds: string[];
   errorCode?: string;
 }
 
@@ -107,6 +113,7 @@ export function createSession(
     exposedFamilyIds: [...(options.exposedFamilyIds ?? [])],
     predictionsEnabled: options.predictionsEnabled ?? true,
     assistedPredictionIds: [],
+    repeatPredictionIds: [],
   };
 }
 
@@ -136,6 +143,25 @@ function checkpointAtCursor(session: Session, ctx: SessionContext): Prediction |
 
 function withUnique(list: readonly string[], value: string): string[] {
   return list.includes(value) ? [...list] : [...list, value];
+}
+
+/**
+ * Opens a checkpoint as a question. Whether the attempt can only ever be practice is decided
+ * here, from what the learner had already seen before answering: submitting itself exposes the
+ * family, so the judgement cannot be made afterwards.
+ */
+function openCheckpoint(
+  session: Session,
+  ctx: SessionContext,
+  prediction: Prediction,
+): Session {
+  const next: Session = { ...session, status: 'question', activePredictionId: prediction.id };
+  delete next.selectedOptionId;
+  const repeat =
+    session.exposedFamilyIds.includes(prediction.familyId) ||
+    (ctx.priorAnsweredQuestionIds ?? []).includes(prediction.id);
+  if (repeat) next.repeatPredictionIds = withUnique(session.repeatPredictionIds, prediction.id);
+  return next;
 }
 
 function union(list: readonly string[], values: readonly string[]): string[] {
@@ -233,9 +259,7 @@ export function reduce(session: Session, action: SessionAction, ctx: SessionCont
       // A checkpoint exactly at the cursor is answered before the clock starts.
       const waiting = checkpointAtCursor(session, ctx);
       if (waiting) {
-        const next: Session = { ...session, status: 'question', activePredictionId: waiting.id };
-        delete next.selectedOptionId;
-        return none(next);
+        return none(openCheckpoint(session, ctx, waiting));
       }
       // Reduced motion never autoplays; the learner steps manually instead.
       if (ctx.reducedMotion) return none({ ...session, status: 'paused' });
@@ -255,14 +279,8 @@ export function reduce(session: Session, action: SessionAction, ctx: SessionCont
       const checkpoint = nextCheckpoint(session, ctx);
       // A long frame must stop exactly at the authored checkpoint, not past it.
       if (checkpoint && proposed >= checkpoint.atMs) {
-        const next: Session = {
-          ...session,
-          status: 'question',
-          cursorMs: checkpoint.atMs,
-          activePredictionId: checkpoint.id,
-        };
-        delete next.selectedOptionId;
-        return none(next);
+        const stopped: Session = { ...session, cursorMs: checkpoint.atMs };
+        return none(openCheckpoint(stopped, ctx, checkpoint));
       }
       if (proposed >= ctx.timeline.durationMs) {
         const effects: SessionEffect[] = [

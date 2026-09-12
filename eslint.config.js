@@ -12,6 +12,8 @@ export default tseslint.config(
       'public/content',
       'playwright-report',
       'test-results',
+      // Plain browser-driven smoke script, outside the type-checked project.
+      'scripts/*.mjs',
       // Specification artifacts, not application source.
       'documentation/**',
       'eslint.config.js',
