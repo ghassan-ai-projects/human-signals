@@ -1,0 +1,30 @@
+.about {
+  padding: var(--hs-space-6) var(--hs-space-5);
+}
+
+.versions {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: var(--hs-space-2) var(--hs-space-4);
+  margin: 0 0 var(--hs-space-5);
+}
+
+.versions dt {
+  font-weight: 600;
+}
+
+.versions dd {
+  margin: 0;
+  font-family: var(--hs-font-mono);
+  font-size: var(--hs-text-small);
+}
+
+.diagnostics {
+  max-width: var(--hs-measure);
+  overflow-x: auto;
+  padding: var(--hs-space-3);
+  background: var(--hs-surface-2);
+  border: 1px solid var(--hs-border);
+  border-radius: var(--hs-radius);
+  font-size: var(--hs-text-small);
+}

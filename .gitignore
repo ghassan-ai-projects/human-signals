@@ -141,3 +141,10 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# Human Signals generated artifacts
+public/content/
+dist/
+playwright-report/
+test-results/
+documentation/implementation-evidence/**/*.local.md

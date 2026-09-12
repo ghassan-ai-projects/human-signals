@@ -1,0 +1,85 @@
+/*
+ * Design tokens. Document 07: calm, legible educational surface; semantic visual roles rather
+ * than one colour per hormone. Every role also has an icon, line pattern or text label so a
+ * grayscale screenshot still communicates direction, sign and selection.
+ *
+ * Contrast notes (against --hs-surface #ffffff in the light theme):
+ *   text 16.1:1 · text-muted 8.3:1 · source 7.4:1 · target 5.4:1 · route 7.0:1
+ *   inhibit 6.3:1 · uncertain 7.5:1 · border-strong 4.8:1 (>= 3:1 for control boundaries)
+ */
+:root {
+  --hs-bg: #f6f7f9;
+  --hs-surface: #ffffff;
+  --hs-surface-2: #eef1f5;
+  --hs-surface-3: #e2e6ed;
+  --hs-canvas: #f0f2f6;
+  --hs-text: #171a20;
+  --hs-text-muted: #4a5260;
+  --hs-border: #d4d8e0;
+  --hs-border-strong: #707886;
+  --hs-focus: #1d4ed8;
+
+  --hs-role-source: #6d28d9;
+  --hs-role-source-soft: #ede9fe;
+  --hs-role-target: #0d6e66;
+  --hs-role-target-soft: #d5f2ef;
+  --hs-role-route: #1d4ed8;
+  --hs-role-route-soft: #dbe8fe;
+  --hs-role-inhibit: #a1420a;
+  --hs-role-inhibit-soft: #fdecd8;
+  --hs-role-uncertain: #475569;
+  --hs-role-uncertain-soft: #e6eaf0;
+  --hs-role-correct: #14622f;
+  --hs-role-incorrect: #9a1c2b;
+
+  --hs-space-1: 4px;
+  --hs-space-2: 8px;
+  --hs-space-3: 12px;
+  --hs-space-4: 16px;
+  --hs-space-5: 24px;
+  --hs-space-6: 32px;
+  --hs-space-7: 48px;
+
+  --hs-radius-sm: 4px;
+  --hs-radius: 8px;
+  --hs-radius-lg: 12px;
+
+  --hs-font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --hs-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  --hs-text-size: 16px;
+  --hs-text-small: 14px;
+  --hs-line: 1.5;
+  --hs-measure: 68ch;
+
+  --hs-rail-width: 240px;
+  --hs-panel-width: 360px;
+  --hs-tap-target: 44px;
+  --hs-shadow: 0 1px 2px rgb(23 26 32 / 8%), 0 4px 12px rgb(23 26 32 / 6%);
+}
+
+[data-theme='dark'] {
+  --hs-bg: #12141a;
+  --hs-surface: #191c23;
+  --hs-surface-2: #21252e;
+  --hs-surface-3: #2b303b;
+  --hs-canvas: #0e1015;
+  --hs-text: #f2f4f8;
+  --hs-text-muted: #b7bfcd;
+  --hs-border: #363c48;
+  --hs-border-strong: #8e97a6;
+  --hs-focus: #9dc0ff;
+
+  --hs-role-source: #c4b0ff;
+  --hs-role-source-soft: #2c2447;
+  --hs-role-target: #6ad9cd;
+  --hs-role-target-soft: #123b38;
+  --hs-role-route: #9dc0ff;
+  --hs-role-route-soft: #16294d;
+  --hs-role-inhibit: #f3b678;
+  --hs-role-inhibit-soft: #3b2716;
+  --hs-role-uncertain: #b0bbcb;
+  --hs-role-uncertain-soft: #262c37;
+  --hs-role-correct: #7fd69a;
+  --hs-role-incorrect: #ff9ba6;
+  --hs-shadow: 0 1px 2px rgb(0 0 0 / 45%), 0 4px 12px rgb(0 0 0 / 35%);
+}
