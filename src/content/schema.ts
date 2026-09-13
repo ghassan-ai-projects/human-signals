@@ -379,6 +379,7 @@ export const AnchorSchema = z.strictObject({
   view: z.enum(['body', 'brain', 'inset', 'distributed']),
   position: z.tuple([coordinate, coordinate, coordinate]),
   diagramPosition: z.tuple([unitCoordinate, unitCoordinate]),
+  assetId: id('asset').optional(),
   meshNames: z.array(z.string().min(1).max(120)).max(20),
   representation: z.enum(['anatomical-region', 'schematic-inset', 'distributed-overlay']),
 });

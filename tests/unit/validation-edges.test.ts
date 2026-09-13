@@ -289,6 +289,49 @@ describe('asset provenance', () => {
   });
 });
 
+describe('anchor asset mappings', () => {
+  it('VAL-011 keeps schematic placeholders independent of model meshes', () => {
+    const bundle = bundleWith((candidate) => {
+      candidate.anchors[0]!.representation = 'anatomical-region';
+    });
+    const messages = validateBundle(bundle, { mode: 'preview' }).map((issue) => issue.message);
+    expect(messages).toContain('anatomical-region anchors require an assetId');
+  });
+
+  it('VAL-011 accepts a verified body mesh binding', () => {
+    const bundle = bundleWith((candidate) => {
+      const anchor = candidate.anchors[0]!;
+      anchor.assetId = candidate.assets[0]!.id;
+      anchor.meshNames = ['makehuman-base-body'];
+      anchor.representation = 'anatomical-region';
+    });
+    expect(
+      validateBundle(bundle, {
+        mode: 'preview',
+        assetMeshNames: new Map([[bundle.assets[0]!.id, new Set(['makehuman-base-body'])]]),
+      }).filter((issue) => issue.recordId === bundle.anchors[0]!.id),
+    ).toEqual([]);
+  });
+
+  it('VAL-011 rejects the wrong model view and an unknown verified mesh', () => {
+    const bundle = bundleWith((candidate) => {
+      const anchor = candidate.anchors[0]!;
+      anchor.assetId = candidate.assets[0]!.id;
+      anchor.meshNames = ['not-in-the-glb'];
+      anchor.representation = 'anatomical-region';
+      anchor.view = 'brain';
+    });
+    const messages = validateBundle(bundle, {
+      mode: 'preview',
+      assetMeshNames: new Map([[bundle.assets[0]!.id, new Set(['makehuman-base-body'])]]),
+    }).map((issue) => issue.message);
+    expect(messages).toEqual(expect.arrayContaining([
+      'brain anchors must use a brain-model asset',
+      'mesh not-in-the-glb is not present in asset asset-makehuman-preview-body',
+    ]));
+  });
+});
+
 describe('schema failure classification', () => {
   it('maps a malformed identifier to VAL-001 and an unknown group member to VAL-SCHEMA', () => {
     const badId = parseBundle({

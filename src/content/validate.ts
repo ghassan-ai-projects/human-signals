@@ -76,6 +76,8 @@ export interface ValidateOptions {
   now?: Date;
   /** Supplied by the compiler after canonical scientific hashing. */
   scientificSha256?: string;
+  /** Supplied by the compiler after verified GLB bytes have been inspected. */
+  assetMeshNames?: ReadonlyMap<string, ReadonlySet<string>>;
 }
 
 export const MAX_GRAPH_RECORDS = 10_000;
@@ -88,6 +90,7 @@ interface Ctx {
   mode: 'preview' | 'production';
   now: Date;
   scientificSha256?: string;
+  assetMeshNames?: ReadonlyMap<string, ReadonlySet<string>>;
   ids: Map<string, EntityKind | 'timeline'>;
   claims: Map<string, Claim>;
   explanations: Map<string, Explanation>;
@@ -152,6 +155,7 @@ export function validateBundle(bundle: ContentBundle, options: ValidateOptions):
     mode: options.mode,
     now: options.now ?? new Date(),
     ...(options.scientificSha256 === undefined ? {} : { scientificSha256: options.scientificSha256 }),
+    ...(options.assetMeshNames === undefined ? {} : { assetMeshNames: options.assetMeshNames }),
     ids: new Map(),
     claims: new Map(bundle.claims.map((claim) => [claim.id, claim])),
     explanations: new Map(bundle.explanations.map((item) => [item.id, item])),
@@ -790,6 +794,50 @@ function checkApplicability(ctx: Ctx, timeline: Timeline, claimIds: readonly str
 function checkAnatomyAndRoutes(ctx: Ctx): void {
   const anchors = new Map(ctx.bundle.anchors.map((anchor) => [anchor.id, anchor]));
   const anatomyById = new Map(ctx.bundle.anatomy.map((record) => [record.id, record]));
+  const assets = new Map(ctx.bundle.assets.map((asset) => [asset.id, asset]));
+
+  for (const anchor of ctx.bundle.anchors) {
+    const path = `$.anchors.${anchor.id}`;
+    const isAnatomicalRegion = anchor.representation === 'anatomical-region';
+    if (isAnatomicalRegion && anchor.assetId === undefined) {
+      add(ctx, 'VAL-011', path, 'anatomical-region anchors require an assetId', anchor.id);
+    }
+    if (!isAnatomicalRegion && anchor.assetId !== undefined) {
+      add(ctx, 'VAL-011', path, 'assetId is only valid for anatomical-region anchors', anchor.id);
+    }
+    if (anchor.assetId === undefined) {
+      if (anchor.meshNames.length > 0) {
+        add(ctx, 'VAL-011', path, 'meshNames require an assetId', anchor.id);
+      }
+      continue;
+    }
+
+    const asset = assets.get(anchor.assetId);
+    if (asset === undefined) {
+      add(ctx, 'VAL-001', `${path}.assetId`, `reference to unknown asset ${anchor.assetId}`, anchor.id);
+      continue;
+    }
+    if (anchor.meshNames.length === 0) {
+      add(ctx, 'VAL-011', `${path}.meshNames`, 'asset-bound anchors require at least one mesh name', anchor.id);
+    }
+    if (new Set(anchor.meshNames).size !== anchor.meshNames.length) {
+      add(ctx, 'VAL-011', `${path}.meshNames`, 'asset-bound anchors cannot repeat mesh names', anchor.id);
+    }
+    if (anchor.view === 'body' && asset.kind !== 'body-model') {
+      add(ctx, 'VAL-011', `${path}.assetId`, 'body anchors must use a body-model asset', anchor.id);
+    }
+    if (anchor.view === 'brain' && asset.kind !== 'brain-model') {
+      add(ctx, 'VAL-011', `${path}.assetId`, 'brain anchors must use a brain-model asset', anchor.id);
+    }
+    const availableMeshNames = ctx.assetMeshNames?.get(asset.id);
+    if (availableMeshNames !== undefined) {
+      for (const meshName of anchor.meshNames) {
+        if (!availableMeshNames.has(meshName)) {
+          add(ctx, 'VAL-011', `${path}.meshNames`, `mesh ${meshName} is not present in asset ${asset.id}`, anchor.id);
+        }
+      }
+    }
+  }
 
   for (const anatomy of ctx.bundle.anatomy) {
     const anchor = anchors.get(anatomy.anchorId);

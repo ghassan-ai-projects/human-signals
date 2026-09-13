@@ -12,7 +12,12 @@ Use semantic visual roles rather than assigning a fixed color to every hormone. 
 
 R1 uses an original schematic body asset or an explicitly licensed simplified model. Start engineering with project-authored primitive meshes and semantic anchors. A scientifically reviewed, simplified model is an acceptable final aesthetic if it meets the anatomy and spatial quality bar; photorealism is unnecessary.
 
-Use GLB for loaded models with mesh names in an asset mapping. Source geometry, export settings and licenses belong in the repository. Do not purchase assets or copy proprietary atlas content without authorization. Asset procurement must never block the 2D renderer or engine work.
+Use GLB for loaded models with mesh names in an asset mapping. An `anatomical-region` anchor must
+name its asset and one or more meshes; the compiler verifies those names against the delivered GLB.
+Schematic placeholders intentionally omit the mapping and must not be interpreted as real anatomy.
+Source geometry, export settings and licenses belong in the repository. Do not purchase assets or
+copy proprietary atlas content without authorization. Asset procurement must never block the 2D
+renderer or engine work.
 
 One default schematic adult body is used to locate the systems in scope, with clear acknowledgment of simplification and normal anatomical variation. Do not label it a universal normal body. No body personalization, skin-tone inference, sex assignment or clinical anatomy classification is included.
 

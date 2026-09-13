@@ -32,6 +32,7 @@ import {
 } from '../src/content/validate.ts';
 import { scientificHash, serialiseBundle, sha256Hex, sortBundleRecords } from '../src/content/hash.ts';
 import { verifyAssetBytes } from '../src/content/assets.ts';
+import { readGlbMeshNames } from '../src/content/glb.ts';
 import type { ContentBundle, ContentManifest } from '../src/content/schema.ts';
 
 const ROOT = join(import.meta.dirname, '..');
@@ -222,6 +223,7 @@ function report(issues: readonly ValidationIssue[], fileOf: Map<string, string>)
 interface PreparedAsset {
   asset: ContentBundle['assets'][number];
   sourcePath: string;
+  meshNames: string[];
 }
 
 /** Finds assets in the tracked production directory, with fixtures allowed only in preview. */
@@ -272,7 +274,21 @@ async function verifyAssetFiles(bundle: ContentBundle, mode: Args['mode']): Prom
       });
       continue;
     }
-    assets.push({ asset, sourcePath });
+    let meshNames: string[] = [];
+    if (asset.kind === 'body-model' || asset.kind === 'brain-model') {
+      try {
+        meshNames = readGlbMeshNames(bytes);
+      } catch (error) {
+        issues.push({
+          rule: 'VAL-015',
+          path: `$.assets.${asset.id}`,
+          message: `asset ${asset.id} is not a readable GLB: ${error instanceof Error ? error.message : String(error)}`,
+          recordId: asset.id,
+        });
+        continue;
+      }
+    }
+    assets.push({ asset, sourcePath, meshNames });
   }
   return { issues, assets };
 }
@@ -319,6 +335,19 @@ async function main(): Promise<void> {
   if (verifiedAssets.issues.length > 0) {
     report(verifiedAssets.issues, fileOf);
     console.error(`\ncontent: ${verifiedAssets.issues.length} asset integrity error(s).`);
+    process.exit(1);
+  }
+  const assetMeshNames = new Map(
+    verifiedAssets.assets.map(({ asset, meshNames }) => [asset.id, new Set(meshNames)] as const),
+  );
+  const assetMappingIssues = validateBundle(sorted, {
+    mode: args.mode,
+    scientificSha256: scientificSha,
+    assetMeshNames,
+  });
+  if (assetMappingIssues.length > 0) {
+    report(assetMappingIssues, fileOf);
+    console.error(`\ncontent: ${assetMappingIssues.length} asset mapping error(s).`);
     process.exit(1);
   }
   const bundleFile = `bundle.${bundleSha.slice(0, 16)}.json`;

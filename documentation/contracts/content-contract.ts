@@ -235,6 +235,7 @@ export interface Anchor {
   view: Anatomy['view'];
   position: [number, number, number]; // Normalized model coordinates
   diagramPosition: [number, number]; // 0..1 in the view's 2D diagram
+  assetId?: Id; // Required for an anatomical-region mapping; absent for schematic placeholders
   meshNames: string[];
   representation: 'anatomical-region' | 'schematic-inset' | 'distributed-overlay';
 }
