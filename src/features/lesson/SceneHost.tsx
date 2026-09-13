@@ -81,9 +81,24 @@ export function SceneHost({
     />
   );
 
+  const sceneIntro = (
+    <div className={styles.sceneIntro}>
+      <div>
+        <p className={styles.eyebrow}>Visual explanation</p>
+        <h2>Follow the authored pathway</h2>
+        <p className={styles.sceneCopy}>
+          Explore the model or diagram. The labels and routes are the lesson’s meaning; the body
+          is a simplified visual aid.
+        </p>
+      </div>
+      <span className={styles.modeBadge}>Interactive view</span>
+    </div>
+  );
+
   if (state.kind === 'two-d') {
     return (
       <div className={styles.host}>
+        {sceneIntro}
         {state.reason !== 'preference' && (
           <p className={styles.notice} role="status">
             {state.reason === 'unsupported'
@@ -111,6 +126,7 @@ export function SceneHost({
 
   return (
     <div className={styles.host}>
+      {sceneIntro}
       <div className={styles.viewSwitch}>
         <button
           type="button"

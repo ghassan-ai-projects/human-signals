@@ -11,16 +11,17 @@
 
 .track,
 .trackDimmed {
-  padding: var(--hs-space-4);
-  background: var(--hs-surface);
+  padding: 20px;
+  background: color-mix(in srgb, var(--hs-surface) 88%, transparent);
   border: 1px solid var(--hs-border);
-  border-left: 4px solid var(--hs-role-route);
-  border-radius: var(--hs-radius);
+  border-top: 3px solid var(--hs-role-route);
+  border-radius: var(--hs-radius-lg);
+  box-shadow: var(--hs-shadow-soft);
 }
 
 /* A dimmed track is still fully readable: focusing changes emphasis, never content. */
 .trackDimmed {
-  border-left-color: var(--hs-border-strong);
+  border-top-color: var(--hs-border-strong);
   background: var(--hs-surface-2);
 }
 

@@ -1,8 +1,10 @@
 .transcript {
-  padding: var(--hs-space-4);
+  max-width: 980px;
+  padding: clamp(22px, 4vw, 36px);
   background: var(--hs-surface);
   border: 1px solid var(--hs-border);
   border-radius: var(--hs-radius-lg);
+  box-shadow: var(--hs-shadow-soft);
 }
 
 .intro {

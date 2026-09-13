@@ -21,7 +21,7 @@ function styleBodyMaterial(material: Material): void {
     side: number;
   };
   bodyMaterial.transparent = true;
-  bodyMaterial.opacity = 0.28;
+  bodyMaterial.opacity = 0.38;
   bodyMaterial.depthWrite = false;
   bodyMaterial.side = DoubleSide;
 }

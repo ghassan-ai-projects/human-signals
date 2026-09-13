@@ -1,6 +1,6 @@
 .player {
   display: grid;
-  gap: var(--hs-space-5);
+  gap: clamp(24px, 3vw, 36px);
 }
 
 .notice {
@@ -13,10 +13,11 @@
 }
 
 .overview {
-  padding: var(--hs-space-4);
-  background: var(--hs-surface);
+  padding: clamp(24px, 4vw, 40px);
+  background: linear-gradient(135deg, var(--hs-surface), color-mix(in srgb, var(--hs-role-target-soft) 32%, var(--hs-surface)));
   border: 1px solid var(--hs-border);
   border-radius: var(--hs-radius-lg);
+  box-shadow: var(--hs-shadow-soft);
 }
 
 .overview h2 {

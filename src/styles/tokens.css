@@ -8,15 +8,15 @@
  *   inhibit 6.3:1 · uncertain 7.5:1 · border-strong 4.8:1 (>= 3:1 for control boundaries)
  */
 :root {
-  --hs-bg: #f6f7f9;
+  --hs-bg: #f5f7fb;
   --hs-surface: #ffffff;
-  --hs-surface-2: #eef1f5;
-  --hs-surface-3: #e2e6ed;
-  --hs-canvas: #f0f2f6;
-  --hs-text: #171a20;
-  --hs-text-muted: #4a5260;
-  --hs-border: #d4d8e0;
-  --hs-border-strong: #707886;
+  --hs-surface-2: #eef3f8;
+  --hs-surface-3: #e2eaf3;
+  --hs-canvas: #eaf1f9;
+  --hs-text: #172033;
+  --hs-text-muted: #526174;
+  --hs-border: #dbe3ed;
+  --hs-border-strong: #8190a3;
   --hs-focus: #1d4ed8;
 
   --hs-role-source: #6d28d9;
@@ -40,9 +40,9 @@
   --hs-space-6: 32px;
   --hs-space-7: 48px;
 
-  --hs-radius-sm: 4px;
-  --hs-radius: 8px;
-  --hs-radius-lg: 12px;
+  --hs-radius-sm: 8px;
+  --hs-radius: 12px;
+  --hs-radius-lg: 20px;
 
   --hs-font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --hs-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
@@ -54,15 +54,16 @@
   --hs-rail-width: 240px;
   --hs-panel-width: 360px;
   --hs-tap-target: 44px;
-  --hs-shadow: 0 1px 2px rgb(23 26 32 / 8%), 0 4px 12px rgb(23 26 32 / 6%);
+  --hs-shadow: 0 12px 32px rgb(23 47 82 / 10%), 0 2px 6px rgb(23 47 82 / 6%);
+  --hs-shadow-soft: 0 4px 16px rgb(23 47 82 / 7%);
 }
 
 [data-theme='dark'] {
-  --hs-bg: #12141a;
+  --hs-bg: #101522;
   --hs-surface: #191c23;
   --hs-surface-2: #21252e;
   --hs-surface-3: #2b303b;
-  --hs-canvas: #0e1015;
+  --hs-canvas: #101a2a;
   --hs-text: #f2f4f8;
   --hs-text-muted: #b7bfcd;
   --hs-border: #363c48;
@@ -81,5 +82,6 @@
   --hs-role-uncertain-soft: #262c37;
   --hs-role-correct: #7fd69a;
   --hs-role-incorrect: #ff9ba6;
-  --hs-shadow: 0 1px 2px rgb(0 0 0 / 45%), 0 4px 12px rgb(0 0 0 / 35%);
+  --hs-shadow: 0 12px 32px rgb(0 0 0 / 35%), 0 2px 6px rgb(0 0 0 / 25%);
+  --hs-shadow-soft: 0 4px 16px rgb(0 0 0 / 25%);
 }

@@ -12,7 +12,7 @@ html {
 
 body {
   margin: 0;
-  background: var(--hs-bg);
+  background: radial-gradient(circle at 50% -10%, color-mix(in srgb, var(--hs-role-route-soft) 38%, var(--hs-bg)), var(--hs-bg) 38rem);
   color: var(--hs-text);
   font-family: var(--hs-font);
   font-size: var(--hs-text-size);
@@ -71,14 +71,24 @@ button {
   min-height: var(--hs-tap-target);
   min-width: var(--hs-tap-target);
   padding: var(--hs-space-2) var(--hs-space-4);
-  border: 1px solid var(--hs-border-strong);
+  border: 1px solid var(--hs-border);
   border-radius: var(--hs-radius);
   background: var(--hs-surface);
+  box-shadow: 0 1px 2px rgb(23 47 82 / 7%);
   cursor: pointer;
+  font-weight: 600;
+  transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
 }
 
 button:hover:not(:disabled) {
   background: var(--hs-surface-2);
+  border-color: var(--hs-border-strong);
+  box-shadow: var(--hs-shadow-soft);
+  transform: translateY(-1px);
+}
+
+button:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 button:disabled {

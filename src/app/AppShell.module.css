@@ -22,42 +22,69 @@
 .previewBanner {
   margin: 0;
   max-width: none;
-  padding: var(--hs-space-2) var(--hs-space-4);
+  padding: 10px var(--hs-space-4);
   background: var(--hs-role-inhibit-soft);
   color: var(--hs-role-inhibit);
   border-bottom: 1px solid var(--hs-role-inhibit);
   font-size: var(--hs-text-small);
+  letter-spacing: 0.01em;
+  text-align: center;
 }
 
 .header {
-  display: flex;
-  flex-wrap: wrap;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: var(--hs-space-4);
-  padding: var(--hs-space-2) var(--hs-space-4);
-  background: var(--hs-surface);
+  padding: 10px clamp(16px, 4vw, 48px);
+  background: color-mix(in srgb, var(--hs-surface) 88%, transparent);
+  backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--hs-border);
 }
 
 .brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   font-weight: 700;
-  font-size: 1.05rem;
+  font-size: 1.1rem;
+  letter-spacing: -0.02em;
   color: var(--hs-text);
   text-decoration: none;
   padding: var(--hs-space-2) 0;
 }
 
+.brand::before {
+  flex: 0 0 12px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--hs-role-route), var(--hs-role-target));
+  box-shadow: 0 0 0 5px var(--hs-role-route-soft);
+  content: '';
+}
+
 .nav {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: var(--hs-space-1);
   margin: 0;
   padding: 0;
   list-style: none;
   max-width: none;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.nav::-webkit-scrollbar {
+  display: none;
 }
 
 .nav li {
+  flex: 0 0 auto;
   max-width: none;
 }
 
@@ -67,9 +94,10 @@
   align-items: center;
   min-height: var(--hs-tap-target);
   padding: var(--hs-space-2) var(--hs-space-3);
-  border-radius: var(--hs-radius);
+  border-radius: 999px;
   color: var(--hs-text-muted);
   text-decoration: none;
+  white-space: nowrap;
 }
 
 .navLink:hover,
@@ -81,8 +109,8 @@
 .navLinkActive {
   color: var(--hs-text);
   font-weight: 600;
-  /* Not colour alone: the active item also carries an underline and bold weight. */
-  box-shadow: inset 0 -3px 0 var(--hs-role-route);
+  background: var(--hs-role-route-soft);
+  box-shadow: none;
 }
 
 .body {
@@ -112,4 +140,29 @@
   margin-left: var(--hs-space-2);
   padding: var(--hs-space-1) var(--hs-space-2);
   font-size: var(--hs-text-small);
+}
+
+@media (max-width: 760px) {
+  .header {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--hs-space-2) var(--hs-space-3);
+  }
+
+  .header nav {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    min-width: 0;
+  }
+
+  .tools {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .navLink,
+  .navLinkActive {
+    min-height: 38px;
+    padding-inline: 11px;
+    font-size: var(--hs-text-small);
+  }
 }

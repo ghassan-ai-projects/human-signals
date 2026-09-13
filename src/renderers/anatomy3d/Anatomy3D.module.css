@@ -16,9 +16,19 @@
   aspect-ratio: 4 / 3;
   min-height: 320px;
   overflow: hidden;
-  background: var(--hs-canvas);
-  border: 1px solid var(--hs-border);
+  background: radial-gradient(circle at 50% 34%, #ffffff 0, var(--hs-canvas) 52%, #dce7f3 100%);
+  border: 1px solid color-mix(in srgb, var(--hs-role-route) 16%, var(--hs-border));
   border-radius: var(--hs-radius-lg);
+  box-shadow: var(--hs-shadow);
+}
+
+.canvasHolder::before {
+  position: absolute;
+  inset: 14px;
+  border: 1px solid rgb(255 255 255 / 70%);
+  border-radius: calc(var(--hs-radius-lg) - 6px);
+  content: '';
+  pointer-events: none;
 }
 
 .modelNote {
@@ -93,10 +103,11 @@
 .controls {
   display: grid;
   gap: var(--hs-space-3);
-  padding: var(--hs-space-4);
-  background: var(--hs-surface);
+  padding: var(--hs-space-5);
+  background: color-mix(in srgb, var(--hs-surface) 92%, transparent);
   border: 1px solid var(--hs-border);
   border-radius: var(--hs-radius-lg);
+  box-shadow: var(--hs-shadow-soft);
 }
 
 .orientation {

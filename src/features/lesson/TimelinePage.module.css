@@ -1,16 +1,30 @@
 .page {
   display: grid;
   gap: var(--hs-space-5);
-  padding: var(--hs-space-5);
+  width: min(1280px, 100%);
+  margin: 0 auto;
+  padding: clamp(28px, 5vw, 56px) clamp(16px, 4vw, 48px) 72px;
 }
 
 .header h1 {
-  margin-bottom: var(--hs-space-3);
+  max-width: 18ch;
+  margin: 6px 0 var(--hs-space-5);
+  font-size: clamp(2.25rem, 5vw, 4rem);
+  letter-spacing: -0.055em;
+  line-height: 1.02;
 }
 
 .kind {
+  display: inline-flex;
+  align-items: center;
   margin: 0;
+  padding: 6px 10px;
+  border: 1px solid color-mix(in srgb, var(--hs-role-route) 30%, var(--hs-border));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--hs-role-route-soft) 70%, var(--hs-surface));
   font-size: var(--hs-text-small);
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--hs-text-muted);
@@ -19,7 +33,7 @@
 .headerControls {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-end;
+  align-items: center;
   gap: var(--hs-space-4);
 }
 
@@ -29,10 +43,12 @@
 }
 
 .prerequisites {
-  padding: var(--hs-space-4);
-  background: var(--hs-surface-2);
-  border: 1px solid var(--hs-border);
+  padding: clamp(20px, 3vw, 32px);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--hs-role-route-soft) 55%, var(--hs-surface)), var(--hs-surface));
+  border: 1px solid color-mix(in srgb, var(--hs-role-route) 18%, var(--hs-border));
+  border-left: 4px solid var(--hs-role-route);
   border-radius: var(--hs-radius-lg);
+  box-shadow: var(--hs-shadow-soft);
 }
 
 .prerequisites h2 {
