@@ -11,8 +11,8 @@ Quality bar: [quality-bar.md](quality-bar.md). Specification: [../README.md](../
 |---|---|---|
 | G1 contract and engine | **pass** | VAL rule fixtures, projection properties, controller transitions |
 | G2 product flows | **in progress** | 2D slice, explore, search, loading and failure paths covered |
-| G3 access and robustness | **in progress** | keyboard and 2D parity covered in jsdom; browser and screen-reader runs not yet executed |
-| G4 scientific and asset readiness | **blocked** | no qualified reviewer, no verified source, no licensed asset |
+| G3 access and robustness | **in progress** | keyboard and 2D/3D structure-selection parity covered in jsdom and desktop/390 px browser checks; screen-reader and physical-device runs remain |
+| G4 scientific and asset readiness | **blocked** | the preview body asset now has verified provenance and a recorded licence, but no qualified scientific review or approved release hash exists |
 | G5 quality and performance | **not run** | no physical-device measurement yet |
 | G6 operations | **not run** | no host chosen, no deployment authorised |
 | G7 learning validation | **not evidenced** | no study has been run |
@@ -166,14 +166,45 @@ contradiction (fast track claiming the carried route still travelling after its 
 never-visible carried edge, and test-honesty items. Not run here: real-device performance
 (G5), screen readers (G5); real Stress biology remains G4/W8.
 
+### W8-A — Provenance-first real 3D body model seam (`123093d`..`6ec0310`)
+
+The renderer now loads a self-hosted MakeHuman Community base-human GLB only after verifying its
+exact delivered bytes and SHA-256. The tracked preview asset is 644,084 bytes with SHA-256
+`39795b09c03340e6a831a92a76243dc04bcd6dbf25e221e161e4a251211396b8`, sourced from the pinned
+MakeHuman revision `1f508f6083b2f823dab15de924b3bde72e08d77c`. Its ledger records CC0-1.0,
+canonical licence URL, attribution and the normalization/export modification. Mesh names do not
+assert anatomy claims; the fictional bundle remains visibly labelled as draft preview content.
+
+The runtime path is bounded and recoverable: same-origin fetch, byte/hash verification before
+GLTF parsing, timeout and abort cleanup, disposal on unmount, and 2D fallback. The 3D module stays
+lazy, structure selection is available through keyboard and screen-reader button controls in both
+renderers, labels wrap/clamp on narrow screens, and the production resolver cannot use fixture
+assets. Asset provenance is now machine-checked: canonical licence identifiers and URLs, pinned
+40-character upstream revisions, source/revision binding, and preview-only project fixtures.
+
+Executed at `6ec0310`: `npm run verify` — 488 tests; statements 98.78%, branches 94.52%, functions
+98.05%, lines 98.95%. Preview build produced bundle SHA-256
+`ea00c4a2e5d9c4eaa367fb01a6794cfd27fa31972aa0ebe22f7745a4b26a8fa6` and scientific SHA-256
+`05f226b67c20f24d33901af5cdd94b24a589c768ee1f5a50726501e0b3a0b7b6`. The six executable budget
+checks passed: initial shell 138,501 gzip bytes, lazy 3D JavaScript 250,461, manifest/search 578,
+content bundle 12,719, lazy body assets 402,891, and frame projection p95 0.29 ms. The managed
+Playwright check passed at desktop and 390 px; visual review passed the real GLB render, marker
+contrast, narrow labels, and accessible structure selection.
+
+This is an engineering and provenance checkpoint, not scientific approval. G4 remains blocked:
+the preview content and asset have no qualified human scientific review, so production publication
+continues to fail closed. Next step is W8-B: obtain and record reviewed scientific curriculum and
+asset-anchor approval without weakening the 2D fallback or the provenance gate.
+
 ## Blocked, and why
 
-**G4 — scientific and asset readiness.** No physiology in this repository has been reviewed, no
-source has been read and recorded, and no asset licence exists. `content/reviews/` holds empty
-ledgers, which is the honest state; the fabrication guard fails any commit that adds a citation
-or approval without a human entry, and `npm run build` refuses to produce a production artifact.
-This is the specification's intended outcome, not an oversight. Resolving it needs a qualified
-physiology reviewer and source access, which are the project owner's to arrange.
+**G4 — scientific and asset readiness.** The preview body asset now has a pinned source, recorded
+CC0-1.0 licence, attribution, exact byte/hash verification and machine-checked provenance.
+However, no physiology in this repository has been approved by a qualified reviewer and
+`content/reviews/` remains an empty ledger. The fabrication guard fails any commit that adds a
+citation or approval without a human entry, and `npm run build` refuses to produce a production
+artifact. This is the specification's intended outcome, not an oversight. Resolving it needs a
+qualified physiology reviewer and source access, which are the project owner's to arrange.
 
 All engineering continues on the fictional development bundle in `content/fixtures/`, which is
 excluded from any production build by the publication gate.
