@@ -60,7 +60,7 @@ The physiological graph can contain cycles, including feedback. The Why explanat
 | VAL-015 | Production forbids fixtures, draft/withdrawn claims, missing/expired approval, invalid scientific hash, unlicensed assets and mismatched bytes hashes |
 | VAL-016 | Every R1 inventory item exists; all journeys/states satisfy content/prediction minimums; navigation reaches every released item |
 | VAL-017 | Plain strings max 10000 chars, labels max 120, IDs max 120; total graph max 10000 records and Why traversal max 100 nodes per root for R1 |
-| VAL-018 | Asset and content paths stay same-origin and reject `..`, protocol prefixes and leading double slash; external citation URLs permit HTTPS only |
+| VAL-018 | Asset and content paths stay same-origin and reject `..`, protocol prefixes and leading double slash; external citation URLs permit HTTPS only; asset licence URLs and source revisions are machine-checked |
 | VAL-019 | Anatomy parent graph is acyclic; its roots and view transitions are defined; left/right duplicates do not share ambiguous pick IDs |
 | VAL-020 | Source catalog IDs exactly match the release manifest catalog; retired IDs are disjoint from active IDs; manifest/bundle versions and hashes agree |
 

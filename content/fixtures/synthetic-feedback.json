@@ -2377,7 +2377,7 @@
       "source": "https://github.com/makehumancommunity/makehuman/blob/1f508f6083b2f823dab15de924b3bde72e08d77c/makehuman/data/3dobjs/base.obj",
       "sourceRevision": "1f508f6083b2f823dab15de924b3bde72e08d77c",
       "license": "CC0-1.0",
-      "licenseUrl": "https://github.com/makehumancommunity/makehuman/blob/1f508f6083b2f823dab15de924b3bde72e08d77c/LICENSE.md",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
       "attribution": "MakeHuman Community base mesh; Data Collection AB, Joel Palmius and Jonas Hauquier.",
       "modified": true,
       "modificationNote": "Extracted the body group, normalized it to two world units, triangulated it, generated normals and exported a translucent GLB. No mesh names are used as anatomy claims."

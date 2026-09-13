@@ -4,6 +4,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import { parseBundle, validateBundle, type ValidationRule } from '../../src/content/validate.ts';
+import { validateAssetProvenance } from '../../src/content/assets.ts';
 import { canonicalJson } from '../../src/content/hash.ts';
 import { AssetSchema } from '../../src/content/schema.ts';
 import { bundleWith, timelineOf } from '../fixtures/bundle.ts';
@@ -241,6 +242,50 @@ describe('bounds and paths', () => {
     bundle.references[0]!.url = 'http://example.invalid/x';
     const rules = validateBundle(bundle, { mode: 'preview' }).map((issue) => issue.rule);
     expect(rules.filter((rule) => rule === 'VAL-018')).toHaveLength(2);
+  });
+});
+
+describe('asset provenance', () => {
+  it('accepts the pinned preview asset and its canonical licence URL', () => {
+    expect(validateAssetProvenance(bundleWith(() => undefined).assets[0]!, 'preview')).toEqual([]);
+  });
+
+  it('VAL-018 rejects an unsupported licence or non-canonical licence URL', () => {
+    const unsupported = bundleWith((bundle) => {
+      bundle.assets[0]!.license = 'Custom-1.0';
+    });
+    expect(validateBundle(unsupported, { mode: 'preview' }).some((issue) =>
+      issue.message.includes('unsupported licence identifier'),
+    )).toBe(true);
+
+    const nonCanonical = bundleWith((bundle) => {
+      bundle.assets[0]!.licenseUrl = 'https://github.com/makehumancommunity/makehuman/blob/main/LICENSE.md';
+    });
+    expect(validateBundle(nonCanonical, { mode: 'preview' }).some((issue) =>
+      issue.message.includes('canonical URL'),
+    )).toBe(true);
+  });
+
+  it('VAL-018 rejects floating and unverifiable source provenance', () => {
+    const bundle = bundleWith((candidate) => {
+      candidate.assets[0]!.sourceRevision = 'main';
+      candidate.assets[0]!.source = 'https://example.com/body/base.obj';
+    });
+    const messages = validateBundle(bundle, { mode: 'preview' }).map((issue) => issue.message);
+    expect(messages).toEqual(expect.arrayContaining([
+      expect.stringContaining('40-character immutable revision'),
+      expect.stringContaining('source URL must include sourceRevision'),
+    ]));
+  });
+
+  it('VAL-018 rejects fixture provenance in production', () => {
+    const bundle = bundleWith((candidate) => {
+      candidate.assets[0]!.sourceRevision = 'fixture';
+      candidate.assets[0]!.source = 'project-authored preview fixture';
+    });
+    expect(validateBundle(bundle, { mode: 'production' }).some((issue) =>
+      issue.message.includes('fixture source revision in production'),
+    )).toBe(true);
   });
 });
 

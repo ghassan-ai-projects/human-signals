@@ -23,6 +23,7 @@ import {
   timelineKindForId,
   type EntityKind,
 } from './ids.ts';
+import { validateAssetProvenance } from './assets.ts';
 import {
   MIN_CHECKPOINT_PREDICTIONS,
   MIN_PREDICTIONS_PER_TIMELINE,
@@ -167,6 +168,7 @@ export function validateBundle(bundle: ContentBundle, options: ValidateOptions):
   checkComparisons(ctx);
   checkSizeLimits(ctx);
   checkPaths(ctx);
+  checkAssetProvenance(ctx);
   if (ctx.mode === 'production') {
     checkPublicationGate(ctx);
     checkInventory(ctx);
@@ -967,6 +969,15 @@ function checkPaths(ctx: Ctx): void {
   for (const reference of ctx.bundle.references) {
     if (!reference.url.startsWith('https://')) {
       add(ctx, 'VAL-018', `$.references.${reference.id}.url`, 'citation links must use https', reference.id);
+    }
+  }
+}
+
+/** VAL-018: asset license identifiers and upstream revisions are machine-checkable. */
+function checkAssetProvenance(ctx: Ctx): void {
+  for (const asset of ctx.bundle.assets) {
+    for (const message of validateAssetProvenance(asset, ctx.mode)) {
+      add(ctx, 'VAL-018', `$.assets.${asset.id}`, message, asset.id);
     }
   }
 }
