@@ -11,7 +11,7 @@
 
 <div class="app" id="app">
   <div class="atmos" id="atmos"></div>
-  <svg id="world" role="img" aria-label="Illustrated body. Use the Systems panel, the pathway controls or Read the route for a text alternative."></svg>
+  <svg id="world" role="img" tabindex="0" aria-label="Illustrated body. Arrow keys pan, plus and minus zoom. Use the Systems panel, the pathway controls or Read the route for a text alternative."></svg>
   <div class="night" id="night"></div>
   <svg id="overlay" aria-hidden="true"></svg>
   <div id="labels"></div>
@@ -34,6 +34,7 @@
     <button class="toggle" role="switch" aria-checked="false" id="tMotion"><span>Reduce motion<small>No travelling pulses or animated signs</small></span><span class="sw"></span></button>
     <button class="toggle" role="switch" aria-checked="false" id="tLabels"><span>Show all labels<small>For review and teaching · L</small></span><span class="sw"></span></button>
     <button class="toggle" role="switch" aria-checked="true" id="tTips"><span>Tips<small>One per zoom level, shown once</small></span><span class="sw"></span></button>
+    <button class="toggle" id="bKeys"><span>Keyboard shortcuts<small>Press ? anytime</small></span><kbd class="kk">?</kbd></button>
     <div class="divider"></div>
     <h4>Your progress</h4>
     <div class="psum" id="psum">Nothing explored yet</div>

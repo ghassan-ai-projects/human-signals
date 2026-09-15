@@ -21,7 +21,9 @@ document.addEventListener('keydown',e=>{
   const tgt=e.target instanceof Element?e.target:document.body;
   if(tgt.closest('input,textarea')) return;
   const k=e.key, p=HS.pathway();
+  if(k==='?'){ e.preventDefault(); HS.toggleKeys(); return; }
   if(k==='Escape'){
+    if($('#keys')){ HS.toggleKeys(); return; }
     if($('#cards .card')){ HS.closeCards(); return; }
     if(E.tryMode){ HS.closeTry(); return; }
     if(E.whatIf){ HS.restoreWhatIf(true); return; }
@@ -61,6 +63,18 @@ be.addEventListener('click',()=>{
   HS.eraseProgress(); HS.renderContinue(); HS.renderSummary(); HS.toast('Progress erased from this device.');
 });
 window.addEventListener('hashchange',()=>{ if(!HS.restoring) HS.restoreFromHash(); });
+$('#labels').addEventListener('focusin',e=>{ if(e.target.matches('.hs,.lab button')) HS.ensureVisible(e.target); });
+
+/* keyboard shortcuts (?) */
+const KEYS=[['Anywhere',[['⌘K or /','Search'],['S','Systems panel'],['L','Show all labels'],['+ and −','Zoom'],['0','Whole body'],['Arrows','Pan, when the body has focus'],['?','This list'],['Esc','Close, then zoom out, then leave']]],
+ ['In a pathway',[['Space','Play or pause'],['] and [','Next or previous step'],['T','Try it?'],['W','What if?'],['F and G','First or second route'],['R','Read the route']]]];
+HS.toggleKeys=function(){
+  let d=$('#keys'); if(d){ const ret=d._ret; d.remove(); if(ret&&document.contains(ret)) ret.focus(); return; }
+  d=document.createElement('div'); d.id='keys'; d.className='keys float'; d.setAttribute('role','dialog'); d.setAttribute('aria-label','Keyboard shortcuts'); d._ret=document.activeElement;
+  d.innerHTML=`<header><b>Keyboard</b><button class="x" aria-label="Close">×</button></header><div class="kcols">${KEYS.map(([h,rows])=>`<section><h4>${h}</h4><dl>${rows.map(([k,v])=>`<dt><kbd>${k}</kbd></dt><dd>${v}</dd>`).join('')}</dl></section>`).join('')}</div>`;
+  HS.app.appendChild(d); d.querySelector('.x').onclick=HS.toggleKeys; d.querySelector('.x').focus();
+};
+$('#bKeys').addEventListener('click',()=>{ document.querySelectorAll('.pop').forEach(x=>x.hidden=true); $('#bSettings').setAttribute('aria-expanded','false'); HS.toggleKeys(); });
 
 /* first paint */
 HS.buildWorld(); HS.renderTriggers(); HS.renderTree();

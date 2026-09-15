@@ -92,6 +92,8 @@ HS.renderTree=function(){
     return `<li role="none"><button class="row" role="treeitem" data-id="${n.id}" aria-level="${lvl}" ${has?`aria-expanded="${open}"`:''} aria-selected="${HS.selectedNode===n.id}">${inner}</button>${has&&open?`<ul role="group">${n.children.map(c=>rowHTML(c,lvl+1)).join('')}</ul>`:''}</li>`;
   };
   treeEl.innerHTML=HS.TREE.map(n=>rowHTML(n,1)).join('');
+  const rows=treeEl.querySelectorAll('.row'), sel=HS.selectedNode&&treeEl.querySelector(`[data-id="${HS.selectedNode}"]`);
+  rows.forEach(r=>{ r.tabIndex=-1; }); if(rows.length) (sel||rows[0]).tabIndex=0;   // one tab stop; arrows move within
 };
 HS.selectNode=id=>{
   HS.selectedNode=id; let top=id; for(let a=PARENT[id];a;a=PARENT[a]){ openNodes.add(a); top=a; }
@@ -103,8 +105,9 @@ HS.selectNode=id=>{
 app.addEventListener('scroll',()=>{ app.scrollLeft=0; app.scrollTop=0; });
 /* scroll a child into its own scroller only; scrollIntoView would also shift the fixed app frame */
 HS.revealIn=function(sc,el){ if(!sc||!el) return; const r=el.getBoundingClientRect(), s=sc.getBoundingClientRect(); if(r.top<s.top) sc.scrollTop-=s.top-r.top+8; else if(r.bottom>s.bottom) sc.scrollTop+=r.bottom-s.bottom+8; app.scrollLeft=0; app.scrollTop=0; };
-treeEl.addEventListener('mouseover',e=>{ const r=e.target.closest('.row'); const n=r&&NODE[r.dataset.id]; const set=n&&n.organs?new Set(n.organs):null; if(String(set&&[...set])!==String(light.preview&&[...light.preview])){ light.preview=set; HS.applyOrgs(); } });
-treeEl.addEventListener('mouseleave',()=>{ light.preview=null; HS.applyOrgs(); });
+let pvT=0;   // hover preview waits 150 ms so sweeping the pointer across the tree doesn't flicker the body
+treeEl.addEventListener('mouseover',e=>{ const r=e.target.closest('.row'); const n=r&&NODE[r.dataset.id]; const set=n&&n.organs?new Set(n.organs):null; clearTimeout(pvT); pvT=setTimeout(()=>{ if(String(set&&[...set])!==String(light.preview&&[...light.preview])){ light.preview=set; HS.applyOrgs(); } },150); });
+treeEl.addEventListener('mouseleave',()=>{ clearTimeout(pvT); light.preview=null; HS.applyOrgs(); });
 treeEl.addEventListener('focusin',e=>{ const r=e.target.closest('.row'); const n=r&&NODE[r.dataset.id]; light.preview=n&&n.organs?new Set(n.organs):null; HS.applyOrgs(); });
 treeEl.addEventListener('focusout',()=>{ light.preview=null; HS.applyOrgs(); });
 treeEl.addEventListener('click',e=>{
@@ -114,13 +117,23 @@ treeEl.addEventListener('click',e=>{
   HS.selectNode(n.id); treeEl.querySelector(`[data-id="${n.id}"]`).focus();
   if(n.path) HS.openPathway(n.scene,n.path,!!e.target.closest('[data-play]')); else HS.onSignalSelect(n);
 });
+/* WAI-ARIA tree keyboard model: Up/Down, Home/End, Right expands or enters, Left collapses or goes to parent, type-ahead */
+const focusRow=id=>{ const r=treeEl.querySelector(`[data-id="${id}"]`); if(!r) return; treeEl.querySelectorAll('.row').forEach(x=>{ x.tabIndex=-1; }); r.tabIndex=0; r.focus({preventScroll:true}); HS.revealIn(treeEl.closest('.panel-scroll'),r); };
+let typeBuf='', typeT=0;
 treeEl.addEventListener('keydown',e=>{
   const rows=[...treeEl.querySelectorAll('.row')]; const i=rows.indexOf(document.activeElement); if(i<0) return;
-  const cur=rows[i], n=NODE[cur.dataset.id];
-  if(e.key==='ArrowDown'){ e.preventDefault(); (rows[i+1]||cur).focus(); }
-  else if(e.key==='ArrowUp'){ e.preventDefault(); (rows[i-1]||cur).focus(); }
-  else if(e.key==='ArrowRight' && n.children && !openNodes.has(n.id)){ e.preventDefault(); openNodes.add(n.id); HS.renderTree(); treeEl.querySelector(`[data-id="${n.id}"]`).focus(); }
-  else if(e.key==='ArrowLeft' && n.children && openNodes.has(n.id)){ e.preventDefault(); openNodes.delete(n.id); HS.renderTree(); treeEl.querySelector(`[data-id="${n.id}"]`).focus(); }
+  const n=NODE[rows[i].dataset.id], k=e.key, go=j=>{ e.preventDefault(); focusRow(rows[Math.max(0,Math.min(rows.length-1,j))].dataset.id); };
+  if(k==='ArrowDown') go(i+1);
+  else if(k==='ArrowUp') go(i-1);
+  else if(k==='Home') go(0);
+  else if(k==='End') go(rows.length-1);
+  else if(k==='ArrowRight'){ e.preventDefault(); if(n.children&&!openNodes.has(n.id)){ openNodes.add(n.id); HS.renderTree(); focusRow(n.id); } else if(n.children) focusRow(n.children[0].id); }
+  else if(k==='ArrowLeft'){ e.preventDefault(); if(n.children&&openNodes.has(n.id)){ openNodes.delete(n.id); HS.renderTree(); focusRow(n.id); } else if(PARENT[n.id]) focusRow(PARENT[n.id]); }
+  else if(k.length===1&&/\S/.test(k)&&!e.metaKey&&!e.ctrlKey&&!e.altKey){
+    e.preventDefault(); clearTimeout(typeT); typeBuf+=k.toLowerCase(); typeT=setTimeout(()=>{ typeBuf=''; },600);
+    const order=typeBuf.length>1?rows.slice(i).concat(rows.slice(0,i)):rows.slice(i+1).concat(rows.slice(0,i+1));
+    const hit=order.find(r=>NODE[r.dataset.id].label.toLowerCase().startsWith(typeBuf)); if(hit) focusRow(hit.dataset.id);
+  }
 });
 HS.pickNode=function(id){ const p=$('#panel'); if(p.classList.contains('closed')) $('#bSystems').click(); HS.selectNode(id); HS.onSignalSelect(NODE[id]); const r=treeEl.querySelector(`[data-id="${id}"]`); if(r) r.focus({preventScroll:true}); };
 
@@ -191,7 +204,7 @@ function pop(btn,id){ const p=$(id), open=p.hidden; document.querySelectorAll('.
 $('#bLayers').addEventListener('click',e=>{ e.stopPropagation(); pop(e.currentTarget,'#popLayers'); });
 $('#bSettings').addEventListener('click',e=>{ e.stopPropagation(); pop(e.currentTarget,'#popSettings'); });
 document.addEventListener('click',e=>{ if(!e.target.closest('.pop')&&!e.target.closest('#bLayers,#bSettings')){ document.querySelectorAll('.pop').forEach(x=>x.hidden=true); document.querySelectorAll('#bLayers,#bSettings').forEach(b=>b.setAttribute('aria-expanded','false')); } });
-document.querySelectorAll('.toggle').forEach(t=>t.addEventListener('click',()=>{
+document.querySelectorAll('.toggle[role="switch"]').forEach(t=>t.addEventListener('click',()=>{
   const on=t.getAttribute('aria-checked')!=='true'; t.setAttribute('aria-checked',on);
   if(t.id==='tMotion'){ HS.userRM=on; HS.applyRM(); HS.stopPlay(); HS.setPlayUI(); }
   else if(t.id==='tLabels'){ HS.ov.showAll=on; HS.renderOverlay(); }

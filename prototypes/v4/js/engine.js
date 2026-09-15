@@ -214,11 +214,12 @@ function openTry(){
   HS.light.dim=new Set(tr.candidates); HS.applyOrgs();
   const box=document.createElement('div'); box.className='try float'; box.id='tryCard'; box.setAttribute('role','dialog'); box.setAttribute('aria-label','Try it');
   box.style.left=Math.min(app.clientWidth-500,Math.max(340,app.clientWidth*.56))+'px'; box.style.top='110px';
-  box.innerHTML=`<div class="k">Try it? <button class="why" id="tryWhy">ⓘ Why?</button></div><h5>${q}</h5><p>${tr.hint}</p><div id="tryWhyTxt"></div><div class="picks" id="tryPicks">Nothing selected yet</div><div id="tryRes"></div><div class="acts"><button class="btn t" id="tryShow">Show me</button><span><button class="btn t" id="tryClose">Close</button> <button class="btn p" id="tryCheck" disabled>Check</button></span></div>`;
+  box.innerHTML=`<div class="k">Try it? <button class="why" id="tryWhy">ⓘ Why?</button></div><h5>${q}</h5><p>${tr.hint} Or choose here:</p><div class="opts" role="group" aria-label="Candidates, head to pelvis">${tr.candidates.map(k=>`<button class="opt" aria-pressed="false" data-pick="${k}">${HS.orgName(k)}</button>`).join('')}</div><div id="tryWhyTxt"></div><div class="sr" id="tryPicks" aria-live="polite">Nothing selected yet</div><div id="tryRes"></div><div class="acts"><button class="btn t" id="tryShow">Show me</button><span><button class="btn t" id="tryClose">Close</button> <button class="btn p" id="tryCheck" disabled>Check</button></span></div>`;
   $('#cards').appendChild(box);
   $('#tryWhy').onclick=()=>{ if($('#tryCheck')) E.tryCtx.why=true; $('#tryWhyTxt').innerHTML=`<div class="whytxt">${tr.why}</div>`; $('#tryWhy').remove(); };
   $('#tryShow').onclick=()=>checkTry(true); $('#tryClose').onclick=closeTry; $('#tryCheck').onclick=()=>checkTry(false);
-  $('#tryCheck').focus();
+  box.querySelector('.opts').addEventListener('click',e=>{ const b=e.target.closest('[data-pick]'); if(b&&!b.disabled){ togglePick(b.dataset.pick); HS.renderOverlay(); } });
+  box.querySelector('[data-pick]').focus();
   HS.say(`Try it. ${q} Candidates: ${tr.candidates.map(HS.orgName).join(', ')}. Use the hotspot numbers or click organs.`);
 }
 HS.openTry=openTry;
@@ -226,6 +227,7 @@ function togglePick(k){
   const tr=P().gate.try;
   if(!tr.candidates.includes(k)||!$('#tryCheck')||$('#tryCheck').dataset.done) return;
   E.picks.has(k)?E.picks.delete(k):E.picks.add(k); $('#o-'+k).classList.toggle('pick',E.picks.has(k));
+  const chip=$(`#tryCard [data-pick="${k}"]`); if(chip) chip.setAttribute('aria-pressed',E.picks.has(k));
   $('#tryPicks').innerHTML=E.picks.size?'Selected: <b>'+[...E.picks].map(HS.orgName).join(', ')+'</b>':'Nothing selected yet';
   $('#tryCheck').disabled=!E.picks.size;
 }
@@ -237,6 +239,7 @@ async function checkTry(show){
   const rec=show?'Not recorded as an attempt: you chose Show me.':E.tryCtx.exposed?'Recorded as practice, because the answer had already been shown.':E.tryCtx.why?'Recorded as an assisted attempt, because Why? was opened first.':'Recorded as your first unassisted attempt.';
   $('#tryRes').innerHTML=`<div class="res ${fb.tone}"><b>${fb.head}</b>${fb.txt}</div><div class="rec">${rec}</div>`;
   if($('#tryCheck')) $('#tryCheck').dataset.done=1;
+  $('#tryCard').querySelectorAll('[data-pick]').forEach(b=>{ b.disabled=true; const k=b.dataset.pick; b.classList.toggle('right',right.has(k)); b.classList.toggle('wrongpick',E.picks.has(k)&&!right.has(k)&&!show); });
   $('#tryCard .acts').innerHTML=`<span></span><button class="btn p" id="tryCalm">${g.calmButton}</button>`;
   $('#tryCalm').onclick=()=>{ closeTry(); setTime(lastT(),true); HS.camTo('body',700); if(g.afterTip) setTimeout(()=>HS.tip(g.afterTip.key,g.afterTip.text,g.afterTip.pos),900); }; $('#tryCalm').focus();
   HS.say(fb.head+' '+fb.txt);

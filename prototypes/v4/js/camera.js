@@ -6,7 +6,8 @@ const cam=HS.cam={region:'body',suppressClick:false};
 
 const panelOpen=()=>!$('#panel').classList.contains('closed');
 const bottomOn=()=>!$('#bottom').classList.contains('hidden');
-function avail(){ const W=app.clientWidth,H=app.clientHeight; const left=panelOpen()?334:30; const bottom=bottomOn()?200:40; return {W,H,x:left,y:84,w:Math.max(200,W-left-150),h:Math.max(200,H-84-bottom)}; }
+const sheetOn=()=>!$('#sheet').classList.contains('closed');
+function avail(){ const W=app.clientWidth,H=app.clientHeight; const left=panelOpen()?334:30; const bottom=bottomOn()?200:40; const right=sheetOn()?430:150; return {W,H,x:left,y:84,w:Math.max(200,W-left-right),h:Math.max(200,H-84-bottom)}; }
 function targetVB(r,pad){ const a=avail(); const s=Math.min(a.w/(r.w*(1+pad)),a.h/(r.h*(1+pad))); return {x:(r.x+r.w/2)-(a.x+a.w/2)/s, y:(r.y+r.h/2)-(a.y+a.h/2)/s, w:a.W/s, h:a.H/s}; }
 function bodyScale(){ const a=avail(); return Math.min(a.w/(HS.REG.body.w*1.06),a.h/(HS.REG.body.h*1.06)); }
 const scale=()=>app.clientWidth/vb.w;
@@ -30,9 +31,9 @@ HS.updateView=function(){
 };
 /* frame a world point at a zoom ratio relative to the whole-body fit (used by links) */
 HS.setView=function(cx,cy,z){ const W=app.clientWidth,H=app.clientHeight, s=bodyScale()*Math.max(.85,Math.min(18,z)); vb={x:cx-W/2/s,y:cy-H/2/s,w:W/s,h:H/s}; cam.region=null; HS.updateView(); };
-HS.camTo=function(name,dur=650,pad=.12){
-  cam.region=name; const t=targetVB(HS.REG[name],pad);
-  cancelAnimationFrame(camRaf);
+HS.camTo=function(name,dur=650,pad=.12){ cam.region=name; return animateTo(targetVB(HS.REG[name],pad),dur); };
+function animateTo(t,dur){
+  cancelAnimationFrame(camRaf); app.classList.remove('busy');
   if(HS.RM()||dur===0){ vb=t; HS.updateView(); return Promise.resolve(); }
   const f={...vb}, t0=performance.now(); app.classList.add('busy');
   return new Promise(res=>{
@@ -62,5 +63,33 @@ window.addEventListener('resize',()=>{ HS.camTo(cam.region||'body',0); });
 $('#zIn').addEventListener('click',()=>HS.zoomBy(1.6));
 $('#zOut').addEventListener('click',()=>HS.zoomBy(1/1.6));
 $('#zReset').addEventListener('click',()=>HS.camTo('body'));
-$('#mini').addEventListener('click',()=>HS.camTo('body'));
+
+/* double-click empty canvas: zoom in one step around the pointer */
+world.addEventListener('dblclick',e=>{
+  if(e.target.closest('.org')) return;
+  const r=app.getBoundingClientRect(), px=e.clientX-r.left, py=e.clientY-r.top, s=scale(), ns=Math.min(bodyScale()*18,s*2.2), W=app.clientWidth, H=app.clientHeight;
+  const wx=vb.x+px/s, wy=vb.y+py/s; cam.region=null; animateTo({x:wx-px/ns,y:wy-py/ns,w:W/ns,h:H/ns},450);
+});
+/* arrow keys pan while the canvas has focus */
+world.addEventListener('keydown',e=>{
+  const d={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[e.key]; if(!d) return;
+  e.preventDefault(); const s=scale(); vb.x+=d[0]*80/s; vb.y+=d[1]*80/s; cam.region=null; HS.updateView();
+});
+/* mini-map: click (or Enter) returns to the whole body; dragging moves the view */
+const mini=$('#mini'); let md=null;
+mini.addEventListener('pointerdown',e=>{ md={x:e.clientX,y:e.clientY,moved:false}; mini.setPointerCapture(e.pointerId); });
+mini.addEventListener('pointermove',e=>{
+  if(!md) return; const dx=e.clientX-md.x, dy=e.clientY-md.y; if(!md.moved&&Math.hypot(dx,dy)<4) return;
+  md.moved=true; const r=$('#miniSvg').getBoundingClientRect(), k=Math.min(r.width/700,r.height/780);
+  vb.x+=dx/k; vb.y+=dy/k; md.x=e.clientX; md.y=e.clientY; cam.region=null; HS.updateView();
+});
+mini.addEventListener('pointerup',()=>{ const moved=md&&md.moved; md=null; if(!moved) HS.camTo('body'); });
+mini.addEventListener('click',e=>{ if(e.detail===0) HS.camTo('body'); });
+/* focus never hides under a floating panel: nudge the view so the focused control sits in the open area */
+HS.ensureVisible=function(el){
+  const a=avail(), r=el.getBoundingClientRect(), ar=app.getBoundingClientRect(), m=28;
+  const cx=r.left-ar.left+r.width/2, cy=r.top-ar.top+r.height/2;
+  const dx=cx<a.x+m?cx-(a.x+m):cx>a.x+a.w-m?cx-(a.x+a.w-m):0, dy=cy<a.y+m?cy-(a.y+m):cy>a.y+a.h-m?cy-(a.y+a.h-m):0;
+  if(!dx&&!dy) return; const s=scale(); cam.region=null; animateTo({x:vb.x+dx/s,y:vb.y+dy/s,w:vb.w,h:vb.h},300);
+};
 })(window.HS);
