@@ -265,6 +265,12 @@ A floating pill at the bottom-centre, visible only while a pathway is open. It h
 - Clicking a hotspot **zooms to that organ or structure** and shows its **one-line label**. The segment leading into it highlights, and ⓘ offers more.
 - A visited hotspot gets a **subtle check**.
 - Hotspots can be visited in any order, but numbering, the route direction and keyboard order always follow causality.
+
+**The unrevealed (ghost) state — named on the body, not only on hover (§10 task 5):**
+- A gated route that has not been revealed is drawn as an **unfinished** line: it carries no end glyph where every other route kind ends in one (arrow / bar / diamond), and the `?` sits where it stops.
+- It is **named on the body at all times**, wherever the learner is: a short "Not revealed yet" label on the `?` badge's own plate, with a dashed border (the same "not real / not yet" grammar as the draft banner and the evidence chip).
+- The instruction for what to do about it ("open the ? dot to work it out") is a **one-time tip**, not a second permanent label, and the wording is **pointer-neutral** because `?` is also the app-wide shortcut key.
+- Rationale: a bare dashed connector is the conventional mark for *association*, which is exactly the misconception task 5 tests for, so the **shape** must carry the meaning and the words confirm it. Brightness is not the lever — the ghost's opacity is the invitation and stays as it is.
 - **States:** unvisited (outlined number) · focused (ring) · current (filled number) · visited (number + small check) · Try it? (dashed ring + `?`).
 
 **Effects (qualitative, on the body):**
@@ -687,3 +693,20 @@ The Phase 2 prototype ([`prototypes/v4/`](../prototypes/v4/)) builds all three t
 | P8 | Structure list adds muscles, SCN, pineal gland, the eye in the cutaway, and pancreatic islets |
 | P9 | More sheet: Why? is the trail up to the hotspot; evidence is a claim line with review status |
 | P10 | Try it? and What if? cards dock right; the camera frames the scene beside them |
+
+### Round 4 additions (branch `design/v4-quality-round4`)
+
+Added after measuring the §10 bar against the running build. Round 4 found the *measurable* half of the bar already green (labels, overlaps, grayscale, reduced motion, console) while the *comprehension* half had two real gaps, and both were about **where an answer lives** rather than missing content.
+
+| # | Change | Why it is a change to this direction |
+|---|---|---|
+| P11 | The unrevealed state is **named on the body**, not only on hover, and its **shape** reads as unfinished (no end glyph; the `?` terminates the line) | §4.3 previously left the ghost's meaning to hover text and its `?` badge. A bare dashed connector is the conventional mark for *association* — the exact misconception §10 task 5 tests for — so the shape now carries the meaning. §4.3 updated accordingly |
+| P12 | The route card carries **"Schematic: not a drawing of a blood vessel or a nerve"**, and the disclaimer opens at the **top** of Read the route rather than below the fold | §10 task 6 is asked while looking at the body. The answer existed but only inside one panel, below the fold (measured: the sheet is ~1330 px tall in a ~640 px viewport and the paragraph sat at y≈1053). The card fires at the moment of confusion, next to the texture swatch that is the evidence |
+| P13 | **"Say it back" is reachable on demand** (pathway bar + key `Y`), not only 900 ms after a full play-through | Round 3 shipped the ungraded self-explanation card but only auto-fired it, so a learner who already understood the feedback could not ask for it. The first open in a session keeps the model hidden (the retrieval effort matters); a later open shows it for comparison. Never recorded, never scored |
+| P14 | Every route-line **texture and end glyph** is taught once, on the body, as a rich tip (`HS.tipRich`) | The textures distinguish nerve from blood — the §10 task 6 distinction — and were explained only at the bottom of Read the route. Teaching happens by showing the samples, once per session, through the existing dismissible tip channel rather than a new latch |
+| P15 | The reading UI **scales with the user's font size** (all font sizes and text-bearing container widths are rem) | WCAG 2.2 §1.4.4: `body` used rem but the interface was hardcoded px, so at 200% base font size the prose doubled and the navigation stayed at 14 px. Round 3 had named this as an open follow-up; it is now closed. The `min-width:1024px` desktop-only scope (D13) still excludes §1.4.10 Reflow at 320 px |
+
+**Two items in the round-4 plan were cut after review and measurement rather than built**, recorded so they are not silently dropped:
+
+- **Prefixing every route name with "schematic"** — cut because repeating one word across six route names, in pathways already at the label ceiling, is habituation that learners stop reading, and it reverses this document's own §5.3/§7 rule (`schematic route` on *first appearance*, then the short name). P12 achieves the same goal at the point of confusion.
+- **Pathway-overview sheets for the systems that are not built** (Thyroid, Dopamine) — cut after measuring that sending a thyroid question to the HPA axis would assert that the thyroid axis *is* the HPA axis, a physiology claim produced by a navigation button. Those rows now say what the system is for and that it is not built, and navigate nowhere. Measured while implementing: only **two** tree rows were dead ends, not the five the plan claimed; `Blood glucose`, `Stress response` and `Daily rhythms` already expand and lead somewhere.

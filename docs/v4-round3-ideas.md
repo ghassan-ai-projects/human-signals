@@ -254,3 +254,24 @@ Two caveats found while building the audit, both in the *measurement*, not the p
 Tasks 1, 7, 8 and 10 proxy as passing: three triggers are visible on first paint with a name and a one-line "what happens" each and ≥24 px targets; the text alternative states the feedback relation and contrasts fast/slow without leaking measured times; and the guided path is keyboard-traversable with no dead tab stop.
 
 The honest read: the round-4 work should be **small and surgical** — put words where the learner is already looking — rather than another broad pass, because everything the scripts can already check is green.
+
+### Round 4: what shipped
+
+Full record: [v4-round4-worklist.md](v4-round4-worklist.md) (the reconciled plan) · branch `design/v4-quality-round4`.
+
+| Audit | Before round 4 | After |
+|---|---|---|
+| `scripts/v4-quality-bar.mjs` | 83/83 — but two checks could not fail, one read marks regardless of active state, and none pressed ▶ Play | **97/97** — the two weak checks replaced, plus a **Play-in-flight** label probe, an **active-route-still-named** probe, a two-pronged reduced-motion assertion, and a **text-scaling** probe |
+| `scripts/v4-comprehension-check.mjs` | 12/14 (tasks 5 and 6 red) | **33/33** — every §10 prototype task now passes, including behavioural halves for tasks 1 and 7/8 |
+
+**Items R4-1…R4-7**, one commit each: first-run cue and the body-Enter defect; the unrevealed line named in shape and words; the not-a-vessel answer moved to the route card; the line grammar taught once on the body; "Say it back" reachable on demand; the dead-end tree rows made honest; evidence, docs, and the text-scaling fix.
+
+**Three things this round found by measuring rather than assuming**, recorded because each one would have shipped a defect:
+
+1. **The first action a keyboard learner could take did nothing.** The first Tab stop on first paint is the body, and Enter there left the engine `idle`. Task 1's existing proxy passed only because it checked that buttons exist with subtitles. Fixed by R4-1 and now asserted behaviourally.
+2. **A §10 breach that the audit structurally could not see.** `stress:slow` already reached the 8-label ceiling *during playback* — the pulse's route name duplicated the current step's label — while the audit never pressed ▶. Any always-on label would have made it 9. The duplicate is now suppressed (repetition removed, not content) and the audit measures the playing state.
+3. **A WCAG 1.4.4 failure the earlier E1 pass had deferred.** At 200% base font size the prose doubled and the navigation did not, because the interface was hardcoded px. All 100 font sizes and the text-bearing container widths are now rem.
+
+Two planned items were **cut after review and measurement** (the "schematic" prefix on every route name, and overview sheets for systems that are not built), and two plan premises were found **factually wrong** ("five inert tree rows" was two; `glucoseSys` already had a destination). Both are written up in the work list and the direction doc rather than quietly dropped.
+
+**B3 note, made explicit as the plan required:** the self-explanation card is never recorded as an attempt. `HS.recordAttempt` is called only from `checkTry`; the reflect path never calls it, and the comprehension audit now wraps `recordAttempt` and asserts a zero call count across the whole reflect flow.

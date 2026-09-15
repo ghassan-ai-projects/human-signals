@@ -61,6 +61,11 @@ An **Advanced** switch (pathway bar menu, settings, key A) is stored apart from 
 | P8 | Anatomy adds **muscles, SCN, pineal gland and the eye** in the cutaway, and **pancreatic islets** at close-up | Needed by the meal and dark scenes | §5.2 structure list |
 | P9 | More sheet's **Why?** is the trail of steps up to the selected hotspot; its evidence block is a claim line with an honest review status | Makes the doc 04 claim model visible without inventing citations | §2.5 |
 | P10 | Try it? and What if? cards **dock on the right**, and the camera frames the scene in the space beside them; labels stay out from under the card | A card "beside the hotspot" covered the very organs and outcome badges it asks about (evidence 15 before the fix) | §4.3 |
+| P11 | The unrevealed state is **named on the body** at all times, and its **shape** reads as unfinished (no end glyph, the `?` terminates the line) | A bare dashed connector is the conventional mark for *association* — the exact misconception §10 task 5 tests for | §4.3 |
+| P12 | The route card carries the **"schematic, not a vessel or a nerve"** line, and Read the route opens with the disclaimer at the top | §10 task 6 is asked while looking at the body; the answer existed only below the fold of one panel | §4.3, §10 |
+| P13 | **"Say it back" is reachable on demand** (pathway bar + `Y`); first open keeps the model hidden, later opens show it | The ungraded self-explanation card only auto-fired after a full play-through, so it could not be asked for | round-3 B3, §10 tasks 7/8 |
+| P14 | The route **textures and end glyphs are taught once on the body** as a rich tip | The nerve/blood texture distinction is what §10 task 6 rests on, and it was explained only in Read the route | §5.3 |
+| P15 | The reading UI **scales with the user's font size** (rem throughout) | WCAG 2.2 §1.4.4: the prose scaled and the navigation did not | §6, §10 accessibility |
 
 ## Owner decisions still open
 
@@ -79,6 +84,18 @@ Every label, ⓘ text, sign, Try it? correction, What if? outcome and cell step 
 - **Dark:** melanopsin cells as a separate light-sensing system; the SCN → spinal cord → neck → pineal nerve route; melatonin *modulating* the SCN; "body temperature at its lowest" in the early morning; pupils widening is a light reflex, not melatonin.
 - **Leads-to links:** cortisol's morning rise; the SCN shaping cortisol's daily rhythm; glucose released under stress prompting insulin.
 - **Advanced (all new, undergraduate-physiology level, marked "Advanced · illustrative draft"):** every passport field for the 12 signals (source, synthesis site, transport, receptor location, timescale in words, clearance); the molecule-class and carrier on each route label; the named cell mechanisms — GR/GREs and PEPCK for cortisol; Gs/adenylyl cyclase/cAMP/PKA, glycogen phosphorylase, glucose-6-phosphatase and GLUT2 for glucagon; the insulin-receptor tyrosine kinase, IRS/PI3K/Akt and GLUT4 for insulin; β1/cAMP/PKA, α1, AANAT and HIOMT (ASMT) for melatonin; the organ/structure one-liners (e.g. corticotrophs, superior cervical ganglion). None of it is anatomy-placed; it rides on the same placeholder art.
+
+### Round-4 prose needing review
+
+New sentences added in round 4, all to the scientific review list alongside the above:
+
+- **The unrevealed-line wording**, on all four gates: *"The dashed line means this step has not been revealed yet. Open the ? dot to work it out."* — describes the app's state, not the biology; check it cannot be read as a claim about the physiology.
+- **The route-card caveat**, on every route card: *"Schematic: not a drawing of a blood vessel or a nerve."* — a claim about representation, and the one §10 task 6 depends on.
+- **The carrier-legend wording**: *blood-borne message · nerve or light signal · portal — straight to the next gland · feedback — acts back*, and the end glyphs *stimulates · inhibits · modulates*. Review the portal phrasing especially: it deliberately avoids "a short hop" because that word reads as an amount (§5.4).
+- **The two new `reflect` model lines.** The fast-route model now appends: *"The slow route is different: it takes over minutes and lasts hours, and cortisol's brake on the brain is what turns that slow response down."* This **makes a claim about the fast/slow contrast**, so it needs review like any other claim. It names cortisol explicitly rather than saying "its brake", because adrenaline is *cleared* (`stress.js`) — the possessive, not the physiology, was the error the review caught.
+- **The fast→slow hand-off tip**: *"That was the fast route, within seconds. Now follow the slow route: choose Slow — or press ▶ Watch it all to see both across the ribbon."* — check "both across the ribbon" is honest; it was verified against the running build that `playAll` holds the other route at `faint` rather than hiding it.
+- **The two "not built yet" system descriptions** (Thyroid, Dopamine) — each states what the system is for and that it is not built here. These must not be read as descriptions of thyroid or dopamine physiology; they are scope statements.
+- **The "no score and no wrong answer" framing** on the self-explanation card, and the revisit copy *"Reading it again — here is how we'd put it, so you can compare with your own version."* — check the wording never reads as marking.
 
 ## Anatomy review list
 
