@@ -14,7 +14,7 @@ HS.showInfoCard=function(key,anchorEl){
   HS.closeCards();
   cards.insertAdjacentHTML('beforeend',`<div class="card float" role="dialog" aria-label="${inf.t}" style="left:${x}px;top:${y}px"><button class="x" aria-label="Close">×</button><div class="lvl">${LEVELNAME[L]}</div><h5>${inf.t}</h5><p>${inf[L]}</p><div class="row2"><span class="ev">Illustrative · not reviewed</span><button class="more">More ›</button></div></div>`);
   const c=cards.querySelector('.card'); c.querySelector('.x').onclick=()=>{ HS.closeCards(); anchorEl.focus(); };
-  c.querySelector('.more').onclick=()=>{ c.querySelector('p').insertAdjacentHTML('afterend','<p style="color:var(--ink-3);font-size:12.5px;margin-top:-4px">In the full design, More opens a side sheet with the Why trail, claim-level evidence and glossary. Zoom in to read the deeper version here.</p>'); c.querySelector('.more').remove(); };
+  c.querySelector('.more').onclick=()=>{ HS.closeCards(); HS.openMore(key,anchorEl); };
   c.querySelector('.more').focus();
 };
 
@@ -153,11 +153,18 @@ document.addEventListener('pointerdown',e=>{ if($('#palette')&&!e.target.closest
 /* ---------- Read the route ---------- */
 HS.openRead=function(){
   const S=HS.E.scene; if(!S) return; const s=$('#sheet');
-  s.innerHTML=`<button class="x" aria-label="Close">×</button><h3>Read the route</h3><p class="sub">${S.trigger.title} · illustrative draft, not reviewed science</p>${S.read({revealed:HS.isRevealed})}
+  HS.sheetReturn=$('#bRead'); tipsBox.innerHTML='';
+  s.setAttribute('aria-label','Read the route');
+  s.innerHTML=`<button class="x" aria-label="Close">×</button><h3>Read the route</h3><p class="sub">${S.trigger.title} · illustrative draft, not reviewed science</p>
+  ${HS.E.route?`<span class="eyebrow">${S.pathways[HS.E.route].name} at a glance</span><div class="diagram">${HS.causalSVG(S,HS.E.route,HS.isRevealed)}</div>`:''}${S.read({revealed:HS.isRevealed})}
   <h4>About routes</h4><p class="sub" style="margin:0">Routes show that a message travels and where it arrives. They are not drawings of blood vessels or nerves. Time words show order and rough timescale, not measured time.</p>`;
   s.classList.remove('closed'); s.querySelector('.x').onclick=()=>HS.closeRead(true); s.querySelector('.x').focus();
 };
-HS.closeRead=function(focus){ const s=$('#sheet'); if(s.classList.contains('closed')) return; s.classList.add('closed'); if(focus) $('#bRead').focus(); };
+HS.closeRead=function(focus){
+  const s=$('#sheet'); if(s.classList.contains('closed')) return; s.classList.add('closed');
+  const ret=HS.sheetReturn; HS.sheetReturn=null;
+  if(focus&&ret&&document.contains(ret)) ret.focus();
+};
 
 /* ---------- layers & settings ---------- */
 function applyLayer(name,on,user){

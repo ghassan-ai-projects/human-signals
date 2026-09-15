@@ -91,7 +91,7 @@ HS.getLabels=function(){
   const S=E.scene, p=P(), T=E.tIdx;
   if(E.whatIf==='outcome') p.whatIf.badges.forEach((b,i)=>out.push({key:'wi-'+i,text:b.text,cls:'badge',anchor:HS.wc(b.org),dx:b.dx,dy:b.dy}));
   if(E.whatIf){ const b=p.whatIf.blockLabel; out.push({key:'wi-block',text:b.text,cls:'badge',anchor:HS.ptOn(b.route,b.t),dx:b.dx,dy:b.dy,noLeader:true}); }
-  if(E.cur>=0){ const h=p.hots[E.cur]; out.push({key:'one',org:h.org,text:h.one,cls:'one',anchor:HS.wc(h.org),dx:h.ldx,dy:h.ldy,info:h.org,cell:L!=='body'&&h.cell}); }
+  if(E.cur>=0){ const h=p.hots[E.cur]; out.push({key:'one',org:h.org,text:h.one,cls:'one',anchor:HS.wc(h.org),dx:h.ldx,dy:h.ldy,info:h.org,cell:L!=='body'&&h.cell,lead:!E.tryMode&&!E.whatIf&&!E.playing&&h.leads}); }
   HS.lodLabels(L).forEach(l=>out.push(l));
   const pr=HS.pulse.on&&S.routes[HS.pulse.route];
   if(pr&&pr.label) out.push({key:'rl-'+HS.pulse.route,text:pr.label,cls:'sig',anchor:HS.ptOn(HS.pulse.route,pr.at),dx:pr.dx,dy:pr.dy,noLeader:true});
@@ -199,18 +199,19 @@ function afterPlay(){
 /* ---------- Try it? ---------- */
 function openTry(){
   const p=P(); if(!p||!p.gate||E.tryMode||E.whatIf) return; const g=p.gate, tr=g.try;
+  const q=typeof tr.q==='string'?tr.q:(tr.q[HS.level()]||tr.q.organ);   // wording follows the zoom level it was opened at
   stopPlay(); HS.closeCards(); HS.clearTip(g.tipKey); E.tryMode=true; E.picks.clear(); E.tryCtx={exposed:isRevealed(),why:false};
   HS.camTo(tr.region||p.region,600);
   tr.candidates.forEach(k=>$('#o-'+k).classList.add('cand'));
   HS.light.dim=new Set(tr.candidates); HS.applyOrgs();
   const box=document.createElement('div'); box.className='try float'; box.id='tryCard'; box.setAttribute('role','dialog'); box.setAttribute('aria-label','Try it');
   box.style.left=Math.min(app.clientWidth-500,Math.max(340,app.clientWidth*.56))+'px'; box.style.top='110px';
-  box.innerHTML=`<div class="k">Try it? <button class="why" id="tryWhy">ⓘ Why?</button></div><h5>${tr.q}</h5><p>${tr.hint}</p><div id="tryWhyTxt"></div><div class="picks" id="tryPicks">Nothing selected yet</div><div id="tryRes"></div><div class="acts"><button class="btn t" id="tryShow">Show me</button><span><button class="btn t" id="tryClose">Close</button> <button class="btn p" id="tryCheck" disabled>Check</button></span></div>`;
+  box.innerHTML=`<div class="k">Try it? <button class="why" id="tryWhy">ⓘ Why?</button></div><h5>${q}</h5><p>${tr.hint}</p><div id="tryWhyTxt"></div><div class="picks" id="tryPicks">Nothing selected yet</div><div id="tryRes"></div><div class="acts"><button class="btn t" id="tryShow">Show me</button><span><button class="btn t" id="tryClose">Close</button> <button class="btn p" id="tryCheck" disabled>Check</button></span></div>`;
   $('#cards').appendChild(box);
   $('#tryWhy').onclick=()=>{ if($('#tryCheck')) E.tryCtx.why=true; $('#tryWhyTxt').innerHTML=`<div class="whytxt">${tr.why}</div>`; $('#tryWhy').remove(); };
   $('#tryShow').onclick=()=>checkTry(true); $('#tryClose').onclick=closeTry; $('#tryCheck').onclick=()=>checkTry(false);
   $('#tryCheck').focus();
-  HS.say(`Try it. ${tr.q} Candidates: ${tr.candidates.map(HS.orgName).join(', ')}. Use the hotspot numbers or click organs.`);
+  HS.say(`Try it. ${q} Candidates: ${tr.candidates.map(HS.orgName).join(', ')}. Use the hotspot numbers or click organs.`);
 }
 HS.openTry=openTry;
 function togglePick(k){
@@ -309,5 +310,6 @@ HS.onOrgClick=function(k){
   if(reg) HS.camTo(reg,650);
   if(E.state!=='triggered'){ HS.light.lit=new Set([k]); HS.applyOrgs(); }
 };
+HS.followLead=function(l){ if(!l) return; HS.toast(l.why); HS.openPathway(l.scene,l.path,false); };
 HS.onSignalSelect=function(n){ HS.light.lit=new Set(n.organs); HS.applyOrgs(); HS.renderOverlay(); };
 })(window.HS);

@@ -27,17 +27,17 @@ HS.scenes.meal={
    ],
    hots:[
     {org:'panc',num:1,dx:34,dy:20,seg:null,t:2,region:'panc',one:'Pancreas releases glucagon',lab:{body:'Pancreas',organ:'glucagon',structure:'Alpha cells release glucagon'},ldx:64,ldy:12},
-    {org:'liver',num:2,dx:-46,dy:-20,seg:'glucagon',t:3,region:'liver',one:'Liver releases stored glucose',lab:{body:'Liver',organ:'glucose',structure:'Liver cells break down glycogen'},ldx:-86,ldy:-10,cell:'liverGcg'},
+    {org:'liver',num:2,dx:-46,dy:-20,seg:'glucagon',t:3,region:'liver',one:'Liver releases stored glucose',lab:{body:'Liver',organ:'glucose',structure:'Liver cells break down glycogen'},ldx:-86,ldy:-10,cell:'liverGcg',leads:{scene:'stress',path:'slow',why:'During stress, cortisol also helps the liver keep glucose available, more slowly.'}},
     {org:'brain',num:3,dx:40,dy:6,seg:'glucose',t:3,region:'head',one:'Brain keeps its glucose supply',lab:{body:'Brain',organ:'glucose',structure:'Brain cells take up glucose'},ldx:56,ldy:-18}],
    afterPlay:{whenHidden:true,tip:{key:'mealGhost',text:'Something turns glucagon down again. Open Try it? on the dashed line.',pos:{right:16,bottom:214}}},
    gate:{
-    routes:['fbGlu'],at:['fbGlu',.5],labelRoutes:['fbGlu'],tipKey:'mealGhost',
+    routes:['fbGlu'],at:['fbGlu',.5],labelRoutes:['fbGlu'],tipKey:'mealGhost',from:'liver',
     aria:'Try it: something turns glucagon down',ariaRevealed:'Feedback: rising glucose acts back on the pancreas, revealed',dotAria:'Try it: what turns glucagon down?',
     calmBlocked:'Glucose can’t settle until something turns glucagon down. Open Try it? on the dashed line.',
     calmButton:'Watch glucose settle',
     afterTip:{key:'toAfter',text:'What about after eating? Choose After a meal in the pathway bar.',pos:{right:16,bottom:214}},
     try:{
-     region:'meal',q:'As glucose rises again, where does it act to turn glucagon down?',hint:'Tap the organ you think on the body.',
+     region:'meal',q:{body:'As glucose rises again, which organ eases off the signal that raised it?',organ:'As glucose rises again, where does it act to turn glucagon down?'},hint:'Tap the organ you think on the body.',
      candidates:['brain','liver','stom','panc'],answer:['panc'],
      why:'The cells that release a hormone are well placed to sense what it controls.',
      correct:'Rising glucose acts back on the pancreas, so it releases less glucagon. This is negative feedback.',
@@ -76,13 +76,13 @@ HS.scenes.meal={
     {org:'muscle',num:4,dx:32,dy:-44,seg:'insM',t:3,region:'muscle',one:'Muscles take up glucose',lab:{body:'Muscles',organ:'insulin',structure:'Muscle cells take up glucose'},ldx:40,ldy:-66,cell:'muscleIns'}],
    afterPlay:{whenHidden:true,tip:{key:'fedGhost',text:'Something stops glucose falling too far. Open Try it? on the dashed line.',pos:{right:16,bottom:214}}},
    gate:{
-    routes:['fbIns'],at:['fbIns',.5],labelRoutes:['fbIns'],tipKey:'fedGhost',
+    routes:['fbIns'],at:['fbIns',.5],labelRoutes:['fbIns'],tipKey:'fedGhost',from:'muscle',
     aria:'Try it: something turns insulin down',ariaRevealed:'Feedback: falling glucose acts back on the pancreas, revealed',dotAria:'Try it: what turns insulin down?',
     calmBlocked:'Glucose can’t settle until something turns insulin down. Open Try it? on the dashed line.',
     calmButton:'Watch glucose settle',
     afterTip:{key:'fedDone',text:'Two hormones, one steady level: glucagon raises glucose between meals, insulin lowers it after eating.',pos:{right:16,bottom:214}},
     try:{
-     region:'fed',q:'As glucose falls again, where is insulin turned down?',hint:'Tap the organ you think on the body.',
+     region:'fed',q:{body:'As glucose falls again, which organ eases off the signal that lowered it?',organ:'As glucose falls again, where is insulin turned down?'},hint:'Tap the organ you think on the body.',
      candidates:['liver','panc','int','muscle'],answer:['panc'],
      why:'A hormone’s own source can sense its effect and ease off.',
      correct:'Falling glucose acts back on the pancreas, so it releases less insulin. This is negative feedback.',

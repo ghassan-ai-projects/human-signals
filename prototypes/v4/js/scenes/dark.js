@@ -18,15 +18,15 @@ HS.scenes.dark={
     {org:'retina',num:1,dx:-22,dy:22,seg:null,t:1,region:'clock',one:'Eyes sense the light fading',lab:{body:'Eyes',organ:'Eyes · light sensors',structure:'Light-sensing cells report darkness'},ldx:22,ldy:52},
     {org:'scn',num:2,dx:-12,dy:-28,seg:'rht',t:1,region:'clock',one:'Body clock reads it as night',lab:{body:'Body clock',organ:'Body clock (SCN)',structure:'SCN signals the pineal gland'},ldx:-26,ldy:-60},
     {org:'pineal',num:3,dx:10,dy:-30,seg:'clockPineal',t:2,region:'clock',one:'Pineal gland releases melatonin',lab:{body:'Pineal gland',organ:'Pineal gland',structure:'Pineal cells make melatonin'},ldx:34,ldy:-62,cell:'pinealMel'},
-    {org:'brain',num:4,dx:42,dy:8,seg:'melatonin',t:2,region:'head',one:'Brain and body get ready for sleep',lab:{body:'Brain',organ:'melatonin',structure:'Melatonin acts on brain receptors'},ldx:58,ldy:-18}],
+    {org:'brain',num:4,dx:42,dy:8,seg:'melatonin',t:2,region:'head',one:'Brain and body get ready for sleep',lab:{body:'Brain',organ:'melatonin',structure:'Melatonin acts on brain receptors'},ldx:58,ldy:-18,leads:{scene:'stress',path:'slow',why:'Before waking, cortisol rises too, as part of its daily rhythm.'}}],
    afterPlay:{whenHidden:true,tip:{key:'darkGhost',text:'Melatonin also acts back on something. Open Try it? on the dashed line.',pos:{right:16,bottom:214}}},
    gate:{
-    routes:['fbMel'],at:['fbMel',.5],labelRoutes:['fbMel'],tipKey:'darkGhost',blocksEnd:false,
+    routes:['fbMel'],at:['fbMel',.5],labelRoutes:['fbMel'],tipKey:'darkGhost',from:'pineal',blocksEnd:false,
     aria:'Try it: melatonin acts back somewhere',ariaRevealed:'Melatonin acts back on the body clock, revealed',dotAria:'Try it: where does melatonin act back?',
     calmButton:'Watch the morning come',
     afterTip:{key:'darkWhatIf',text:'Try What if? in the pathway bar: what if the lights stay on?',pos:{right:16,bottom:214}},
     try:{
-     region:'night',q:'Melatonin also acts back on one place in the brain. Where?',hint:'Tap the structure you think in the brain cutaway.',
+     region:'night',q:{body:'The night signal also acts back on one place in the brain. Where?',organ:'Melatonin also acts back on one place in the brain. Where?'},hint:'Tap the structure you think in the brain cutaway.',
      candidates:['retina','scn','pit','pineal'],answer:['scn'],
      why:'A clock that can sense its own night signal can keep its timing in step.',
      correct:'Melatonin acts back on the body clock, helping keep its timing in step with night.',

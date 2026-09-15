@@ -289,3 +289,26 @@ button{font-family:inherit;color:inherit}
 .lid{opacity:0;transition:opacity 1s var(--ease)}
 #eyes.sleepy .lid{opacity:1}
 .rm .night,.rm .lid{transition:none}
+/* connected: leads-to chips, More sheet, causal diagram */
+.leadchip{border:1px solid rgba(67,217,154,.45);background:rgba(67,217,154,.1);color:#9BEFC9;border-radius:999px;font:600 11.5px var(--sans);padding:3px 9px;cursor:pointer;white-space:nowrap}
+.leadchip:hover{background:rgba(67,217,154,.2)}
+.sheet .eyebrow{display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin:0 0 4px}
+.sheet .lead-p{font-size:15px;line-height:22px;color:var(--ink);margin:4px 0 6px}
+.linkbtn{border:0;background:transparent;color:var(--primary);font:600 13px var(--sans);padding:4px 0;cursor:pointer}
+.deeper{margin:6px 0 0;padding:10px 12px;border-radius:12px;background:var(--primary-soft);font-size:14px;line-height:20px}
+.sheet .trail{gap:6px;color:var(--ink-2);font-size:13.5px}
+.sheet .trail li.here{color:var(--ink);font-weight:600}
+.claim{border:1px solid var(--float-line);border-radius:12px;padding:10px 12px;display:grid;gap:6px}
+.claim-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:13.5px;font-weight:600}
+.claim-row .arr{color:var(--ink-3);font-weight:400}
+.claim-eff{font-size:13.5px;color:var(--ink-2)}
+.claim-meta{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:11.5px;color:var(--ink-3)}
+.sheet .ev{font-size:11px;padding:3px 8px;border-radius:999px;border:1px dashed #3A5560;color:var(--warm)}
+.gloss{margin:0;display:grid;gap:2px}
+.gloss dt{font-weight:600;font-size:13px}
+.gloss dd{margin:0 0 6px;color:var(--ink-2);font-size:13px;line-height:18px}
+.gobtn{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;border:1px solid var(--float-line);background:transparent;color:var(--ink);border-radius:10px;padding:8px 10px;font:500 13.5px var(--sans);cursor:pointer;text-align:left;margin-top:6px}
+.gobtn:hover{border-color:#34535E;background:rgba(255,255,255,.03)}
+.gobtn small{color:var(--ink-3);font-size:12px}
+.diagram{margin:4px 0 14px;padding:10px 8px;border-radius:12px;background:#07131A;border:1px solid var(--float-line)}
+.diagram svg{display:block;width:100%;height:auto}

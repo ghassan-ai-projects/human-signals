@@ -9,6 +9,7 @@ HS.ov={hoverKey:null,showAll:false};
 let ROUTES={};
 const rstate=HS.rstate={}, pathEl={};
 HS.buildRoutes=function(routes){
+  travelTok++; pulse.on=false; fx.length=0; Object.keys(drawing).forEach(k=>delete drawing[k]);   // nothing from the previous scene keeps animating
   ROUTES=routes; Object.keys(rstate).forEach(k=>delete rstate[k]); Object.keys(pathEl).forEach(k=>delete pathEl[k]);
   let s=''; Object.entries(routes).forEach(([id,r])=>{ s+=`<path class="casing" id="c-${id}" d="${r.d}" stroke="#061015" stroke-width="8" fill="none" opacity="0"/><path class="route" id="r-${id}" d="${r.d}" stroke="${COL[r.kind]}" stroke-width="2.6" opacity="0"/>`; });
   $('#gRoutes').innerHTML=s;
@@ -57,7 +58,7 @@ const pulse=HS.pulse={on:false,route:null,t:0}; let travelTok=0;
 HS.cancelTravel=()=>{ travelTok++; };
 HS.travel=function(id,dur=1100){
   return new Promise(res=>{
-    if(HS.RM()){ res(true); return; }
+    if(HS.RM()||!ROUTES[id]){ res(true); return; }
     const tok=++travelTok; pulse.on=true; pulse.route=id; const t0=performance.now();
     const f=now=>{
       if(tok!==travelTok){ pulse.on=false; HS.renderOverlay(); res(false); return; }
@@ -126,7 +127,7 @@ HS.renderOverlay=function(){
     const [px,py]=project(it.anchor[0],it.anchor[1]); if(px<-20||py<40||px>W+20||py>H+20) return;
     seen.add(it.key); let el=labEls.get(it.key);
     if(!el){ el=document.createElement('div'); labelsEl.appendChild(el); labEls.set(it.key,el); }
-    const html=`<span>${it.text}</span>${it.cell?'<button class="cell" data-cell="1">Cell ›</button>':''}${it.info?`<button class="i" aria-label="About ${it.text}">i</button>`:''}`;
+    const html=`<span>${it.text}</span>${it.lead?`<button class="leadchip" title="${it.lead.why}">↗ ${HS.scenes[it.lead.scene].pathways[it.lead.path].name}</button>`:''}${it.cell?'<button class="cell" data-cell="1">Cell ›</button>':''}${it.info?`<button class="i" aria-label="About ${it.text}">i</button>`:''}`;
     if(el._html!==html){ el.innerHTML=html; el._html=html; }
     el.className='lab'+(it.cls?' '+it.cls:''); el._it=it;
     const [ax,ay]=project(it.anchor[0],it.anchor[1]); const w=el.offsetWidth, h=el.offsetHeight;
@@ -155,5 +156,6 @@ labelsEl.addEventListener('click',e=>{
   const lab=e.target.closest('.lab'); if(!lab) return;
   if(e.target.closest('.i')) HS.showInfoCard(lab._it.info,e.target.closest('.i'));
   if(e.target.closest('.cell')) HS.openCell(lab._it.cell);
+  if(e.target.closest('.leadchip')) HS.followLead(lab._it.lead);
 });
 })(window.HS);
