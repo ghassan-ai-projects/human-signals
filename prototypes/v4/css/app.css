@@ -335,3 +335,41 @@ button{font-family:inherit;color:inherit}
 .keys dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:8px 12px;align-items:center}
 .keys dt kbd{font-family:var(--mono);font-size:11.5px;padding:3px 7px;border-radius:6px;border:1px solid var(--float-line);color:var(--ink);white-space:nowrap}
 .keys dd{margin:0;font-size:13.5px;color:var(--ink-2)}
+/* ---------- round 2 · feel ---------- */
+.lab{animation:labin .24s var(--ease)}
+@keyframes labin{from{opacity:0;translate:0 4px}}
+.hs{animation:hsin .28s var(--ease)}
+@keyframes hsin{from{opacity:0;scale:.6}}
+.lab.hover{box-shadow:0 8px 20px rgba(0,0,0,.5)}
+.casing{transition:opacity .4s var(--ease)}
+.route{transition:opacity .4s var(--ease),stroke-width .15s}
+.route.hl{stroke-width:4.2px}
+.rhit{fill:none;stroke:transparent;stroke-width:16px;vector-effect:non-scaling-stroke;pointer-events:stroke;cursor:pointer}
+.rhit[data-st="hide"],.rhit[data-st="faint"]{pointer-events:none}
+.org.arrive .halo{animation:arrive .95s var(--ease)}
+@keyframes arrive{0%{opacity:.95}100%{opacity:.32}}
+#rbTrack{cursor:pointer}
+#rbTrack .rb-handle{transition:left .35s var(--ease)}
+#rbTrack .rb-fill{transition:width .35s var(--ease)}
+#rbTrack.drag .rb-handle,#rbTrack.drag .rb-fill{transition:none}
+.hdot.cur{background:var(--msg);border-color:var(--msg);color:#06202E}
+.seg .sm{display:none}
+.intro #world{animation:worldin 1s var(--ease) both}
+@keyframes worldin{from{opacity:0}}
+.intro .org{animation:orgin .8s var(--ease) both;animation-delay:calc(var(--i,0) * 45ms + 250ms)}
+@keyframes orgin{from{opacity:0;translate:0 8px}}
+.rm .lab,.rm .hs,.rm .org.arrive .halo,.rm.intro #world,.rm.intro .org{animation:none}
+.ribbon{width:min(720px,calc(100vw - 300px))}
+@media (max-width:1400px){ .pbar .chip:not(.done){display:none} #bRead .lbl{display:none} }
+@media (max-width:1180px){ .pbar .nm{display:none} #playTxt{display:none} .playbtn{padding:0 13px} .seg .lg{display:none} .seg .sm{display:inline} }
+@media (max-width:1400px){
+  .zoomer{right:16px;bottom:174px;flex-direction:row}
+  .zoomer button+button{border-top:0;border-left:1px solid var(--float-line)}
+  .lvl-chip{bottom:220px}
+  #tips .tip[style*="bottom"]{margin-bottom:50px}
+}
+@media (max-width:1180px){
+  .caption{top:70px}
+  .caption b{font-size:18px}
+  .thought{top:124px}
+}

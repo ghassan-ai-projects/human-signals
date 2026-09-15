@@ -99,9 +99,9 @@ HS.buildWorld=function(){
 
   s+=`<g id="gOrg" transform="translate(90 0)">`;
   s+=`<path d="M 260 176 L 260 282 M 260 282 C 252 290 244 294 236 304 M 260 282 C 268 290 276 294 284 304" fill="none" stroke="#2C4B57" stroke-width="6" stroke-linecap="round"/><path d="M 260 176 L 260 282" fill="none" stroke="#3F6674" stroke-width="1.5" stroke-dasharray="2 3" class="cord"/>`;
-  ORDER.forEach(k=>{
+  ORDER.forEach((k,oi)=>{
     const o=ORGS[k];
-    s+=`<g class="org" data-org="${k}" id="o-${k}">`;
+    s+=`<g class="org" data-org="${k}" id="o-${k}" style="--i:${oi}">`;
     o.parts.forEach(p=>{ s+=`<ellipse class="halo" cx="${p.c[0]}" cy="${p.c[1]}" rx="${p.r[0]*1.5+14}" ry="${p.r[1]*1.35+14}" fill="url(#halo)"/>`; });
     s+=`<g class="org-body">`;
     o.parts.forEach((p,i)=>{ s+=`<path class="org-shape" d="${p.d}" fill="url(#gr-${k})"/><path d="${p.d}" fill="url(#sheen)" pointer-events="none"/><path d="${p.d}" fill="none" stroke="${darken(o.fill,.6)}" stroke-width="3" stroke-opacity=".4" clip-path="url(#cl-${k}${i})" pointer-events="none"/>`; });

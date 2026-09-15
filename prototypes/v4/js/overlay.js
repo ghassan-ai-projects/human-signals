@@ -11,16 +11,18 @@ const rstate=HS.rstate={}, pathEl={};
 HS.buildRoutes=function(routes){
   travelTok++; pulse.on=false; fx.length=0; Object.keys(drawing).forEach(k=>delete drawing[k]);   // nothing from the previous scene keeps animating
   ROUTES=routes; Object.keys(rstate).forEach(k=>delete rstate[k]); Object.keys(pathEl).forEach(k=>delete pathEl[k]);
-  let s=''; Object.entries(routes).forEach(([id,r])=>{ s+=`<path class="casing" id="c-${id}" d="${r.d}" stroke="#061015" stroke-width="8" fill="none" opacity="0"/><path class="route" id="r-${id}" d="${r.d}" stroke="${COL[r.kind]}" stroke-width="2.6" opacity="0"/>`; });
-  $('#gRoutes').innerHTML=s;
+  let s=''; Object.entries(routes).forEach(([id,r])=>{ s+=`<path class="casing" id="c-${id}" d="${r.d}" stroke="#061015" stroke-width="8" fill="none" style="opacity:0"/><path class="route" id="r-${id}" d="${r.d}" stroke="${COL[r.kind]}" stroke-width="2.6" style="opacity:0"/>`; });
+  s+=Object.entries(routes).map(([id,r])=>`<path class="rhit" data-route="${id}" data-st="hide" d="${r.d}"/>`).join('');   // wide invisible hit areas, on top
+  $('#gRoutes').innerHTML=s; HS.ov.hoverRoute=null;
   Object.keys(routes).forEach(id=>{ pathEl[id]=document.getElementById('r-'+id); rstate[id]='hide'; });
 };
 HS.routeDef=id=>ROUTES[id];
 HS.setRoute=function(id,st,opt){
   const was=rstate[id]; rstate[id]=st; const p=pathEl[id], c=document.getElementById('c-'+id);
   endDraw(id);
-  p.setAttribute('opacity',{hide:0,faint:.24,ghost:.62,on:1}[st]);
-  c.setAttribute('opacity',{hide:0,faint:.2,ghost:.45,on:.95}[st]);
+  p.style.opacity={hide:0,faint:.24,ghost:.62,on:1}[st];   // style, not attribute, so the 400 ms cross-fade applies
+  c.style.opacity={hide:0,faint:.2,ghost:.45,on:.95}[st];
+  const hit=document.querySelector(`#gRoutes .rhit[data-route="${id}"]`); if(hit) hit.dataset.st=st;
   if(st==='ghost') p.setAttribute('stroke-dasharray','6 7'); else p.removeAttribute('stroke-dasharray');
   if(opt&&opt.draw&&st==='on'&&was!=='on') drawOn(id);
 };
@@ -117,7 +119,13 @@ HS.renderOverlay=function(){
   const now=performance.now();
   for(let i=fx.length-1;i>=0;i--){ const f=fx[i], k=(now-f.t0)/f.dur; if(k>=1){ fx.splice(i,1); continue; } const e=1-Math.pow(1-k,2), [x,y]=project(f.p[0],f.p[1]); svg+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(f.r0+(f.r1-f.r0)*e).toFixed(1)}" fill="none" stroke="${f.c}" stroke-width="${f.w}" opacity="${((1-k)*.75).toFixed(2)}"/>`; }
 
+  /* hover: a route or a hotspot lights its route and says what it is */
+  const hr=HS.ov.hoverRoute&&rstate[HS.ov.hoverRoute]&&rstate[HS.ov.hoverRoute]!=='hide'?HS.ov.hoverRoute:null, hh=HS.ov.hoverHot;
+  const hl=hr||(hh&&hh.seg);
+  Object.entries(pathEl).forEach(([id,el])=>el.classList.toggle('hl',id===hl));
   const items=HS.getLabels().slice();
+  if(hr){ const ghost=rstate[hr]==='ghost', r=ROUTES[hr]; items.push({key:'hovroute',text:ghost?'Something acts back here · Try it?':(r.label||HS.gateLabel(hr)||'feedback'),cls:(ghost?'badge':'sig')+' hover',anchor:HS.ov.hoverAt||HS.ptOn(hr,.5),dx:14,dy:-20,noLeader:true}); }
+  if(hh&&hh.tip&&!items.some(i=>i.key==='one'&&i.org===hh.org)){ const d=hh.dx||0; items.push({key:'hovhot',text:hh.tip,cls:'one hover',anchor:hh.anchor,dx:d>=0?d+24:d-24,dy:hh.dy||0,noLeader:true}); }
   if(HS.ov.showAll){ HS.orgKeys().forEach(k=>{ if(!items.some(i=>i.org===k)) items.push({key:'all-'+k,org:k,text:HS.orgName(k),anchor:HS.wc(k),dx:34,dy:-20,info:k}); }); }
   const hk=HS.ov.hoverKey;
   if(hk && !items.some(i=>i.org===hk)) items.push({key:'hover',org:hk,text:HS.orgName(hk),anchor:HS.wc(hk),dx:24,dy:-24,cls:'hover'});
@@ -146,14 +154,30 @@ HS.renderOverlay=function(){
   const hseen=new Set();
   hots.forEach(h=>{
     hseen.add(h.id); let b=hsEls.get(h.id);
-    if(!b){ b=document.createElement('button'); b.addEventListener('click',()=>b._h.onClick()); labelsEl.appendChild(b); hsEls.set(h.id,b); }
+    if(!b){
+      b=document.createElement('button'); b.addEventListener('click',()=>b._h.onClick());
+      const on=()=>{ HS.ov.hoverHot=b._h; HS.renderOverlay(); }, off=()=>{ if(HS.ov.hoverHot&&HS.ov.hoverHot.id===b._h.id){ HS.ov.hoverHot=null; HS.renderOverlay(); } };
+      b.addEventListener('pointerenter',on); b.addEventListener('focus',on); b.addEventListener('pointerleave',off); b.addEventListener('blur',off);
+      labelsEl.appendChild(b); hsEls.set(h.id,b);
+    }
     b._h=h; const cls='hs '+(h.cls||''); if(b.className!==cls) b.className=cls; if(b.textContent!==String(h.num)) b.textContent=h.num;
     if(b.getAttribute('aria-label')!==h.aria) b.setAttribute('aria-label',h.aria);
     const [x,y]=project(h.anchor[0],h.anchor[1]); b.style.transform=`translate(${(x+(h.dx||0)).toFixed(1)}px,${(y+(h.dy||0)).toFixed(1)}px)`;
   });
-  hsEls.forEach((b,k)=>{ if(!hseen.has(k)){ b.remove(); hsEls.delete(k); } });
+  hsEls.forEach((b,k)=>{ if(!hseen.has(k)){ b.remove(); hsEls.delete(k); if(HS.ov.hoverHot&&HS.ov.hoverHot.id===k) HS.ov.hoverHot=null; } });
   overlay.innerHTML=svg;
 };
+
+const world=$('#world');
+world.addEventListener('pointermove',e=>{
+  const t=e.target.closest&&e.target.closest('.rhit'), id=t?t.dataset.route:null;
+  if(!id&&!HS.ov.hoverRoute) return;
+  HS.ov.hoverRoute=id;
+  if(id){ const r=app.getBoundingClientRect(); HS.ov.hoverAt=HS.unproject(e.clientX-r.left,e.clientY-r.top); }
+  HS.renderOverlay();
+});
+world.addEventListener('pointerleave',()=>{ if(HS.ov.hoverRoute){ HS.ov.hoverRoute=null; HS.renderOverlay(); } });
+world.addEventListener('click',e=>{ if(HS.cam.suppressClick) return; const t=e.target.closest('.rhit'); if(t) HS.onRouteClick(t.dataset.route,e); });
 HS.focusHotspot=id=>{ const b=hsEls.get(id); if(b) b.focus(); };
 
 labelsEl.addEventListener('click',e=>{

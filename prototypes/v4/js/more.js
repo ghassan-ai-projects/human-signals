@@ -31,7 +31,9 @@ HS.GLOSSARY={
  'pineal gland':'A small gland deep in the brain that releases melatonin.',
  'melanopsin':'A light-sensitive pigment in special eye cells that report light levels to the body clock.',
  'serotonin':'A signalling molecule. In the pineal gland it is the starting material for melatonin.',
- 'enzyme':'A protein that speeds up a chemical reaction.'
+ 'enzyme':'A protein that speeds up a chemical reaction.',
+ 'nerve signals':'Electrical signals carried along nerve cells and passed on by chemical messengers where they end.',
+ 'light signals':'Nerve signals from light-sensing cells in the eye, reporting how bright it is.'
 };
 
 const esc=s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');

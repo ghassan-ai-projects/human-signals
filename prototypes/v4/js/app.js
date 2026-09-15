@@ -78,6 +78,7 @@ $('#bKeys').addEventListener('click',()=>{ document.querySelectorAll('.pop').for
 
 /* first paint */
 HS.buildWorld(); HS.renderTriggers(); HS.renderTree();
+if(!HS.RM()&&!location.hash){ HS.app.classList.add('intro'); setTimeout(()=>HS.app.classList.remove('intro'),1700); }   // the body settles in once
 HS.loadProgress(); HS.renderContinue(); HS.renderSummary();
 HS.camTo('body',0);
 HS.restoreFromHash().then(opened=>{ if(!opened) HS.tip('start','Start here: pick something that happens to you.',{left:326,top:92}); });

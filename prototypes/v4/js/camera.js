@@ -18,6 +18,7 @@ HS.zoomRatio=()=>scale()/bodyScale();
 HS.level=()=>{ const z=HS.zoomRatio(); return z<2.2?'body':(z<6.5?'organ':'structure'); };
 HS.project=(x,y)=>{ const s=scale(); return [(x-vb.x)*s,(y-vb.y)*s]; };
 HS.viewCenter=()=>[vb.x+vb.w/2,vb.y+vb.h/2];
+HS.unproject=(px,py)=>{ const s=scale(); return [vb.x+px/s,vb.y+py/s]; };
 HS.resetLevel=()=>{ lastLevel=''; };
 
 const CHIP={body:'Whole body · <b>plain story</b>',organ:'Organ · <b>pathway names</b>',structure:'Close-up · <b>precise location</b>'};

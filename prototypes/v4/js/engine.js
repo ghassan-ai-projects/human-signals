@@ -78,9 +78,10 @@ HS.setTime=setTime;
 (function bindRibbon(){
   const track=$('#rbTrack'), h=$('#rbHandle'); let dragging=false;
   const idxAt=x=>{ const r=track.getBoundingClientRect(); return Math.round(Math.max(0,Math.min(1,(x-r.left)/r.width))*lastT()); };
-  h.addEventListener('pointerdown',e=>{ dragging=true; h.setPointerCapture(e.pointerId); stopPlay(); });
+  h.addEventListener('pointerdown',e=>{ dragging=true; track.classList.add('drag'); h.setPointerCapture(e.pointerId); stopPlay(); });
   h.addEventListener('pointermove',e=>{ if(dragging){ const i=idxAt(e.clientX); if(i!==E.tIdx) setTime(i,true); } });
-  h.addEventListener('pointerup',()=>{ dragging=false; });
+  h.addEventListener('pointerup',()=>{ dragging=false; track.classList.remove('drag'); });
+  track.addEventListener('click',e=>{ if(e.target.closest('.rb-handle,[data-t]')) return; stopPlay(); setTime(idxAt(e.clientX),true); });   // click anywhere on the ribbon
   $('#rbWays').addEventListener('click',e=>{ const b=e.target.closest('[data-t]'); if(b){ stopPlay(); setTime(+b.dataset.t,true); } });
   h.addEventListener('keydown',e=>{ if(e.key==='ArrowRight'||e.key==='ArrowUp'){ e.preventDefault(); stopPlay(); setTime(Math.min(lastT(),E.tIdx+1),true); } if(e.key==='ArrowLeft'||e.key==='ArrowDown'){ e.preventDefault(); stopPlay(); setTime(Math.max(0,E.tIdx-1),true); } });
 })();
@@ -115,8 +116,9 @@ HS.getHotspots=function(){
   const p=P(), v=vis();
   const hs=p.hots.map((h,i)=>({id:E.sceneId+E.route+i,num:h.num,anchor:HS.wc(h.org),dx:h.dx,dy:h.dy,cls:(v.has(i)?'v ':'')+(i===E.cur?'cur':''),
     aria:E.tryMode?`Select ${HS.orgName(h.org)} as an answer${E.picks.has(h.org)?', selected':''}`:`Step ${h.num} of ${p.hots.length}: ${h.one}${v.has(i)?', visited':''}`,
+    tip:E.tryMode?null:h.one, seg:h.seg, org:h.org,
     onClick:()=>{ if(E.tryMode){ togglePick(h.org); HS.renderOverlay(); } else goHot(i,true); }}));
-  if(p.gate&&!E.whatIf){ const g=p.gate; hs.push({id:'q',num:'?',anchor:HS.ptOn(g.at[0],g.at[1]),cls:'q'+(isRevealed()?' v':''),aria:isRevealed()?g.ariaRevealed:g.aria,onClick:openTry}); }
+  if(p.gate&&!E.whatIf){ const g=p.gate; hs.push({id:'q',num:'?',anchor:HS.ptOn(g.at[0],g.at[1]),cls:'q'+(isRevealed()?' v':''),aria:isRevealed()?g.ariaRevealed:g.aria,tip:E.tryMode?null:isRevealed()?'Feedback, revealed':'Something acts back here · Try it?',seg:g.routes[0],onClick:openTry}); }
   return hs;
 };
 HS.getMarks=()=>{ const p=P(); return E.whatIf&&p?p.whatIf.blocks:[]; };
@@ -125,13 +127,13 @@ HS.info=k=>(E.scene&&E.scene.info[k])||HS.baseInfo(k);
 /* ---------- pathway bar ---------- */
 function renderToggle(){
   const opts=E.scene.toggle?E.scene.toggle.options:[];
-  $('#seg').innerHTML=opts.map(([r,l])=>`<button data-route="${r}" aria-pressed="false">${l}</button>`).join('');
+  $('#seg').innerHTML=opts.map(([r,l,s])=>`<button data-route="${r}" aria-pressed="false" aria-label="${l}"><span class="lg">${l}</span><span class="sm" aria-hidden="true">${s||l}</span></button>`).join('');
   $('#seg').setAttribute('aria-label',E.scene.toggle?E.scene.toggle.label:'Route'); $('#seg').hidden=opts.length<2;
 }
 $('#seg').addEventListener('click',e=>{ const b=e.target.closest('[data-route]'); if(!b) return; const p=P(); if(p&&p.afterPlay&&p.afterPlay.tip) HS.clearTip(p.afterPlay.tip.key); enterPathway(b.dataset.route,false); });
 function renderDots(){
   const p=P(), v=vis();
-  let h=p.hots.map((x,i)=>`<button class="hdot${v.has(i)?' v':''}" data-h="${i}" aria-label="Go to step ${x.num}: ${x.one}">${x.num}</button>`).join('');
+  let h=p.hots.map((x,i)=>`<button class="hdot${v.has(i)?' v':''}${i===E.cur?' cur':''}" data-h="${i}" aria-label="Go to step ${x.num}: ${x.one}">${x.num}</button>`).join('');
   if(p.gate) h+=`<button class="hdot q${isRevealed()?' v':''}" data-q="1" aria-label="${p.gate.dotAria}">?</button>`;
   $('#dots').innerHTML=h;
   const done=v.size===p.hots.length&&(!p.gate||isRevealed());
@@ -173,6 +175,7 @@ HS.stopPlay=stopPlay;
 async function goHot(i,user){
   const p=P(), h=p.hots[i]; if(user){ stopPlay(); closeTry(); }
   E.cur=i; vis().add(i); renderDots(); HS.saveSoon(); HS.syncHash();
+  const og=$('#o-'+h.org); if(og&&!HS.RM()){ og.classList.remove('arrive'); void og.getBoundingClientRect(); og.classList.add('arrive'); clearTimeout(og._arr); og._arr=setTimeout(()=>og.classList.remove('arrive'),950); }   // the organ answers once as the signal lands
   if(E.tIdx<h.t) setTime(h.t);
   HS.say(`Step ${h.num}: ${h.one}`);
   if(user){ await HS.camTo(h.region,650); if(h.seg) await HS.travel(h.seg,900); }
@@ -321,6 +324,13 @@ HS.onOrgClick=function(k){
   const reg=(p&&p.orgRegions&&p.orgRegions[k])||(HS.ORGS[k]||HS.INSET[k]||{}).region;
   if(reg) HS.camTo(reg,650);
   if(E.state!=='triggered'){ HS.light.lit=new Set([k]); HS.applyOrgs(); }
+};
+/* routes are pointable: the ghost offers Try it?, others open a signal card */
+HS.gateLabel=id=>{ const p=P(); return p&&p.gate&&p.gate.routes.includes(id)?E.scene.routes[p.gate.labelRoutes[0]].label:null; };
+HS.onRouteClick=function(id,ev){
+  const p=P(), st=HS.rstate[id]; if(!p||st==='hide'||E.tryMode) return;
+  if(st==='ghost'&&p.gate&&p.gate.routes.includes(id)){ openTry(); return; }
+  HS.showRouteCard(id,ev);
 };
 HS.followLead=function(l){ if(!l) return; HS.toast(l.why); HS.openPathway(l.scene,l.path,false); };
 HS.onSignalSelect=function(n){ HS.light.lit=new Set(n.organs); HS.applyOrgs(); HS.renderOverlay(); };

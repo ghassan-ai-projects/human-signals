@@ -18,6 +18,19 @@ HS.showInfoCard=function(key,anchorEl){
   c.querySelector('.more').focus();
 };
 
+const cap=s=>/^[A-Z]{2,}/.test(s)?s:s.charAt(0).toUpperCase()+s.slice(1);
+const HOW={blood:'Carried in the blood.',portal:'Carried a short way in portal blood, straight to the next gland.','schematic route':'The line shows that a message travels and where it arrives, not the path it takes.',nerve:'Carried along nerves.',feedback:'Acts back on an earlier step.','acts on the clock':'Acts back on the body clock.'};
+HS.showRouteCard=function(id,ev){
+  const r=HS.routeDef(id), label=r.label||HS.gateLabel(id)||'signal · route', [sig,how]=label.split(' · ');
+  const key=Object.keys(HS.GLOSSARY).find(k=>k.toLowerCase()===sig.toLowerCase()), def=key?HS.GLOSSARY[key]:'';
+  const a=app.getBoundingClientRect(); let x=ev.clientX-a.left+16, y=ev.clientY-a.top-12;
+  if(x+300>app.clientWidth-10) x-=332; y=Math.max(76,Math.min(app.clientHeight-230,y));
+  HS.closeCards();
+  cards.insertAdjacentHTML('beforeend',`<div class="card float" role="dialog" aria-label="${cap(sig)}" style="left:${x}px;top:${y}px"><button class="x" aria-label="Close">×</button><div class="lvl">Signal · ${r.kind==='nerve'?'nerve route':r.kind==='fb'?'acts back':'message'}</div><h5>${cap(sig)}</h5><p>${def} ${HOW[how]||''}</p><div class="row2"><span class="ev">Illustrative · not reviewed</span><span></span></div></div>`);
+  const c=cards.querySelector('.card'); c.querySelector('.x').onclick=()=>HS.closeCards(); c.querySelector('.x').focus();
+  HS.say(`${cap(sig)}. ${def} ${HOW[how]||''}`);
+};
+
 /* ---------- toast & tips ---------- */
 let toastT=0; const toastEl=document.createElement('div'); toastEl.className='tip float'; toastEl.style.cssText='left:50%;top:84px;transform:translateX(-50%);display:none'; toastEl.setAttribute('role','status'); app.appendChild(toastEl);
 HS.toast=m=>{ toastEl.textContent=m; toastEl.style.display='flex'; clearTimeout(toastT); toastT=setTimeout(()=>toastEl.style.display='none',2800); };
@@ -64,6 +77,10 @@ HS.renderSummary=function(){
 };
 HS.syncTriggers=()=>document.querySelectorAll('[data-trigger]').forEach(b=>b.setAttribute('aria-pressed',HS.E.sceneId===b.dataset.trigger&&HS.E.state==='triggered'));
 $('#triggers').addEventListener('click',e=>{ const b=e.target.closest('[data-trigger]'); if(b) HS.clickTrigger(b.dataset.trigger); });
+/* hovering a trigger previews the organs it will involve */
+let tpT=0;
+$('#triggers').addEventListener('mouseover',e=>{ const b=e.target.closest('[data-trigger]'), S=b&&HS.scenes[b.dataset.trigger]; clearTimeout(tpT); tpT=setTimeout(()=>{ light.preview=S?new Set([...S.trigger.lights,...S.pathways[S.trigger.first].organs]):null; HS.applyOrgs(); },150); });
+$('#triggers').addEventListener('mouseleave',()=>{ clearTimeout(tpT); light.preview=null; HS.applyOrgs(); });
 
 /* ---------- systems tree ---------- */
 HS.TREE=[
@@ -161,6 +178,9 @@ HS.openSearch=function(){
     sel=Math.max(0,Math.min(sel,res.length-1));
     list.innerHTML=res.length?res.map((s,i)=>{ const via=q&&!s.t.toLowerCase().includes(q)?s.syn.find(x=>x.includes(q)):null; return `<li role="option" id="qo${i}" data-i="${i}" aria-selected="${i===sel}"><span>${s.t}${via?`<span class="via">· ${via}</span>`:''}</span><small>${s.k}</small></li>`; }).join(''):'<li class="none">No match. Try a signal like ACTH, an organ, or “stress”.</li>';
     if(res.length){ input.setAttribute('aria-activedescendant','qo'+sel); HS.revealIn(list,list.querySelector(`#qo${sel}`)); } else input.removeAttribute('aria-activedescendant');
+    const g=res[sel]&&res[sel].go, S=g&&(HS.scenes[g.trigger]||(g.pathway&&HS.scenes[g.pathway[0]]));   // the highlighted result lights its organs
+    light.preview=!g?null:g.organ?new Set([g.organ]):g.node?new Set(NODE[g.node].organs):g.pathway?new Set(S.pathways[g.pathway[1]].organs):S?new Set([...S.trigger.lights,...S.pathways[S.trigger.first].organs]):null;
+    HS.applyOrgs();
   };
   const choose=i=>{ const s=res[i]; if(!s) return; HS.closeSearch(false); HS.runGo(s.go); };
   input.addEventListener('input',()=>{ sel=0; draw(); });
@@ -174,7 +194,7 @@ HS.openSearch=function(){
   list.addEventListener('click',e=>{ const li=e.target.closest('[data-i]'); if(li) choose(+li.dataset.i); });
   draw(); input.focus();
 };
-HS.closeSearch=function(focus){ const d=$('#palette'); if(!d) return; d.remove(); if(focus) $('#bSearch').focus(); };
+HS.closeSearch=function(focus){ const d=$('#palette'); if(!d) return; d.remove(); light.preview=null; HS.applyOrgs(); if(focus) $('#bSearch').focus(); };
 document.addEventListener('pointerdown',e=>{ if($('#palette')&&!e.target.closest('#palette,#bSearch')) HS.closeSearch(false); });
 
 /* ---------- Read the route ---------- */

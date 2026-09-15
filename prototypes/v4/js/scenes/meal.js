@@ -3,7 +3,7 @@
 HS.scenes.meal={
  id:'meal',
  trigger:{title:'You skip a meal',sub:'Watch the body keep glucose steady',caption:'Glucose in the blood starts to fall',lights:['panc'],first:'between',autoplay:true,atmosphere:'rgba(240,194,126,.10)'},
- toggle:{label:'Meal timing',options:[['between','Between meals'],['after','After a meal']]},
+ toggle:{label:'Meal timing',options:[['between','Between meals','Between'],['after','After a meal','After']]},
 
  routes:{
   glucagon:{d:'M 378 536 C 338 570 252 556 256 498',kind:'msg',label:'glucagon · blood',at:.5,dx:0,dy:26},
