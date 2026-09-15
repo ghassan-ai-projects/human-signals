@@ -26,6 +26,31 @@ page.on('pageerror', (e) => errs.push('pageerror: ' + e.message));
 await page.goto(BASE, { waitUntil: 'networkidle' });
 await page.waitForTimeout(1000);
 
+/* ---- Task 1, behavioural half: does the FIRST action available to a keyboard
+   learner actually reach a scene? This is the check that fails on the pre-round-4
+   build: the first Tab stop is #world and Enter there left the engine idle. ---- */
+await page.evaluate(() => { try { localStorage.clear(); } catch { /* fresh */ } });
+await page.reload({ waitUntil: 'networkidle' });
+await page.waitForTimeout(1000);
+await page.keyboard.press('Tab');
+const firstStop = await page.evaluate(() => document.activeElement.id || document.activeElement.tagName);
+await page.keyboard.press('Enter');
+await page.waitForTimeout(1200);
+const afterEnter = await page.evaluate(() => ({
+  state: window.HS.E.state,
+  firstAccents: document.querySelectorAll('#triggers .trig.first').length,
+  route: window.HS.E.route,
+}));
+rec('1', 'the first Tab stop exists and is reachable', !!firstStop, `first stop = ${firstStop}`);
+rec('1', 'the first action a keyboard learner can take reaches a scene',
+  afterEnter.state === 'triggered',
+  `stop=${firstStop} → state=${afterEnter.state}`);
+rec('1', 'the first-visit accent is gone once a trigger is chosen',
+  afterEnter.firstAccents === 0, `${afterEnter.firstAccents} rows still accented`);
+await page.evaluate(() => { try { localStorage.clear(); } catch { /* fresh */ } });
+await page.reload({ waitUntil: 'networkidle' });
+await page.waitForTimeout(1000);
+
 /* ---- Task 1: is there something to click, and does it say what it is, in the
    first screen with no instruction? Proxy: the three triggers are visible,
    each has an accessible name AND a one-line subtitle, and each is a real
@@ -45,6 +70,11 @@ rec('1', 'every trigger has a name and a one-line "what happens"', t1.every((t) 
   t1.filter((t) => !(t.eager && t.hasSub)).map((t) => t.text).join(' | '));
 rec('1', 'triggers meet a 24px minimum target', t1.every((t) => t.h >= 24),
   t1.map((t) => Math.round(t.h)).join(','));
+/* The subtitle must name something that HAPPENS to you, in the same vocabulary as the
+   first-run tip, not the lesson's own name for itself. */
+rec('1', 'each trigger names the everyday event, not the lesson',
+  t1.every((t) => !/watch the|the body|how the/i.test(t.text)),
+  t1.map((t) => t.text.slice(0, 60)).join(' | '));
 
 /* ---- Task 5: does the unrevealed line read as "not yet", not "association"?
    Proxy: the ghost is (a) visually distinct from a revealed route by dash

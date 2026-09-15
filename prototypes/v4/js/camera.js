@@ -84,6 +84,12 @@ world.addEventListener('dblclick',e=>{
 });
 /* arrow keys pan while the canvas has focus */
 world.addEventListener('keydown',e=>{
+  /* Nothing chosen yet: the body is the FIRST tab stop on first paint, so Enter here is the
+     first action a keyboard learner can take. It opens the first trigger, so that action leads
+     somewhere instead of doing nothing. Once a scene is triggered the canvas keeps only panning. */
+  if((e.key==='Enter'||e.key===' ')&&HS.E.state!=='triggered'&&HS.TRIGGERS&&HS.TRIGGERS.length){
+    e.preventDefault(); HS.clickTrigger(HS.TRIGGERS[0].id); return;
+  }
   const d={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[e.key]; if(!d) return;
   e.preventDefault(); const s=scale(); vb.x+=d[0]*80/s; vb.y+=d[1]*80/s; cam.region=null; HS.updateView();
 });

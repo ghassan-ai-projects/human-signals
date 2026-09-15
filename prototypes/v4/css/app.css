@@ -54,6 +54,14 @@ button{font-family:inherit;color:inherit}
 .trig[aria-pressed="true"]{border-color:#2F5A68;background:rgba(124,203,255,.08)}
 .trig[aria-pressed="true"] .ti{background:var(--msg);color:#06202E}
 .trig.soon{opacity:.55}
+/* First visit, nothing chosen yet: a warm left edge marking the way in. Deliberately NOT
+   the .continue skin (that is the returning learner's Continue row and its blue is the
+   system's SELECTED-state vocabulary, so three rows wearing it would read as a lie), and
+   not a fill or border colour that implies selection. --warm reads as attention, not
+   state. Static, no motion. */
+.trig.first{box-shadow:inset 2px 0 0 var(--warm)}
+.trig.first:hover{box-shadow:inset 3px 0 0 var(--warm)}
+.trig.first[aria-pressed="true"]{box-shadow:inset 2px 0 0 var(--primary)}
 .divider{height:1px;background:var(--float-line);margin:12px 8px}
 .tree{list-style:none;margin:0;padding:0}
 .tree ul{list-style:none;margin:0;padding:0 0 0 18px}
@@ -384,6 +392,10 @@ button{font-family:inherit;color:inherit}
 .intro .org{animation:orgin .8s var(--ease) both;animation-delay:calc(var(--i,0) * 45ms + 250ms)}
 @keyframes orgin{from{opacity:0;translate:0 8px}}
 .rm .lab,.rm .hs,.rm .org.arrive .halo,.rm.intro #world,.rm.intro .org{animation:none}
+/* The floating cards and tips are new surfaces added after the original list, so they must
+   be named here by hand — .rm is an explicit selector list, not a global animation kill.
+   Without this, .tip (tipin .3s) and .card (tipin .18s) still animate under reduced motion. */
+.rm .tip,.rm .card,.rm .try,.rm #reflCard{animation:none}
 .ribbon{width:min(720px,calc(100vw - 300px))}
 @media (max-width:1500px){ .pbar .chip:not(.done){display:none} #bAll .lbl{display:none} }
 @media (max-width:1400px){ #bRead .lbl{display:none} }

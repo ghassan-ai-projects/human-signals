@@ -71,13 +71,22 @@ world.addEventListener('pointerleave',()=>{ HS.ov.hoverKey=null; HS.renderOverla
 world.addEventListener('click',e=>{ if(HS.cam.suppressClick) return; const g=e.target.closest('.org'); if(g) HS.onOrgClick(g.dataset.org); });
 
 /* ---------- triggers ---------- */
+/* `alias` names the everyday event in the learner's own vocabulary, so the row and the
+   first-run tip ("pick something that happens to you") use the same words. It is also
+   pushed into `syn` so search finds the scene by the thing that happened, not only by
+   the system's name. */
 HS.TRIGGERS=[
- {id:'stress',title:'Something stressful happens',syn:['stress','threat','fight or flight'],icon:'<path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z" fill="currentColor"/>'},
- {id:'meal',title:'You skip a meal',syn:['fasting','hunger','glucose'],icon:'<circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'},
- {id:'dark',title:'It gets dark',syn:['night','melatonin','sleep'],icon:'<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="currentColor"/>'}
+ {id:'stress',title:'Something stressful happens',alias:'an exam, a near miss, a fright',syn:['stress','threat','fight or flight','exam','fright','scare'],icon:'<path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z" fill="currentColor"/>'},
+ {id:'meal',title:'You skip a meal',alias:'you have not eaten for hours',syn:['fasting','hunger','glucose','skip a meal','not eaten'],icon:'<circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'},
+ {id:'dark',title:'It gets dark',alias:'the evening light fades',syn:['night','melatonin','sleep','evening','dusk'],icon:'<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="currentColor"/>'}
 ];
 HS.renderTriggers=function(){
-  $('#triggers').innerHTML=HS.TRIGGERS.map(t=>{ const S=HS.scenes[t.id]; return `<button class="trig${S?'':' soon'}" data-trigger="${t.id}" aria-pressed="false"><span class="ti"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">${t.icon}</svg></span><span>${t.title}<small>${S?S.trigger.sub:'Not in this concept'}</small></span></button>`; }).join('');
+  /* Nothing chosen yet: each row carries a quiet left-edge accent so the column reads as
+     *the* way in. It is an orientation cue on a static list — no count, no tick, no
+     milestone — and it is gone the moment any trigger is pressed. */
+  const fresh=HS.E.state!=='triggered';
+  $('#triggers').innerHTML=HS.TRIGGERS.map(t=>{ const S=HS.scenes[t.id];
+    return `<button class="trig${S?'':' soon'}${fresh&&S?' first':''}" data-trigger="${t.id}" aria-pressed="false"><span class="ti"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">${t.icon}</svg></span><span>${t.title}<small>${S?(t.alias||S.trigger.sub):'Not in this concept'}</small></span></button>`; }).join('');
 };
 /* Continue: the last pathway, with how much of it has been explored (quiet, no score) */
 HS.renderContinue=function(){
@@ -93,7 +102,15 @@ HS.renderSummary=function(){
   const d=HS.exportProgress(), v=Object.values(d.visited).reduce((a,x)=>a+x.length,0), r=Object.values(d.revealed).filter(Boolean).length, a=(HS.store.attempts||[]).length;
   $('#psum').textContent=v||r||a?`${v} steps visited · ${r} feedback ${r===1?'loop':'loops'} revealed · ${a} ${a===1?'answer':'answers'} checked`:'Nothing explored yet';
 };
-HS.syncTriggers=()=>document.querySelectorAll('[data-trigger]').forEach(b=>b.setAttribute('aria-pressed',HS.E.sceneId===b.dataset.trigger&&HS.E.state==='triggered'));
+/* The first-visit accent and the pressed state are driven from one place, so they cannot
+   drift apart: the accent is gone as soon as any trigger has been chosen. */
+HS.syncTriggers=function(){
+  const chosen=HS.E.state==='triggered';
+  document.querySelectorAll('[data-trigger]').forEach(b=>{
+    b.setAttribute('aria-pressed',HS.E.sceneId===b.dataset.trigger&&chosen);
+    b.classList.toggle('first',!chosen&&!b.classList.contains('soon'));
+  });
+};
 $('#triggers').addEventListener('click',e=>{ const b=e.target.closest('[data-trigger]'); if(b) HS.clickTrigger(b.dataset.trigger); });
 /* how the three stories connect: an orientation map generated from the cross-scene leads (never a progress board) */
 const CONNPOS={stress:[170,52],meal:[276,194],dark:[64,194]};

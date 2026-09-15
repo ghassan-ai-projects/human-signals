@@ -122,28 +122,71 @@ for (const w of WIDTHS) {
   }
 }
 
+/* ---------- 1b. the label ceiling DURING playback ----------
+   The paused audit above structurally cannot see the peak: pressing ▶ adds the travelling
+   pulse's own route name (engine.js getLabels) on top of the hotspot labels, which is what
+   takes stress:slow from 7 to 8. Any new always-on label has to fit under the cap in THIS
+   state, so it is measured here rather than inferred. */
+await page.setViewportSize({ width: 1440, height: 900 });
+for (const [scene, path] of PATHWAYS) {
+  const view = `play:${scene}:${path}`;
+  await page.evaluate(([s, p]) => window.HS.openPathway(s, p, false), [scene, path]);
+  await page.waitForTimeout(600);
+  const paused = await page.evaluate(() => document.querySelectorAll('#labels .lab').length);
+  await page.evaluate(() => {
+    const b = document.querySelector('#bPlay') || document.querySelector('[data-play]');
+    if (b) b.click();
+  });
+  let peak = paused, seen = 0;
+  for (let i = 0; i < 24; i++) {
+    await page.waitForTimeout(150);
+    const n = await page.evaluate(() => document.querySelectorAll('#labels .lab').length);
+    seen = Math.max(seen, n);
+  }
+  peak = Math.max(paused, seen);
+  await page.evaluate(() => window.HS.stopPlay && window.HS.stopPlay());
+  await page.waitForTimeout(120);
+  rec(view, 'labels ≤ 8 during playback (the real peak)', peak <= 8,
+    `paused=${paused} peak during play=${peak}`, peak);
+}
+
+/* ---------- 1c. an active route still has a visible name ----------
+   A route name with nowhere free is dropped rather than overlapped (overlay.js), so a
+   longer label can silently remove a route's name while every other check stays green:
+   the label count goes DOWN and overlaps stay 0. This is the check that catches it. */
+for (const [scene, path] of PATHWAYS) {
+  const view = `names:${scene}:${path}`;
+  await page.evaluate(([s, p]) => window.HS.openPathway(s, p, false), [scene, path]);
+  await page.waitForTimeout(700);
+  // walk one step in, which is when at least one route name is expected on the body
+  await page.evaluate(() => { const n = document.querySelector('#bNext'); if (n) n.click(); });
+  await page.waitForTimeout(450);
+  const r = await page.evaluate(() => {
+    const on = Object.entries(window.HS.rstate || {}).filter(([, v]) => v === 'on').map(([k]) => k);
+    const texts = [...document.querySelectorAll('#labels .lab')].map((e) => e.textContent.trim().toLowerCase());
+    const named = on.filter((id) => {
+      const rt = (window.HS.routeText && window.HS.routeText(id)) || '';
+      const first = rt.toLowerCase().split(/[·—-]/)[0].trim();
+      return first && texts.some((t) => t.includes(first));
+    });
+    return { on, named, level: window.HS.level() };
+  });
+  // only meaningful where a route name is expected at all (not body level of a hotspot scene)
+  const expectName = r.level !== 'body';
+  rec(view, 'every active route still has a visible name', !expectName || r.named.length === r.on.length || r.on.length === 0,
+    `level=${r.level} on=[${r.on}] named=[${r.named}]`);
+}
+
 /* ---------- 2. grayscale survival ---------- */
 await page.setViewportSize({ width: 1440, height: 900 });
 await page.evaluate(() => window.HS.openPathway('stress', 'slow', false));
 await page.waitForTimeout(700);
 
 const GRAY = () => {
-  /* Luminance spread of the route/hotspot/ghost marks after desaturation tells us
-     whether a distinction survives without hue. Routes live in #world, the pulse
-     and hotspot layer lives in #overlay, so both are read. */
-  const marks = [];
-  for (const root of ['#world', '#overlay']) {
-    const svg = document.querySelector(root);
-    if (!svg) continue;
-    for (const el of svg.querySelectorAll('path, circle, line, rect, ellipse')) {
-      const s = getComputedStyle(el);
-      const r = el.getBoundingClientRect();
-      if (r.width <= 1 || r.height <= 1) continue;
-      if (+s.opacity <= 0.08) continue;
-      if (!s.stroke || s.stroke === 'none') continue;
-      marks.push(el);
-    }
-  }
+  /* Whether the route STATES stay distinguishable without hue. Scoped to route paths and
+     tagged with their rstate, because the §10 requirement is that a learner can tell an
+     active route from a faint one from an unrevealed one in grayscale — a luminance spread
+     over every decorative mark in the scene does not test that and passes trivially. */
   const lum = (c) => {
     const m = c.match(/\d+(\.\d+)?/g);
     if (!m) return null;
@@ -151,20 +194,38 @@ const GRAY = () => {
     if (a === 0) return null;
     return 0.2126 * r + 0.7152 * g + 0.0722 * b;
   };
-  return marks.map((el) => ({
-    lum: lum(getComputedStyle(el).stroke || ''),
-    dash: getComputedStyle(el).strokeDasharray,
-    w: +getComputedStyle(el).strokeWidth.replace('px', '') || 0,
-    cls: el.getAttribute('class') || '',
-  })).filter((m) => m.lum != null);
+  const states = { on: [], faint: [], ghost: [] };
+  for (const el of document.querySelectorAll('#world path.route')) {
+    const id = el.getAttribute('data-route') || (el.id || '').replace(/^r-/, '');
+    const st = (window.HS.rstate || {})[id];
+    const s = getComputedStyle(el);
+    const r = el.getBoundingClientRect();
+    if (r.width <= 1 || r.height <= 1) continue;
+    const entry = { lum: lum(s.stroke || ''), dash: s.strokeDasharray, op: +s.opacity, w: +s.strokeWidth.replace('px', '') || 0 };
+    if (entry.lum != null && states[st]) states[st].push(entry);
+  }
+  return states;
 };
 
 const gray = await page.evaluate(GRAY);
-const lums = gray.map((m) => m.lum).filter((n) => n > 0);
-const spread = lums.length ? Math.max(...lums) - Math.min(...lums) : 0;
-const dashed = gray.filter((m) => m.dash && m.dash !== 'none' && m.dash !== '0px').length;
-rec('grayscale', 'route marks have luminance spread ≥ 30', spread >= 30, `spread=${Math.round(spread)}`, Math.round(spread));
-rec('grayscale', 'a dashed (feedback/ghost) distinction exists without hue', dashed > 0, `${dashed} dashed marks`, dashed);
+const avg = (a) => (a.length ? a.reduce((x, y) => x + y, 0) / a.length : null);
+const onL = avg(gray.on.map((m) => m.lum).filter((n) => n != null));
+const faintL = avg(gray.faint.map((m) => m.lum).filter((n) => n != null));
+const ghostL = avg(gray.ghost.map((m) => m.lum).filter((n) => n != null));
+/* In grayscale, "active vs faint" must be told apart by opacity/weight, and "unrevealed"
+   by its dash pattern. Assert the separations that the states actually rely on. */
+const faintOp = avg(gray.faint.map((m) => m.op));
+const onOp = avg(gray.on.map((m) => m.op));
+const ghostDash = gray.ghost.some((m) => m.dash && m.dash !== 'none');
+rec('grayscale', 'active vs faint routes separate by opacity without hue',
+  onOp != null && faintOp != null && onOp - faintOp >= 0.3,
+  `on op=${onOp && onOp.toFixed(2)} faint op=${faintOp && faintOp.toFixed(2)}`,
+  onOp != null && faintOp != null ? +(onOp - faintOp).toFixed(2) : null);
+rec('grayscale', 'the unrevealed route carries a dash distinction without hue', ghostDash,
+  `ghost marks=${gray.ghost.length} dashed=${gray.ghost.filter((m) => m.dash && m.dash !== 'none').length}`);
+rec('grayscale', 'the three route states are present and were actually sampled',
+  gray.on.length > 0 && gray.faint.length > 0 && gray.ghost.length > 0,
+  `on=${gray.on.length} faint=${gray.faint.length} ghost=${gray.ghost.length}`);
 
 /* ---------- 3. reduced-motion walk-through, all five pathways ---------- */
 await page.evaluate(() => {
@@ -174,15 +235,42 @@ for (const [scene, path] of PATHWAYS) {
   const view = `rm:${scene}:${path}`;
   await page.evaluate(([s, p]) => window.HS.openPathway(s, p, false), [scene, path]);
   await page.waitForTimeout(400);
+  /* Assert a REAL advance: the current step must move forward and the visited count must
+     grow. The previous version asserted `after >= before` on an empty selector, so it
+     could not fail and was not evidence of anything. */
   const played = await page.evaluate(async () => {
-    const before = document.querySelectorAll('#overlay .hot').length;
-    const next = document.querySelector('#bNext') || document.querySelector('[data-next]');
-    if (next) { next.click(); await new Promise((r) => setTimeout(r, 350)); }
-    return { before, after: document.querySelectorAll('#overlay .hot').length };
+    const cur = () => (window.HS.E ? window.HS.E.cur : -1);
+    const visited = () => document.querySelectorAll('#labels .hs.visited, #labels .hs.done').length;
+    const before = { cur: cur(), visited: visited() };
+    const next = document.querySelector('#bNext') || document.querySelector('[data-next]')
+      || document.querySelector('#bPlay');   // under RM #bPlay's label is "Next step"
+    if (next) { next.click(); await new Promise((r) => setTimeout(r, 400)); }
+    return { before, after: { cur: cur(), visited: visited() } };
   });
-  rec(view, 'reduced motion: next step advances one step', played.after >= played.before,
-    `hotspots ${played.before}→${played.after}`);
+  rec(view, 'reduced motion: Next step really advances one step',
+    played.after.cur > played.before.cur,
+    `cur ${played.before.cur}→${played.after.cur} (visited ${played.before.visited}→${played.after.visited})`);
 }
+
+/* Under reduced motion, nothing on stage may animate. Two-pronged on purpose: checking
+   animationName alone passes on #sheet, whose motion is a transition, so a
+   transition-only omission would slip through. */
+const rmAnim = await page.evaluate(() => {
+  const sel = ['#world', '#overlay', '#sheet', '.card', '.try', '.tip', '.lab', '.hs',
+    '.route', '.route.ghostin', '.toolbar', '.panel', '.pbar', '#bottom', '#night', '.atmos'];
+  const bad = [];
+  for (const s of sel) {
+    for (const el of document.querySelectorAll(s)) {
+      const cs = getComputedStyle(el);
+      const dur = Math.max(...cs.transitionDuration.split(',').map((d) => parseFloat(d) || 0));
+      if (cs.animationName !== 'none') bad.push(`${s}: animation ${cs.animationName}`);
+      if (dur > 0.13) bad.push(`${s}: transition ${dur}s`);
+    }
+  }
+  return bad;
+});
+rec('rm:stage', 'nothing on stage animates or transitions under reduced motion',
+  rmAnim.length === 0, rmAnim.slice(0, 6).join(' | ') || 'clean');
 await page.evaluate(() => { window.HS.userRM = false; window.HS.applyRM(); });
 
 /* ---------- 4. routes and hotspots are the most salient marks (squint proxy) ---------- */
