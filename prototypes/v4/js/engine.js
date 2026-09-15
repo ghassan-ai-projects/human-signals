@@ -30,7 +30,7 @@ function trigger(id){
   const cap=$('#caption'); cap.innerHTML=`<b>${S.trigger.title}</b><span>${S.trigger.caption}</span>`; cap.classList.remove('fade'); void cap.offsetWidth; cap.classList.add('fade');
   HS.light.lit=new Set(S.trigger.lights); HS.applyOrgs(); HS.say(`${S.trigger.title}. ${S.trigger.caption}.`);
   HS.setAtmos(S.trigger.atmosphere);
-  const at=HS.wc(S.trigger.lights[0]); HS.ripple(at,'#8FDCFF',{dur:1500,r0:18,r1:120,w:1.5}); setTimeout(()=>HS.ripple(at,'#8FDCFF',{dur:1500,r0:18,r1:120,w:1}),260);
+  if(!HS.RM()){ const at=HS.wc(S.trigger.lights[0]); HS.ripple(at,'#8FDCFF',{dur:1500,r0:18,r1:120,w:1.5}); setTimeout(()=>{ if(!HS.RM()&&E.sceneId===S.id) HS.ripple(at,'#8FDCFF',{dur:1500,r0:18,r1:120,w:1}); },260); }
 }
 HS.clickTrigger=async function(id){
   if(!HS.scenes[id]){ HS.toast('That trigger uses the same scene template. It is not built in this concept.'); return; }
@@ -209,13 +209,13 @@ function openTry(){
   const p=P(); if(!p||!p.gate||E.tryMode||E.whatIf) return; const g=p.gate, tr=g.try;
   const q=typeof tr.q==='string'?tr.q:(tr.q[HS.level()]||tr.q.organ);   // wording follows the zoom level it was opened at
   stopPlay(); HS.closeCards(); HS.clearTip(g.tipKey); E.tryMode=true; E.picks.clear(); E.tryCtx={exposed:isRevealed(),why:false};
-  HS.camTo(tr.region||p.region,600);
   tr.candidates.forEach(k=>$('#o-'+k).classList.add('cand'));
   HS.light.dim=new Set(tr.candidates); HS.applyOrgs();
   const box=document.createElement('div'); box.className='try float'; box.id='tryCard'; box.setAttribute('role','dialog'); box.setAttribute('aria-label','Try it');
-  box.style.left=Math.min(app.clientWidth-500,Math.max(340,app.clientWidth*.56))+'px'; box.style.top='110px';
+  box.style.right='16px'; box.style.top='96px';   // docked right; the camera frames the scene in the space beside it
   box.innerHTML=`<div class="k">Try it? <button class="why" id="tryWhy">ⓘ Why?</button></div><h5>${q}</h5><p>${tr.hint} Or choose here:</p><div class="opts" role="group" aria-label="Candidates, head to pelvis">${tr.candidates.map(k=>`<button class="opt" aria-pressed="false" data-pick="${k}">${HS.orgName(k)}</button>`).join('')}</div><div id="tryWhyTxt"></div><div class="sr" id="tryPicks" aria-live="polite">Nothing selected yet</div><div id="tryRes"></div><div class="acts"><button class="btn t" id="tryShow">Show me</button><span><button class="btn t" id="tryClose">Close</button> <button class="btn p" id="tryCheck" disabled>Check</button></span></div>`;
   $('#cards').appendChild(box);
+  HS.camTo(tr.region||p.region,600);
   $('#tryWhy').onclick=()=>{ if($('#tryCheck')) E.tryCtx.why=true; $('#tryWhyTxt').innerHTML=`<div class="whytxt">${tr.why}</div>`; $('#tryWhy').remove(); };
   $('#tryShow').onclick=()=>checkTry(true); $('#tryClose').onclick=closeTry; $('#tryCheck').onclick=()=>checkTry(false);
   box.querySelector('.opts').addEventListener('click',e=>{ const b=e.target.closest('[data-pick]'); if(b&&!b.disabled){ togglePick(b.dataset.pick); HS.renderOverlay(); } });
@@ -281,11 +281,11 @@ function openWhatIf(){
   stopPlay(); closeTry(); closeCell(); HS.closeCards(); E.whatIf='predict';
   $('#thought').hidden=false; (w.fade||[]).forEach(id=>HS.setRoute(id,'faint'));
   if(w.atmos){ HS.setAtmos(w.atmos); HS.setNight(0); }
-  HS.camTo(w.region||p.region,600);
   const box=document.createElement('div'); box.className='try float'; box.id='wiCard'; box.setAttribute('role','dialog'); box.setAttribute('aria-label','What if?');
-  box.style.left=Math.min(app.clientWidth-500,Math.max(340,app.clientWidth*.56))+'px'; box.style.top='120px';
+  box.style.right='16px'; box.style.top='96px';
   box.innerHTML=`<div class="k">What if?</div><h5>${w.q}</h5><p>${w.p}</p><div class="opts" role="radiogroup" aria-label="Your prediction">${w.options.map(o=>`<button class="opt" role="radio" aria-checked="false" data-o="${o[0]}">${o[1]}</button>`).join('')}</div><div id="wiRes"></div><div class="acts"><button class="btn t" id="wiRestore">Restore</button><button class="btn p" id="wiGo" disabled>See what happens</button></div>`;
   $('#cards').appendChild(box);
+  HS.camTo(w.region||p.region,600);
   box.querySelector('.opts').addEventListener('click',e=>{ const b=e.target.closest('.opt'); if(!b||b.disabled) return; box.querySelectorAll('.opt').forEach(o=>o.setAttribute('aria-checked',o===b)); $('#wiGo').disabled=false; });
   $('#wiGo').onclick=()=>runWhatIf(box.querySelector('.opt[aria-checked="true"]').dataset.o);
   $('#wiRestore').onclick=()=>restoreWhatIf(true);

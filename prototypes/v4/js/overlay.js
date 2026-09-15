@@ -122,6 +122,7 @@ HS.renderOverlay=function(){
   const hk=HS.ov.hoverKey;
   if(hk && !items.some(i=>i.org===hk)) items.push({key:'hover',org:hk,text:HS.orgName(hk),anchor:HS.wc(hk),dx:24,dy:-24,cls:'hover'});
   const seen=new Set(), placed=[], hots=HS.getHotspots();
+  const cardEl=$('#tryCard')||$('#wiCard');
   const pn=$('#panel'), panelR=pn.classList.contains('closed')?0:pn.offsetLeft+pn.offsetWidth+8, panelB=pn.offsetTop+pn.offsetHeight;   // labels never sit under the open panel
   hots.forEach(h=>{ const [x,y]=project(h.anchor[0],h.anchor[1]); placed.push({x:x+(h.dx||0)-17,y:y+(h.dy||0)-17,w:34,h:34}); });
   items.forEach(it=>{
@@ -135,6 +136,7 @@ HS.renderOverlay=function(){
     let lx=it.dx<0?ax+it.dx-w:ax+it.dx, ly=ay+it.dy-h/2;
     lx=Math.max(8,Math.min(W-w-8,lx)); ly=Math.max(74,Math.min(H-h-8,ly));
     if(panelR&&lx<panelR&&ly<panelB) lx=panelR;
+    if(cardEl&&lx+w>cardEl.offsetLeft-8&&ly<cardEl.offsetTop+cardEl.offsetHeight) lx=Math.max(panelR||8,cardEl.offsetLeft-8-w);   // nor under a docked Try it? / What if? card
     for(let n=0;n<14;n++){ const hit=placed.find(p=>lx<p.x+p.w+6&&lx+w+6>p.x&&ly<p.y+p.h+5&&ly+h+5>p.y); if(!hit) break; ly=it.dy<0?hit.y-h-5:hit.y+hit.h+5; if(ly<74||ly>H-h-8){ ly=Math.max(74,Math.min(H-h-8,ly)); lx=it.dx<0?hit.x-w-8:hit.x+hit.w+8; } }
     placed.push({x:lx,y:ly,w,h});
     el.style.transform=`translate(${lx.toFixed(1)}px,${ly.toFixed(1)}px)`;

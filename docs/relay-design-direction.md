@@ -668,3 +668,22 @@ These are worth designing only once the flagship scene has been tested.
 - **Everyday-question entry points.** Beyond triggers, plain questions open a scene at the right moment: "Why does my heart pound before an exam?", "Why am I hungry at night?", "Why can't I sleep after screens?" Each is authored to a reviewed scene, never a free-text answer.
 - **Compare by overlay.** Two routes on one body at once (e.g. adrenaline vs cortisol), each in its own route style, with a shared time ribbon showing their different timescales. Replaces the side-by-side compare in *More*.
 - **Share a moment.** A link that restores the scene, zoom level (and therefore depth), time-ribbon position, revealed state and selection, paused. This is useful for educators and study groups (REQ-017 extension).
+
+---
+
+## 14. What the interaction prototype changed (September 2026)
+
+The Phase 2 prototype ([`prototypes/v4/`](../prototypes/v4/)) builds all three triggers. Building them surfaced ten changes to this direction. Each needs owner confirmation; details, evidence and review lists are in the [v4 prototype review note](v4-prototype-review.md).
+
+| # | Change |
+|---|---|
+| P1 | A pathway may carry its own time ribbon and signs |
+| P2 | Gated feedback may leave the ribbon's end open when it does not cause recovery |
+| P3 | Leads-to chips (from §13) join pathways on the same body |
+| P4 | Links reopen a moment, paused (from §13) |
+| P5 | Try it? lists candidates as chips, synced with the body |
+| P6 | One tip at a time; zoom tips leave with their level |
+| P7 | Stage atmosphere per trigger; the dark scene's stage follows the ribbon |
+| P8 | Structure list adds muscles, SCN, pineal gland, the eye in the cutaway, and pancreatic islets |
+| P9 | More sheet: Why? is the trail up to the hotspot; evidence is a claim line with review status |
+| P10 | Try it? and What if? cards dock right; the camera frames the scene beside them |
