@@ -150,6 +150,6 @@ HS.focusHotspot=id=>{ const b=hsEls.get(id); if(b) b.focus(); };
 labelsEl.addEventListener('click',e=>{
   const lab=e.target.closest('.lab'); if(!lab) return;
   if(e.target.closest('.i')) HS.showInfoCard(lab._it.info,e.target.closest('.i'));
-  if(e.target.closest('.cell')) HS.openCell();
+  if(e.target.closest('.cell')) HS.openCell(lab._it.cell);
 });
 })(window.HS);

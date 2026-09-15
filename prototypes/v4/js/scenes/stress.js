@@ -31,7 +31,7 @@ HS.scenes.stress={
     {org:'hyp',num:1,dx:-28,dy:-14,seg:null,t:2,region:'brain',one:'Hypothalamus releases CRH',lab:{body:'Hypothalamus',organ:'CRH',structure:'Releases CRH into portal blood'},ldx:34,ldy:-18},
     {org:'pit',num:2,dx:-28,dy:16,seg:'crh',t:2,region:'brain',one:'Pituitary releases ACTH',lab:{body:'Pituitary',organ:'ACTH',structure:'Anterior lobe releases ACTH'},ldx:34,ldy:20},
     {org:'adr',num:3,dx:-28,dy:24,seg:'acth',t:2,region:'adr',one:'Adrenal cortex releases cortisol',lab:{body:'Adrenal glands',organ:'cortisol',structure:'Cortex · cortisol'},ldx:-40,ldy:-30},
-    {org:'liver',num:4,dx:-10,dy:-34,seg:'cort',t:3,region:'liver',one:'Liver makes glucose available',lab:{body:'Liver',organ:'glucose',structure:'Liver cells make glucose'},ldx:-70,ldy:-4,cell:true}],
+    {org:'liver',num:4,dx:-10,dy:-34,seg:'cort',t:3,region:'liver',one:'Liver makes glucose available',lab:{body:'Liver',organ:'glucose',structure:'Liver cells make glucose'},ldx:-70,ldy:-4,cell:'liverCort'}],
    enterTip:{key:'numbers',text:'Numbers show the order. Press ▶ to watch the signal travel, or click any number.',pos:{right:16,bottom:214}},
    afterPlay:{whenHidden:true,time:3,tip:{key:'ghost',text:'Something acts back on the brain. Open Try it? on the dashed line.',pos:{left:340,top:150}}},
    gate:{
@@ -39,6 +39,7 @@ HS.scenes.stress={
     aria:'Try it: something acts back here',ariaRevealed:'Feedback: cortisol acts back on the pituitary and hypothalamus, revealed',dotAria:'Try it: what acts back?',
     calmBlocked:'The body can’t calm down until something acts back. Open Try it? on the dashed line.',
     calmButton:'Watch the body calm down',
+    afterTip:{key:'whatif',text:'Route explored. Try What if? in the pathway bar to test the brake.',pos:{right:16,bottom:214}},
     try:{
      region:'hpa',q:'Where does cortisol act to slow its own release?',hint:'Tap all that apply on the body.',
      candidates:['hyp','pit','adr','liver'],answer:['hyp','pit'],
@@ -95,7 +96,7 @@ HS.scenes.stress={
   int:{t:'Intestines',body:'Not traced in this scene.',organ:'Not traced in this scene.',structure:'Not traced in this scene.'}
  },
 
- cell:{
+ cells:{liverCort:{
   aria:'Liver cell: how cortisol works',title:'Inside a liver cell',sub:'Cell · mechanism · illustrative draft',
   svg:`<rect x="0" y="0" width="70" height="214" fill="#0B1E28"/><text x="35" y="20" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="9" fill="#5F8A96">BLOOD</text>
     <rect x="78" y="14" width="288" height="186" rx="40" fill="#1A2A2F" stroke="#7B4A3E" stroke-width="3"/>
@@ -116,7 +117,7 @@ HS.scenes.stress={
   end:[250,112],
   steps:['Cortisol from the blood crosses the cell membrane.','Inside the cell, it binds its receptor.','Together they move into the nucleus and change which genes are active.','The cell makes more glucose-producing enzymes, so more glucose is released.'],
   say:'Inside a liver cell. Cortisol crosses the membrane, binds its receptor, moves into the nucleus and changes gene activity, so more glucose is released.'
- },
+ }},
 
  search:[
   {t:'Fast route',k:'Pathway',syn:['sympathetic','adrenal medulla','nerves','fight or flight'],go:{pathway:['stress','fast']}},

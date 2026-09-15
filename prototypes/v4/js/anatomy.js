@@ -22,6 +22,9 @@ function bodyPath(){
 }
 
 const ORGS={
+ muscle:{name:'Muscles',fill:'#6E3E4A',region:'muscle',
+  parts:[{d:'M 386 330 C 400 328 412 352 414 390 C 416 424 408 450 400 456 C 390 450 382 420 382 390 C 382 356 380 334 386 330 Z',c:[398,392],r:[16,62]},{d:'M 134 330 C 120 328 108 352 106 390 C 104 424 112 450 120 456 C 130 450 138 420 138 390 C 138 356 140 334 134 330 Z',c:[122,392],r:[16,62]},{d:'M 282 722 C 300 712 348 714 358 732 C 364 752 362 772 358 780 L 286 780 C 280 764 278 740 282 722 Z',c:[320,752],r:[38,30]},{d:'M 238 722 C 220 712 172 714 162 732 C 156 752 158 772 162 780 L 234 780 C 240 764 242 740 238 722 Z',c:[200,752],r:[38,30]}],
+  detail:'<path d="M 392 344 C 398 380 400 420 398 450"/><path d="M 128 344 C 122 380 120 420 122 450"/><path d="M 300 728 C 314 746 322 764 326 780"/><path d="M 220 728 C 206 746 198 764 194 780"/>'},
  int:{name:'Intestines',fill:'#4C3C36',
   parts:[{d:'M 194 582 C 192 558 222 552 260 554 C 298 552 328 558 326 582 C 334 614 336 650 326 680 C 318 700 290 706 260 706 C 230 706 202 700 194 680 C 184 650 186 614 194 582 Z',c:[260,630],r:[68,72]}],
   detail:'<path d="M 206 680 C 198 640 198 600 208 580 C 226 566 294 566 312 580 C 322 600 322 640 314 680" stroke-width="4" stroke-opacity=".28"/><path d="M 226 602 C 222 590 240 584 248 594 C 254 604 270 604 274 594 C 280 584 298 590 294 604 C 290 616 272 614 266 624 C 260 634 244 632 238 622 C 232 612 230 610 226 602 Z"/><path d="M 222 654 C 218 640 236 634 246 644 C 254 652 268 652 274 644 C 284 634 302 640 298 654 C 294 668 276 668 268 676 C 260 684 244 682 236 674 C 228 666 226 664 222 654 Z"/>'},
@@ -52,14 +55,15 @@ const ORGS={
   parts:[{d:'M 218 72 C 218 48 236 40 260 40 C 284 40 302 48 302 72 C 302 88 294 96 282 98 L 238 98 C 226 96 218 88 218 72 Z',c:[260,69],r:[42,29]}],
   detail:'<path d="M 260 42 L 260 96"/><path d="M 228 62 C 236 54 244 62 250 54"/><path d="M 292 62 C 284 54 276 62 270 54"/><path d="M 226 82 C 236 76 244 84 252 78"/><path d="M 294 82 C 284 76 276 84 268 78"/>'}
 };
-const ORDER=['int','lungs','heart','kid','stom','panc','liver','adr','thy','brain'];
+const ORDER=['muscle','int','lungs','heart','kid','stom','panc','liver','adr','thy','brain'];
 const INSET={
  hyp:{name:'Hypothalamus',c:[102,174],r:6.5,region:'brain'},
  pit:{name:'Pituitary',c:[95,199],r:6.2,region:'brain'},
  scn:{name:'Body clock (SCN)',c:[86,171],r:4.2,region:'brain'},
  pineal:{name:'Pineal gland',c:[141,165],r:4.6,region:'brain'}
 };
-const REG={body:{x:0,y:30,w:640,h:750},head:{x:292,y:30,w:120,h:110},brain:{x:14,y:52,w:196,h:208},pit:{x:62,y:170,w:70,h:56},adr:{x:262,y:492,w:74,h:54},adrClose:{x:281,y:503,w:38,h:32},liver:{x:244,y:418,w:180,h:100},heart:{x:320,y:334,w:94,h:106},hpa:{x:0,y:50,w:460,h:520},fast:{x:150,y:40,w:460,h:560}};
+const REG={body:{x:0,y:30,w:640,h:750},head:{x:292,y:30,w:120,h:110},brain:{x:14,y:52,w:196,h:208},pit:{x:62,y:170,w:70,h:56},adr:{x:262,y:492,w:74,h:54},adrClose:{x:281,y:503,w:38,h:32},liver:{x:244,y:418,w:180,h:100},heart:{x:320,y:334,w:94,h:106},hpa:{x:0,y:50,w:460,h:520},fast:{x:150,y:40,w:460,h:560},
+ panc:{x:318,y:480,w:136,h:72},pancClose:{x:356,y:504,w:44,h:34},muscle:{x:430,y:316,w:120,h:160},int:{x:262,y:540,w:176,h:180},meal:{x:190,y:30,w:390,h:560},fed:{x:200,y:300,w:380,h:430}};
 
 HS.ORGS=ORGS; HS.INSET=INSET; HS.REG=REG; HS.bodyPath=bodyPath; HS.darken=darken; HS.lighten=lighten;
 HS.wc=(key,i=0)=> INSET[key]?INSET[key].c : [ORGS[key].parts[i].c[0]+90, ORGS[key].parts[i].c[1]];
@@ -100,6 +104,9 @@ HS.buildWorld=function(){
     o.parts.forEach((p,i)=>{ s+=`<path class="org-shape" d="${p.d}" fill="url(#gr-${k})"/><path d="${p.d}" fill="url(#sheen)" pointer-events="none"/><path d="${p.d}" fill="none" stroke="${darken(o.fill,.6)}" stroke-width="3" stroke-opacity=".4" clip-path="url(#cl-${k}${i})" pointer-events="none"/>`; });
     if(o.detail) s+=`<g class="detail" fill="none" stroke="${darken(o.fill,.55)}" stroke-width="1" stroke-linecap="round" stroke-opacity=".75" pointer-events="none">${o.detail}</g>`;
     s+=`</g>`;
+    if(k==='panc'){
+      s+=`<g id="pancLod" class="lod" opacity="0" pointer-events="none">${[[250,527],[286,522],[318,512],[344,502]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="3.8" fill="#D98E6C" stroke="#F2B894" stroke-width=".5"/><circle cx="${x}" cy="${y}" r="2.1" fill="#8FD3AE"/>`).join('')}</g>`;
+    }
     if(k==='adr'){
       s+=`<g id="adrLod" class="lod" opacity="0" pointer-events="none">`;
       o.parts.forEach(p=>{ s+=`<path d="${p.d}" fill="#C8944C"/><path d="${p.d}" fill="none" stroke="#E8B872" stroke-opacity=".4" stroke-dasharray="1.5 3" transform="translate(${p.c[0]} ${p.c[1]+1}) scale(.8) translate(${-p.c[0]} ${-p.c[1]})" class="cord"/><path d="${p.d}" fill="#6E3C2C" transform="translate(${p.c[0]} ${p.c[1]+2}) scale(.52) translate(${-p.c[0]} ${-p.c[1]})"/><path d="${p.d}" fill="url(#sheen)"/>`; });
@@ -136,7 +143,7 @@ HS.buildWorld=function(){
 
 /* level of detail: cross-fade detail sets with zoom, and name structures when framed */
 const fade=(z,a,b)=>Math.max(0,Math.min(1,(z-a)/(b-a))).toFixed(2);
-HS.updateLod=function(z){ const a=$('#adrLod'), p=$('#pitLod'); if(a) a.setAttribute('opacity',fade(z,2.8,4.6)); if(p) p.setAttribute('opacity',fade(z,4.4,6.8)); };
+HS.updateLod=function(z){ const a=$('#adrLod'), p=$('#pitLod'), n=$('#pancLod'); if(a) a.setAttribute('opacity',fade(z,2.8,4.6)); if(p) p.setAttribute('opacity',fade(z,4.4,6.8)); if(n) n.setAttribute('opacity',fade(z,2.6,4.4)); };
 const near=(c,x,y,d)=>Math.abs(c[0]-x)<d&&Math.abs(c[1]-y)<d;
 HS.lodLabels=function(L){
   if(L!=='structure') return [];
@@ -147,6 +154,9 @@ HS.lodLabels=function(L){
   if(near(c,96,199,26)) return [
     {key:'antlobe',org:'pit',text:'Anterior lobe · ACTH',anchor:[91.5,202],dx:-26,dy:22,info:'pit'},
     {key:'postlobe',text:'Posterior lobe',anchor:[100.5,196],dx:24,dy:-20,info:'pit'}];
+  if(near(c,378,520,34)) return [
+    {key:'alpha',org:'panc',text:'Islet · alpha cells make glucagon',anchor:[373,519],dx:-30,dy:-26,info:'panc'},
+    {key:'beta',text:'Beta cells make insulin',anchor:[376,522],dx:34,dy:28,info:'panc'}];
   return [];
 };
 })(window.HS);

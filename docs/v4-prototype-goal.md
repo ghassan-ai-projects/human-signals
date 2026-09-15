@@ -39,6 +39,7 @@ Lives in: [`prototypes/v4/`](../prototypes/v4/) — plain HTML, CSS and JS, no b
 | 0 | Done | Docs, style frames and prototype in the repo |
 | 1 | Done | Engine plays any scene from data; stress scene unchanged |
 | 2 | Done | New silhouette (separated arms, hands, legs), organ form ramps with inner shadow and detail lines, skeleton hints, airway, sympathetic chain beads, sagittal brain cutaway with thalamus, cerebellum, optic nerve, SCN and pineal, pituitary lobes at close-up, lit halos, route draw-on, pulse trail, arrival ripples, trigger ripple, stage atmosphere; off-screen labels no longer pin to the edges |
+| 3 | Done | "You skip a meal": Between meals (glucagon → liver → glucose to brain) and After a meal (gut → insulin → liver and muscles), each with its own time ribbon, signs, glucose feedback ghost and Try it?; What if? the liver couldn't answer glucagon; liver-cell (glucagon stays outside) and muscle-cell (insulin moves transporters) insets; pancreatic islets with alpha and beta cells at close-up; muscles added to the anatomy. Engine: per-pathway ribbons and signs, a cell per hotspot, after-reveal tips, one system open at a time in the tree, scene switch clears tips; fixed the app frame shifting when the tree scrolled |
 
 ## Out of scope (named, so they are not silently dropped)
 

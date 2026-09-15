@@ -8,15 +8,17 @@ const P=HS.pathway=()=>E.scene&&E.route?E.scene.pathways[E.route]:null;
 const key=(r=E.route)=>E.sceneId+':'+r;
 const vis=HS.visitedOf=(r=E.route)=>visited[key(r)]||(visited[key(r)]=new Set());
 const isRevealed=HS.isRevealed=(r=E.route)=>!!revealed[key(r)];
-const lastT=()=>E.scene.time.length-1;
+const TL=()=>{ const p=P(); return (p&&p.time)||E.scene.time; };   // a pathway may carry its own ribbon
+const lastT=()=>TL().length-1;
+const signOn=sg=>sg.on.includes(E.tIdx)&&(!sg.paths||sg.paths.includes(E.route));
 
 /* ---------- scenes & triggers ---------- */
 function loadScene(id){
   if(E.sceneId===id) return;
   if(E.sceneId) leave(false);
-  const S=HS.scenes[id]; E.scene=S; E.sceneId=id;
+  const S=HS.scenes[id]; E.scene=S; E.sceneId=id; $('#tips').innerHTML='';
   Object.assign(HS.REG,S.regions||{});
-  HS.buildRoutes(S.routes); HS.buildSigns(S.signs); buildRibbon(); renderToggle();
+  HS.buildRoutes(S.routes); HS.buildSigns(S.signs); E.timeRef=null; renderToggle();
 }
 function trigger(id){
   loadScene(id); if(E.state==='triggered') return;
@@ -38,21 +40,21 @@ function leave(cam){
   $('#bottom').classList.add('hidden'); $('#caption').innerHTML='';
   Object.keys(HS.rstate).forEach(id=>HS.setRoute(id,'hide'));
   HS.light.lit=new Set(); HS.light.dim=null; HS.applyOrgs();
-  setTime(0); HS.setLayer('nervous',false); HS.closeRead(false); HS.setAtmos(null);
+  setTime(0); applySigns(); E.timeRef=null; HS.setLayer('nervous',false); HS.closeRead(false); HS.setAtmos(null);
   if(cam) HS.camTo('body',700);
 }
 HS.leave=()=>leave(true);
 
 /* ---------- time ribbon ---------- */
 function buildRibbon(){
-  const T=E.scene.time, n=T.length-1;
+  const T=TL(), n=T.length-1; E.timeRef=T;
   $('#rbWays').innerHTML=T.map((t,i)=>`<button class="rb-way" style="left:${i/n*100}%" aria-label="Go to ${t.w}" tabindex="-1" data-t="${i}"></button>`).join('');
   $('#rbWords').innerHTML=T.map((t,i)=>`<span style="left:${i/n*100}%">${t.w}</span>`).join('');
   $('#rbHandle').setAttribute('aria-valuemax',n);
 }
 function setTime(i,user){
-  if(!E.scene) return;
-  const T=E.scene.time, last=lastT(), p=P();
+  if(!E.scene||!TL()) return;
+  const T=TL(), last=lastT(), p=P();
   if(i===last && E.whatIf){ i=last-1; if(user) HS.toast(p.whatIf.holdToast); }
   if(i===last && p && p.gate && !isRevealed()){ i=last-1; if(user) HS.toast(p.gate.calmBlocked); }
   E.tIdx=i;
@@ -75,7 +77,7 @@ HS.setTime=setTime;
   $('#rbWays').addEventListener('click',e=>{ const b=e.target.closest('[data-t]'); if(b){ stopPlay(); setTime(+b.dataset.t,true); } });
   h.addEventListener('keydown',e=>{ if(e.key==='ArrowRight'||e.key==='ArrowUp'){ e.preventDefault(); stopPlay(); setTime(Math.min(lastT(),E.tIdx+1),true); } if(e.key==='ArrowLeft'||e.key==='ArrowDown'){ e.preventDefault(); stopPlay(); setTime(Math.max(0,E.tIdx-1),true); } });
 })();
-function applySigns(){ if(!E.scene) return; const active=E.state==='triggered'; E.scene.signs.forEach(sg=>HS.setSign(sg,active&&sg.on.includes(E.tIdx),E.tIdx)); }
+function applySigns(){ if(!E.scene) return; const active=E.state==='triggered'; E.scene.signs.forEach(sg=>HS.setSign(sg,active&&signOn(sg),E.tIdx)); }
 
 /* ---------- what the overlay shows ---------- */
 HS.getLabels=function(){
@@ -88,17 +90,17 @@ HS.getLabels=function(){
   const S=E.scene, p=P(), T=E.tIdx;
   if(E.whatIf==='outcome') p.whatIf.badges.forEach((b,i)=>out.push({key:'wi-'+i,text:b.text,cls:'badge',anchor:HS.wc(b.org),dx:b.dx,dy:b.dy}));
   if(E.whatIf){ const b=p.whatIf.blockLabel; out.push({key:'wi-block',text:b.text,cls:'badge',anchor:HS.ptOn(b.route,b.t),dx:b.dx,dy:b.dy,noLeader:true}); }
-  if(E.cur>=0){ const h=p.hots[E.cur]; out.push({key:'one',org:h.org,text:h.one,cls:'one',anchor:HS.wc(h.org),dx:h.ldx,dy:h.ldy,info:h.org,cell:h.cell&&L!=='body'}); }
+  if(E.cur>=0){ const h=p.hots[E.cur]; out.push({key:'one',org:h.org,text:h.one,cls:'one',anchor:HS.wc(h.org),dx:h.ldx,dy:h.ldy,info:h.org,cell:L!=='body'&&h.cell}); }
   HS.lodLabels(L).forEach(l=>out.push(l));
   const pr=HS.pulse.on&&S.routes[HS.pulse.route];
   if(pr&&pr.label) out.push({key:'rl-'+HS.pulse.route,text:pr.label,cls:'sig',anchor:HS.ptOn(HS.pulse.route,pr.at),dx:pr.dx,dy:pr.dy,noLeader:true});
   else if(L!=='body'){ p.draw.concat(p.gate&&isRevealed()?p.gate.labelRoutes:[]).forEach(id=>{ const r=S.routes[id]; if(HS.rstate[id]==='on'&&r.label) out.push({key:'rl-'+id,text:r.label,cls:'sig',anchor:HS.ptOn(id,r.at),dx:r.dx,dy:r.dy,noLeader:true}); }); }
   if(L==='body'){
     const has=k=>out.some(o=>o.org===k);
-    S.signs.forEach(sg=>{ const lab=sg.label; if(!lab||!sg.on.includes(T)) return; if(lab.org&&!lab.always&&has(lab.org)) return;
+    S.signs.forEach(sg=>{ const lab=sg.label; if(!lab||!signOn(sg)) return; if(lab.org&&!lab.always&&has(lab.org)) return;
       out.push({key:'s-'+sg.id,org:lab.org,text:typeof lab.text==='function'?lab.text(T):lab.text,anchor:lab.anchor||HS.wc(lab.org),dx:lab.dx,dy:lab.dy,info:lab.info}); });
   }
-  p.hots.forEach((h,i)=>{ if(i===E.cur||out.some(o=>o.org===h.org)) return; out.push({key:'h-'+h.org,org:h.org,text:h.lab[L],cls:L==='organ'?'sig':'',anchor:HS.wc(h.org),dx:h.ldx,dy:h.ldy,info:h.org,cell:h.cell&&L==='structure'}); });
+  p.hots.forEach((h,i)=>{ if(i===E.cur||out.some(o=>o.org===h.org)) return; out.push({key:'h-'+h.org,org:h.org,text:h.lab[L],cls:L==='organ'?'sig':'',anchor:HS.wc(h.org),dx:h.ldx,dy:h.ldy,info:h.org,cell:L==='structure'&&h.cell}); });
   return out.slice(0,8);
 };
 HS.getHotspots=function(){
@@ -140,6 +142,7 @@ HS.setPlayUI=setPlayUI;
 async function enterPathway(r,autoplay){
   const S=E.scene; stopPlay(); closeTry(); closeCell(); restoreWhatIf(false);
   E.route=r; E.cur=-1; const p=S.pathways[r];
+  if(E.timeRef!==TL()){ buildRibbon(); setTime(0); }
   if(p.minTime&&E.tIdx<p.minTime) setTime(p.minTime);
   $('#pName').textContent=p.name; $('#timeChip').textContent=p.chip;
   document.querySelectorAll('#seg [data-route]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.route===r));
@@ -225,7 +228,7 @@ async function checkTry(show){
   $('#tryRes').innerHTML=`<div class="res ${fb.tone}"><b>${fb.head}</b>${fb.txt}</div><div class="rec">${rec}</div>`;
   if($('#tryCheck')) $('#tryCheck').dataset.done=1;
   $('#tryCard .acts').innerHTML=`<span></span><button class="btn p" id="tryCalm">${g.calmButton}</button>`;
-  $('#tryCalm').onclick=()=>{ closeTry(); setTime(lastT(),true); HS.camTo('body',700); }; $('#tryCalm').focus();
+  $('#tryCalm').onclick=()=>{ closeTry(); setTime(lastT(),true); HS.camTo('body',700); if(g.afterTip) setTimeout(()=>HS.tip(g.afterTip.key,g.afterTip.text,g.afterTip.pos),900); }; $('#tryCalm').focus();
   HS.say(fb.head+' '+fb.txt);
   revealed[key()]=true; g.routes.forEach(id=>HS.setRoute(id,'on',{draw:true})); renderDots(); HS.renderOverlay();
   await HS.sleep(HS.RM()?0:650);
@@ -239,8 +242,8 @@ function closeTry(){
 HS.closeTry=closeTry;
 
 /* ---------- cell inset ---------- */
-function openCell(){
-  const C=E.scene&&E.scene.cell; if(E.cellOpen||!C) return; E.cellOpen=true; HS.closeCards();
+function openCell(key){
+  const C=E.scene&&E.scene.cells&&E.scene.cells[key]; if(E.cellOpen||!C) return; E.cellOpen=true; HS.closeCards();
   const d=document.createElement('div'); d.className='inset float'; d.id='cellInset'; d.setAttribute('role','dialog'); d.setAttribute('aria-label',C.aria);
   d.style.right='150px'; d.style.top='96px';
   d.innerHTML=`<header><div><b>${C.title}</b><small>${C.sub}</small></div><button class="btn t" id="cellX" aria-label="Close cell view">×</button></header><svg viewBox="0 0 376 214" aria-hidden="true">${C.svg}</svg><ol>${C.steps.map(s=>`<li>${s}</li>`).join('')}</ol>`;
@@ -288,6 +291,7 @@ async function runWhatIf(o){
 function restoreWhatIf(focus){
   if(!E.whatIf) return; const p=P(); E.whatIf=null; $('#thought').hidden=true;
   const c=$('#wiCard'); if(c) c.remove();
+  if(p) (p.whatIf.fade||[]).forEach(id=>{ if(p.draw.includes(id)) HS.setRoute(id,'on'); });
   if(p&&p.gate&&isRevealed()) p.gate.routes.forEach(id=>HS.setRoute(id,'on',{draw:true}));
   HS.renderOverlay(); if(focus){ $('#bWhat').focus(); HS.say('Restored the normal pathway.'); }
 }

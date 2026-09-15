@@ -55,9 +55,13 @@ HS.TREE=[
  {id:'stress',label:'Stress response',dot:'#F08A66',children:[
   {id:'fastP',label:'Fast route',scene:'stress',path:'fast',sub:'nerves → adrenal medulla',organs:['brain','adr','heart','lungs','liver'],children:[{id:'adrenaline',ab:'ADR',label:'Adrenaline',organs:['adr','heart','lungs','liver']},{id:'noradrenaline',ab:'NA',label:'Noradrenaline',organs:['brain','adr','heart']}]},
   {id:'hpaP',label:'HPA axis',scene:'stress',path:'slow',sub:'hypothalamus → pituitary → adrenal',organs:['hyp','pit','adr','liver'],children:[{id:'crh',ab:'CRH',label:'CRH',organs:['hyp','pit']},{id:'acth',ab:'ACTH',label:'ACTH',organs:['pit','adr']},{id:'cortisol',ab:'CORT',label:'Cortisol',organs:['adr','liver']}]}]},
- {id:'thyroid',label:'Thyroid',dot:'#4FC3B2'},{id:'glucose',label:'Blood glucose',dot:'#E0AE4A'},{id:'dopa',label:'Dopamine',dot:'#A58BF5'},{id:'rhythm',label:'Daily rhythms',dot:'#7C9BF0'}
+ {id:'thyroid',label:'Thyroid',dot:'#4FC3B2'},
+ {id:'glucoseSys',label:'Blood glucose',dot:'#E0AE4A',children:[
+  {id:'betweenP',label:'Between meals',scene:'meal',path:'between',sub:'pancreas → glucagon → liver',organs:['panc','liver','brain'],children:[{id:'glucagon',ab:'GCG',label:'Glucagon',organs:['panc','liver']},{id:'glucoseSig',ab:'GLU',label:'Glucose',organs:['int','liver','brain','muscle']}]},
+  {id:'afterP',label:'After a meal',scene:'meal',path:'after',sub:'pancreas → insulin → liver, muscle',organs:['int','panc','liver','muscle'],children:[{id:'insulin',ab:'INS',label:'Insulin',organs:['panc','liver','muscle']}]}]},
+ {id:'dopa',label:'Dopamine',dot:'#A58BF5'},{id:'rhythm',label:'Daily rhythms',dot:'#7C9BF0'}
 ];
-const NODE=HS.NODE={}; (function idx(list){ list.forEach(n=>{ NODE[n.id]=n; if(n.children) idx(n.children); }); })(HS.TREE);
+const NODE=HS.NODE={}, PARENT={}; (function idx(list,parent){ list.forEach(n=>{ NODE[n.id]=n; if(parent) PARENT[n.id]=parent; if(n.children) idx(n.children,n.id); }); })(HS.TREE);
 HS.selectedNode=null; const openNodes=new Set(['stress','fastP','hpaP']);
 const CHEV='<svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>';
 const treeEl=$('#tree');
@@ -72,7 +76,16 @@ HS.renderTree=function(){
   };
   treeEl.innerHTML=HS.TREE.map(n=>rowHTML(n,1)).join('');
 };
-HS.selectNode=id=>{ HS.selectedNode=id; HS.renderTree(); };
+HS.selectNode=id=>{
+  HS.selectedNode=id; let top=id; for(let a=PARENT[id];a;a=PARENT[a]){ openNodes.add(a); top=a; }
+  /* one system open at a time */
+  HS.TREE.forEach(n=>{ if(n.id!==top) [n.id,...(n.children||[]).map(c=>c.id)].forEach(x=>openNodes.delete(x)); });
+  if(NODE[id]&&NODE[id].path) openNodes.add(id);
+  HS.renderTree(); HS.revealIn(treeEl.closest('.panel-scroll'),treeEl.querySelector(`[data-id="${id}"]`));
+};
+app.addEventListener('scroll',()=>{ app.scrollLeft=0; app.scrollTop=0; });
+/* scroll a child into its own scroller only; scrollIntoView would also shift the fixed app frame */
+HS.revealIn=function(sc,el){ if(!sc||!el) return; const r=el.getBoundingClientRect(), s=sc.getBoundingClientRect(); if(r.top<s.top) sc.scrollTop-=s.top-r.top+8; else if(r.bottom>s.bottom) sc.scrollTop+=r.bottom-s.bottom+8; app.scrollLeft=0; app.scrollTop=0; };
 treeEl.addEventListener('mouseover',e=>{ const r=e.target.closest('.row'); const n=r&&NODE[r.dataset.id]; const set=n&&n.organs?new Set(n.organs):null; if(String(set&&[...set])!==String(light.preview&&[...light.preview])){ light.preview=set; HS.applyOrgs(); } });
 treeEl.addEventListener('mouseleave',()=>{ light.preview=null; HS.applyOrgs(); });
 treeEl.addEventListener('focusin',e=>{ const r=e.target.closest('.row'); const n=r&&NODE[r.dataset.id]; light.preview=n&&n.organs?new Set(n.organs):null; HS.applyOrgs(); });
@@ -92,7 +105,7 @@ treeEl.addEventListener('keydown',e=>{
   else if(e.key==='ArrowRight' && n.children && !openNodes.has(n.id)){ e.preventDefault(); openNodes.add(n.id); HS.renderTree(); treeEl.querySelector(`[data-id="${n.id}"]`).focus(); }
   else if(e.key==='ArrowLeft' && n.children && openNodes.has(n.id)){ e.preventDefault(); openNodes.delete(n.id); HS.renderTree(); treeEl.querySelector(`[data-id="${n.id}"]`).focus(); }
 });
-HS.pickNode=function(id){ const p=$('#panel'); if(p.classList.contains('closed')) $('#bSystems').click(); HS.selectNode(id); HS.onSignalSelect(NODE[id]); const r=treeEl.querySelector(`[data-id="${id}"]`); if(r){ r.scrollIntoView({block:'nearest'}); r.focus(); } };
+HS.pickNode=function(id){ const p=$('#panel'); if(p.classList.contains('closed')) $('#bSystems').click(); HS.selectNode(id); HS.onSignalSelect(NODE[id]); const r=treeEl.querySelector(`[data-id="${id}"]`); if(r) r.focus({preventScroll:true}); };
 
 /* ---------- search palette ---------- */
 HS.searchEntries=function(){
@@ -117,7 +130,7 @@ HS.openSearch=function(){
     res=all.filter(s=>!q||s.t.toLowerCase().includes(q)||s.k.toLowerCase().includes(q)||s.syn.some(x=>x.includes(q)));
     sel=Math.max(0,Math.min(sel,res.length-1));
     list.innerHTML=res.length?res.map((s,i)=>{ const via=q&&!s.t.toLowerCase().includes(q)?s.syn.find(x=>x.includes(q)):null; return `<li role="option" id="qo${i}" data-i="${i}" aria-selected="${i===sel}"><span>${s.t}${via?`<span class="via">· ${via}</span>`:''}</span><small>${s.k}</small></li>`; }).join(''):'<li class="none">No match. Try a signal like ACTH, an organ, or “stress”.</li>';
-    if(res.length){ input.setAttribute('aria-activedescendant','qo'+sel); const li=list.querySelector(`#qo${sel}`); li&&li.scrollIntoView({block:'nearest'}); } else input.removeAttribute('aria-activedescendant');
+    if(res.length){ input.setAttribute('aria-activedescendant','qo'+sel); HS.revealIn(list,list.querySelector(`#qo${sel}`)); } else input.removeAttribute('aria-activedescendant');
   };
   const choose=i=>{ const s=res[i]; if(!s) return; HS.closeSearch(false); HS.runGo(s.go); };
   input.addEventListener('input',()=>{ sel=0; draw(); });
