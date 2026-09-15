@@ -464,6 +464,14 @@ button{font-family:inherit;color:inherit}
 html.bigtext .caption{top:104px;left:auto;right:20px;transform:none;text-align:right;max-width:calc(100% - 21rem)}
 html.bigtext .thought{top:150px}
 html.bigtext .panel{max-height:calc(100% - 300px)}
+/* Narrow desktop reader focus: the sheet is an intentional alternative view, so the model
+   must get the space previously reserved for the systems tree. Keep the objective, current
+   route, and timeline visible while stopping the timeline before the reader's right edge. */
+@media (max-width:1350px){
+  .reader-focus .panel{transform:translateX(-330px);opacity:0;pointer-events:none}
+  .reader-focus .bottom{left:14px;transform:none;width:min(45rem,calc(100vw - 430px));max-width:calc(100vw - 430px);align-items:stretch}
+  .reader-focus .ribbon,.reader-focus .pbar{width:100%;max-width:100%}
+}
 /* ---------- round 2 · illustration craft ---------- */
 .rglow{fill:none;stroke-linecap:round;vector-effect:non-scaling-stroke;transition:opacity .6s var(--ease);pointer-events:none}
 .route.ghostin{animation:ghostin 1.6s var(--ease) 1}

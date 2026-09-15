@@ -101,7 +101,7 @@ HS.openPassport=function(key,ret){
   if(keys.length>1) html+=`<h4>Signals in this scene</h4><div class="pptable-wrap"><table class="pptable"><thead><tr><th scope="col">Signal</th><th scope="col">Class</th><th scope="col">Receptor</th><th scope="col">Acts</th></tr></thead><tbody>${keys.map(k=>{ const q=HS.PASSPORTS[k]; return `<tr${k===key?' class="here" aria-current="true"':''}><td>${k===key?q.name:`<button class="linkbtn" data-pass="${k}">${q.name}</button>`}</td><td><span class="dotc" style="--c:${CLS[q.cls].col}"></span>${CLS[q.cls].name}</td><td>${RK[q.rk]}</td><td>${q.ss}</td></tr>`; }).join('')}</tbody></table></div>`;
   html+=`<h4>Why the class matters</h4><ul class="why"><li>Peptides and catecholamines dissolve in the blood but can’t cross the cell membrane, so they bind surface receptors and act within seconds to minutes.</li><li>Steroids such as cortisol ride on carrier proteins, cross the membrane and bind receptors inside the cell, changing gene activity over hours.</li><li>Melatonin is an amine that can cross membranes, yet its main effects come through surface MT1 and MT2 receptors.</li></ul><p class="sub">Advanced · illustrative draft, not reviewed science.</p>`;
   $('#tips').innerHTML='';
-  const s=$('#sheet'); s.innerHTML=html; s.setAttribute('aria-label',`${pp.name} passport`); s.classList.remove('closed'); s.scrollTop=0;
+  const s=$('#sheet'); s.innerHTML=html; s.setAttribute('aria-label',`${pp.name} passport`); s.classList.remove('closed'); app.classList.add('reader-focus'); s.scrollTop=0;
   HS.layers.mount('read',s);
   if(ret!==undefined) HS.sheetReturn=ret;
   s.querySelector('.x').onclick=()=>HS.closeRead(true); s.querySelector('.x').focus();

@@ -331,6 +331,38 @@ await page.screenshot({ path: `${OUT}/qb-grayscale-check.png` });
 
 rec('console', 'no console errors during the whole audit', errs.length === 0, errs.slice(0, 5).join(' | '));
 
+/* ---------- 7. narrow reader focus ----------
+   At laptop-sized desktop widths, opening the text alternative should give the reader and
+   model enough room to coexist without letting the lower timeline run underneath the sheet. */
+await page.setViewportSize({ width: 1280, height: 800 });
+await page.evaluate(() => window.HS.openPathway('stress', 'fast', false));
+await page.waitForTimeout(500);
+await page.evaluate(() => window.HS.openRead());
+await page.waitForTimeout(500);
+const readerFocus = await page.evaluate(() => {
+  const el = (s) => document.querySelector(s);
+  const r = (e) => e ? e.getBoundingClientRect() : null;
+  const sheetEl = el('#sheet'), bottomEl = el('#bottom'), panelEl = el('#panel');
+  const sheet = r(sheetEl), bottom = r(bottomEl), panel = r(panelEl);
+  const visible = (e) => { const b = r(e); return !!e && !!b && b.width > 0 && b.height > 0 && +getComputedStyle(e).opacity > 0.05 && getComputedStyle(e).pointerEvents !== 'none'; };
+  return {
+    reader: visible(sheetEl) && !sheetEl.classList.contains('closed'),
+    focusClass: document.querySelector('#app').classList.contains('reader-focus'),
+    panelDeemphasized: !visible(panelEl),
+    bottomBeforeReader: !!sheet && !!bottom && bottom.right <= sheet.left + 2,
+    objective: !!document.querySelector('#caption b') && document.querySelector('#caption b').textContent.trim().length > 0,
+    routeContext: !!document.querySelector('#pbar') && document.querySelector('#pbar').getBoundingClientRect().height > 0,
+    noTipOverReader: !document.querySelector('#tips .tip'),
+  };
+});
+rec('reader-focus@1280', 'reader focus state preserves objective and route context',
+  readerFocus.reader && readerFocus.focusClass && readerFocus.objective && readerFocus.routeContext && readerFocus.noTipOverReader,
+  JSON.stringify(readerFocus));
+rec('reader-focus@1280', 'systems panel yields the narrow reader focus', readerFocus.panelDeemphasized,
+  JSON.stringify(readerFocus));
+rec('reader-focus@1280', 'bottom timeline stops before the reader sheet', readerFocus.bottomBeforeReader,
+  JSON.stringify(readerFocus));
+
 await browser.close();
 
 /* ---------- report ---------- */

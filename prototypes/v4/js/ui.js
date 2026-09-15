@@ -66,7 +66,7 @@ function renderTip(key,text,pos,html){
 }
 HS.tip=function(key,text,pos){
   HS._curTip={key,text,pos:pos||TIP_POS};   // remembered so the hints control can bring it back
-  if(!HS.tipsOn||tipsSeen.has(key)) return; tipsSeen.add(key);
+  if(!HS.tipsOn||tipsSeen.has(key)||app.classList.contains('reader-focus')) return; tipsSeen.add(key);
   renderTip(key,text,pos);
 };
 /* A tip that teaches by SHOWING: same one-shot/dismissible/Settings-switchable contract as
@@ -75,7 +75,7 @@ HS.tip=function(key,text,pos){
 HS.tipRich=function(key,text,html,pos){
   const at=pos||TIP_POS;
   HS._curTip={key,text,pos:at,html};
-  if(!HS.tipsOn||tipsSeen.has(key)) return false;
+  if(!HS.tipsOn||tipsSeen.has(key)||app.classList.contains('reader-focus')) return false;
   tipsSeen.add(key); renderTip(key,text,at,html);
   return true;   // the caller latches on the RENDER, not on the offer
 };
@@ -87,7 +87,7 @@ HS.setTips=function(on,announce){
   if(b){ b.setAttribute('aria-pressed',HS.tipsOn); b.setAttribute('aria-label',HS.tipsOn?'Hints on':'Hints off'); }
   if(t) t.setAttribute('aria-checked',HS.tipsOn);
   if(!HS.tipsOn){ tipsBox.innerHTML=''; }
-  else if(HS._curTip){ const t=HS._curTip; tipsSeen.delete(t.key); renderTip(t.key,t.text,t.pos,t.html); tipsSeen.add(t.key); }
+  else if(HS._curTip&&!app.classList.contains('reader-focus')){ const t=HS._curTip; tipsSeen.delete(t.key); renderTip(t.key,t.text,t.pos,t.html); tipsSeen.add(t.key); }
   if(announce) HS.toast(HS.tipsOn?'Hints on: a short tip appears once at each depth.':'Hints hidden. Turn them back on any time with the bulb, or H.');
 };
 
@@ -307,11 +307,11 @@ HS.openRead=function(){
   <p class="schem">Routes are schematic: a line is not a drawing of a blood vessel or a nerve. Its texture shows how the message is carried and its end shows what it does.</p>
   ${HS.E.route?`<span class="eyebrow">${S.pathways[HS.E.route].name} at a glance</span><div class="diagram">${HS.causalSVG(S,HS.E.route,HS.isRevealed)}</div>`:''}${S.read({revealed:HS.isRevealed})}
   <h4>About routes</h4><p class="sub" style="margin:0 0 8px">Routes show that a message travels and where it arrives. They are not drawings of blood vessels or nerves. The line's texture shows how the message is carried; the arrow end shows what it does. Time words show order and rough timescale, not measured time.</p>${HS.grammarLegend()}`;
-  s.classList.remove('closed'); s.scrollTop=0;   // match openMore/openPassport: always open at the top
+  s.classList.remove('closed'); app.classList.add('reader-focus'); s.scrollTop=0;   // match openMore/openPassport: always open at the top
   HS.layers.mount('read',s); s.querySelector('.x').onclick=()=>HS.closeRead(true); s.querySelector('.x').focus();
 };
 HS.closeRead=function(focus){
-  const s=$('#sheet'); if(s.classList.contains('closed')){ HS.layers.end('read',focus); return; } s.classList.add('closed');
+  const s=$('#sheet'); if(s.classList.contains('closed')){ app.classList.remove('reader-focus'); HS.layers.end('read',focus); return; } s.classList.add('closed'); app.classList.remove('reader-focus');
   HS.sheetReturn=null; HS.layers.end('read',focus);
 };
 
