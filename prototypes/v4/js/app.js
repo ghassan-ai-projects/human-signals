@@ -9,9 +9,10 @@ HS.onLevel=L=>{
   HS.renderOverlay();
 };
 
-$('#bPlay').addEventListener('click',()=>HS.play());
+$('#bPlay').addEventListener('click',()=>{ HS.stopAll&&HS.stopAll(); HS.play(); });
+$('#bAll').addEventListener('click',()=>HS.playAll());
 $('#bRead').addEventListener('click',()=>HS.openRead());
-$('#bExit').addEventListener('click',()=>HS.leave());
+$('#bExit').addEventListener('click',()=>{ HS.stopAll&&HS.stopAll(); HS.leave(); });
 $('#bWhat').addEventListener('click',()=>HS.openWhatIf());
 $('#bSearch').addEventListener('click',()=>HS.openSearch());
 $('#bSystems').addEventListener('click',()=>{ const p=$('#panel'); p.classList.toggle('closed'); $('#bSystems').setAttribute('aria-pressed',!p.classList.contains('closed')); HS.camTo(HS.cam.region||'body',450); });

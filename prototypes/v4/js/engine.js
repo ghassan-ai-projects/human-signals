@@ -2,7 +2,7 @@
    gated feedback with Try it?, one What if?, and the cell inset. Everything scene-specific comes from HS.scenes[id]. */
 (function(HS){
 const $=HS.$, app=HS.app;
-const E=HS.E={scene:null,sceneId:null,state:'idle',route:null,cur:-1,playing:false,tIdx:0,tryMode:false,picks:new Set(),cellOpen:false,tryCtx:{exposed:false,why:false},whatIf:null,landed:new Set(),gate:true};
+const E=HS.E={scene:null,sceneId:null,state:'idle',route:null,cur:-1,playing:false,tIdx:0,tryMode:false,picks:new Set(),cellOpen:false,tryCtx:{exposed:false,why:false},whatIf:null,landed:new Set(),gate:true,playingAll:false};
 const visited={}, revealed={};
 const P=HS.pathway=()=>E.scene&&E.route?E.scene.pathways[E.route]:null;
 const key=(r=E.route)=>E.sceneId+':'+r;
@@ -138,7 +138,7 @@ function renderToggle(){
   $('#seg').innerHTML=opts.map(([r,l,s])=>`<button data-route="${r}" aria-pressed="false" aria-label="${l}"><span class="lg">${l}</span><span class="sm" aria-hidden="true">${s||l}</span></button>`).join('');
   $('#seg').setAttribute('aria-label',E.scene.toggle?E.scene.toggle.label:'Route'); $('#seg').hidden=opts.length<2;
 }
-$('#seg').addEventListener('click',e=>{ const b=e.target.closest('[data-route]'); if(!b) return; const p=P(); if(p&&p.afterPlay&&p.afterPlay.tip) HS.clearTip(p.afterPlay.tip.key); enterPathway(b.dataset.route,false); });
+$('#seg').addEventListener('click',e=>{ const b=e.target.closest('[data-route]'); if(!b) return; stopAll(); const p=P(); if(p&&p.afterPlay&&p.afterPlay.tip) HS.clearTip(p.afterPlay.tip.key); enterPathway(b.dataset.route,false); });
 function renderDots(){
   const p=P(), v=vis();
   let h=p.hots.map((x,i)=>`<button class="hdot${v.has(i)?' v':''}${i===E.cur?' cur':''}" data-h="${i}" aria-label="Go to step ${x.num}: ${x.one}">${x.num}</button>`).join('');
@@ -165,6 +165,7 @@ async function enterPathway(r,autoplay){
   if(E.timeRef!==TL()){ buildRibbon(); setTime(0); }
   if(p.minTime&&E.tIdx<p.minTime) setTime(p.minTime);
   $('#pName').textContent=p.name; $('#timeChip').textContent=p.chip;
+  $('#bAll').hidden=!(S.toggle&&S.toggle.options.length>=2);
   document.querySelectorAll('#seg [data-route]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.route===r));
   $('#bottom').classList.remove('hidden');
   HS.setLayer('nervous',p.layer==='nervous');
@@ -183,7 +184,7 @@ HS.enterPathway=enterPathway;
 function stopPlay(){ if(E.playing){ E.playing=false; HS.cancelTravel(); setPlayUI(); } }
 HS.stopPlay=stopPlay;
 async function goHot(i,user){
-  const p=P(), h=p.hots[i]; if(user){ stopPlay(); closeTry(); }
+  const p=P(), h=p.hots[i]; if(user){ stopAll(); stopPlay(); closeTry(); }
   E.cur=i; vis().add(i); if(h.org) E.landed.add(h.org); renderDots(); HS.saveSoon(); HS.syncHash();
   const og=$('#o-'+h.org); if(og&&!HS.RM()){ og.classList.remove('arrive'); void og.getBoundingClientRect(); og.classList.add('arrive'); clearTimeout(og._arr); og._arr=setTimeout(()=>og.classList.remove('arrive'),950); }   // the organ answers once as the signal lands
   if(E.tIdx<h.t) setTime(h.t); else applySigns();   // re-couple this organ's sign even when the time index doesn't advance
@@ -215,8 +216,28 @@ function afterPlay(){
   const a=P().afterPlay; if(!a) return;
   if(a.whenHidden&&isRevealed()) return;
   if(a.time!=null) setTime(a.time);
-  if(a.tip) HS.tip(a.tip.key,a.tip.text,a.tip.pos);
+  if(a.tip&&!E.playingAll) HS.tip(a.tip.key,a.tip.text,a.tip.pos);   // no hand-off tip mid "Watch it all"
 }
+/* Watch the whole response: play each route in turn across the shared time ribbon (guided, no table) */
+function setAllUI(on){ const b=$('#bAll'); if(!b) return; b.setAttribute('aria-pressed',on); const l=b.querySelector('.lbl'); if(l) l.textContent=on?'Stop':'Watch it all'; }
+function stopAll(){ if(E.playingAll){ E.playingAll=false; setAllUI(false); } }   // a deliberate user action ends the auto sequence
+HS.stopAll=stopAll;
+async function playAll(){
+  const S=E.scene; if(!S||!S.toggle||S.toggle.options.length<2||(HS.RB&&HS.RB.active)||(HS.CMP&&HS.CMP.active)) return;
+  if(E.playingAll){ E.playingAll=false; stopPlay(); setAllUI(false); return; }
+  E.playingAll=true; setAllUI(true); HS.say('Watching the whole response, one route after another.');
+  for(const opt of S.toggle.options){
+    if(!E.playingAll) break;
+    await enterPathway(opt[0],false); if(!E.playingAll) break;
+    const p=P();
+    if(HS.RM()){ for(let i=0;i<p.hots.length;i++){ if(!E.playingAll) break; await HS.camTo(p.region,0); goHot(i,false); await HS.sleep(520); } }
+    else { E.cur=-1; await play(); }
+    if(!E.playingAll) break;
+    await HS.sleep(750);
+  }
+  E.playingAll=false; setAllUI(false);
+}
+HS.playAll=playAll;
 
 /* ---------- Try it? ---------- */
 function openTry(){

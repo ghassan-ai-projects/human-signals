@@ -363,7 +363,7 @@ button{font-family:inherit;color:inherit}
 @keyframes orgin{from{opacity:0;translate:0 8px}}
 .rm .lab,.rm .hs,.rm .org.arrive .halo,.rm.intro #world,.rm.intro .org{animation:none}
 .ribbon{width:min(720px,calc(100vw - 300px))}
-@media (max-width:1500px){ .pbar .chip:not(.done){display:none} }
+@media (max-width:1500px){ .pbar .chip:not(.done){display:none} #bAll .lbl{display:none} }
 @media (max-width:1400px){ #bRead .lbl{display:none} }
 @media (max-width:1180px){ .pbar .nm{display:none} #playTxt{display:none} .playbtn{padding:0 13px} .seg .lg{display:none} .seg .sm{display:inline} }
 @media (max-width:1400px){
