@@ -4,7 +4,7 @@
   --mono:"Roboto Mono",ui-monospace,Menlo,Consolas,monospace;
   --stage-a:#0B1C23;--stage-b:#040A0D;
   --float:rgba(11,22,28,.86);--float-solid:rgba(11,22,28,.96);--float-line:#1F3A44;
-  --ink:#E6EFEF;--ink-2:#A2B6BA;--ink-3:#6C858B;
+  --ink:#E6EFEF;--ink-2:#A2B6BA;--ink-3:#7C959B;
   --primary:#8DB0FF;--on-primary:#0A1A3A;--primary-soft:rgba(141,176,255,.16);
   --msg:#7CCBFF;--nerve:#C4A8FF;--fb:#FFB547;--good:#43D99A;--warm:#F0C27E;
   --lit:#8FDCFF;--shadow:0 10px 30px rgba(0,0,0,.45);
@@ -222,7 +222,7 @@ button{font-family:inherit;color:inherit}
 .org.miss .ring{stroke:var(--warm);stroke-dasharray:none;opacity:1}
 .route{fill:none;stroke-linecap:round;transition:opacity .4s}
 .route.hide{opacity:0}
-.route.faint{opacity:.22}
+.route.faint{opacity:.28}
 .casing{fill:none;stroke:#061015;stroke-linecap:round}
 .hot{cursor:pointer}
 .hot circle.b{fill:#0B171C;stroke:#4A6F7B;stroke-width:1.5;transition:stroke .2s,fill .2s}
