@@ -27,37 +27,37 @@ learning or interaction experience.
 
 | Level | Observable bar |
 | --- | --- |
-| 0 · blocked | The model, controls, or text are missing, misleading, or unusable. |
-| 1 · readable | The surface loads without console errors; supported widths keep primary controls, labels, and the pathway bar visible; no measured label/UI collisions; text remains usable at 200% base size. |
-| 2 · coherent | The body/model is the visual focus; hierarchy is quiet and legible; active, faint, and unrevealed routes survive grayscale; 2D/text alternatives agree with the stage; decoration never competes with the causal mark. |
-| 3 · explanatory | The visual form teaches the causal grammar at the moment it matters: route, carrier, direction, timing, anatomical location, and feedback are distinguishable without guesswork; progressive disclosure keeps the stage clear. |
-| 4 · resilient craft | The explanatory composition stays coherent across all five pathways, four supported widths, zoom levels, text scaling, reduced motion, and open panels, with independent visual review and no unresolved P0/P1 issue. |
+| 1 · blocked | The model, controls, or text are missing, misleading, or unusable. |
+| 2 · readable | The surface loads without console errors; supported widths keep primary controls, labels, and the pathway bar visible; no measured label/UI collisions; text remains usable at 200% base size. |
+| 3 · coherent | The body/model is the visual focus; hierarchy is quiet and legible; active, faint, and unrevealed routes survive grayscale; 2D/text alternatives agree with the stage; decoration never competes with the causal mark. |
+| 4 · explanatory | The visual form teaches the causal grammar at the moment it matters: route, carrier, direction, timing, anatomical location, and feedback are distinguishable without guesswork; progressive disclosure keeps the stage clear. |
+| 5 · resilient craft | The explanatory composition stays coherent across all five pathways, four supported widths, zoom levels, text scaling, reduced motion, and open panels, with independent visual review and no unresolved P0/P1 issue. |
 
 ### Interactivity
 
 | Level | Observable bar |
 | --- | --- |
-| 0 · blocked | A primary action is dead, ambiguous, traps focus, or leaves the learner without an honest next state. |
-| 1 · functional | Every advertised trigger, pathway control, hotspot, sheet, close action, and exit path works; actions have visible or announced feedback; no uncaught browser errors. |
-| 2 · discoverable | A first-time learner can find an entry action; keyboard focus, tree navigation, target size, Escape/close behavior, and focus restoration are coherent; reduced motion preserves the task rather than merely stopping animation. |
-| 3 · meaningful | Interactions expose cause and consequence: deliberate prediction before feedback, reversible exploration, route comparison, self-explanation, and clear hand-offs between steps. No score, streak, correctness theater, or hidden state is required to understand the model. |
-| 4 · resilient interaction | Interrupting, repeating, scrubbing, switching pathways, reopening sheets, copying/restoring a link, toggling preferences, and using fallback modes leave no stale, contradictory, or inaccessible state. Each critical behavior has an automated regression probe plus browser evidence. |
+| 1 · blocked | A primary action is dead, ambiguous, traps focus, or leaves the learner without an honest next state. |
+| 2 · functional | Every advertised trigger, pathway control, hotspot, sheet, close action, and exit path works; actions have visible or announced feedback; no uncaught browser errors. |
+| 3 · discoverable | A first-time learner can find an entry action; keyboard focus, tree navigation, target size, Escape/close behavior, and focus restoration are coherent; reduced motion preserves the task rather than merely stopping animation. |
+| 4 · meaningful | Interactions expose cause and consequence: deliberate prediction before feedback, reversible exploration, route comparison, self-explanation, and clear hand-offs between steps. No score, streak, correctness theater, or hidden state is required to understand the model. |
+| 5 · resilient interaction | Interrupting, repeating, scrubbing, switching pathways, reopening sheets, copying/restoring a link, toggling preferences, and using fallback modes leave no stale, contradictory, or inaccessible state. Each critical behavior has an automated regression probe plus browser evidence. |
 
 ### Learning experience
 
 | Level | Observable bar |
 | --- | --- |
-| 0 · opaque | The learner cannot tell what the scene is about, what changed, or what to do next. |
-| 1 · oriented | Each scene names an everyday trigger, a clear objective, the current step, and a next action; draft status and scope are visible; text is plain and qualitative. |
-| 2 · causal | The learner can follow Trigger → Source → Signal → Target → Effect → Feedback; time words describe order and rough timescale rather than measurements; the visual, route card, text alternative, and evidence status do not contradict one another. |
-| 3 · teachable | The experience supports retrieval, prediction, mechanism-based feedback, progressive disclosure, self-explanation, comparison, and at least one transfer/What if? moment without giving away the answer too early or fabricating mastery. |
-| 4 · evidence-backed | Independent browser review and bounded learner observation show that the intended tasks are reachable and understandable; claims are reviewable at the point of use; unanswered scientific/anatomy gates are explicitly marked rather than implied to pass. |
+| 1 · opaque | The learner cannot tell what the scene is about, what changed, or what to do next. |
+| 2 · oriented | Each scene names an everyday trigger, a clear objective, the current step, and a next action; draft status and scope are visible; text is plain and qualitative. |
+| 3 · causal | The learner can follow Trigger → Source → Signal → Target → Effect → Feedback; time words describe order and rough timescale rather than measurements; the visual, route card, text alternative, and evidence status do not contradict one another. |
+| 4 · teachable | The experience supports retrieval, prediction, mechanism-based feedback, progressive disclosure, self-explanation, comparison, and at least one transfer/What if? moment without giving away the answer too early or fabricating mastery. |
+| 5 · evidence-backed | Independent browser review and bounded learner observation show that the intended tasks are reachable and understandable; claims are reviewable at the point of use; unanswered scientific/anatomy gates are explicitly marked rather than implied to pass. |
 
 ## What “two levels up” means
 
 At the beginning of an improvement program, record the current score for each
 pillar in the round report. The target is two levels above that baseline, capped
-at Level 4, for every pillar. The overall claim is valid only when the lowest
+at Level 5, for every pillar. The overall claim is valid only when the lowest
 pillar reaches its target; an improved average is not enough.
 
 For this repository, a level increase requires all of the following:
@@ -100,7 +100,6 @@ explicit.
 
 | Pillar | Baseline | Target | Evidence | Status |
 | --- | ---: | ---: | --- | --- |
-| Visual quality | To be recorded by the first browser review | Baseline + 2 | Browser screenshots plus quality-bar results | Pending |
-| Interactivity | To be recorded by the first browser review | Baseline + 2 | Behavioural browser checks plus regression tests | Pending |
-| Learning experience | To be recorded by the first browser review | Baseline + 2 | Comprehension proxies plus independent browser judgement | Pending |
-
+| Visual quality | 3/5 | 5/5 | [Browser review](browser-review-2026-09-15.md), screenshots, quality-bar results | In progress |
+| Interactivity | 3/5 | 5/5 | [Browser review](browser-review-2026-09-15.md), behavioural browser checks, regression tests | In progress |
+| Learning experience | 3/5 | 5/5 | [Browser review](browser-review-2026-09-15.md), comprehension proxies, independent browser judgement | In progress |
