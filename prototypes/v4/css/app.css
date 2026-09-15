@@ -242,13 +242,15 @@ button{font-family:inherit;color:inherit}
 @keyframes beat{0%{transform:scale(.7);opacity:.9}100%{transform:scale(1.5);opacity:0}}
 .breathe{transform-box:fill-box;transform-origin:center;animation:breathe 2.2s ease-in-out infinite}
 @keyframes breathe{50%{transform:scale(1.045)}}
+.wsh{transform-box:fill-box;transform-origin:center;animation:settle 6s ease-in-out infinite}
+@keyframes settle{50%{transform:scale(1.06)}}
 .glyph{animation:drift 3.2s ease-in infinite}
 @keyframes drift{0%{transform:translate(0,0);opacity:0}15%{opacity:1}100%{transform:translate(var(--dx,-46px),var(--dy,26px));opacity:0}}
 .glow{animation:glowp 2.4s ease-in-out infinite}
 @keyframes glowp{50%{opacity:.55}}
 .lod{transition:opacity .3s}
 
-.rm .beat,.rm .breathe,.rm .glyph,.rm .glow{animation:none!important}
+.rm .beat,.rm .breathe,.rm .glyph,.rm .glow,.rm .wsh{animation:none!important}
 .rm .glyph{opacity:1}
 .rm *{transition-duration:.12s!important}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}

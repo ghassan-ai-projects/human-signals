@@ -81,7 +81,7 @@ HS.scenes.stress={
   {id:'heart',type:'ripple',org:'heart',color:'#FF8F8F',on:[1,2,3],calmAt:[3],label:{org:'heart',text:t=>t===3?'Heart settling':'Heart beats faster',dx:56,dy:-30,info:'heart'}},
   {id:'pupils',type:'pupils',on:[1,2],label:{text:'Pupils widen',anchor:[370,108],dx:40,dy:-6}},
   {id:'breath',type:'breathe',org:'lungs',on:[1,2],label:{org:'lungs',text:'Breathing quickens',anchor:[396,300],dx:74,dy:-10,info:'lungs'}},
-  {id:'glucose',type:'glyphs',org:'liver',offset:[-20,16],drift:[-46,26],on:[1,2,3],label:{org:'liver',text:'Liver releases glucose',anchor:[280,448],dx:-96,dy:-10,info:'liver'}},
+  {id:'glucose',type:'glyphs',org:'liver',offset:[40,-24],drift:[48,-42],on:[1,2,3],label:{org:'liver',text:'Liver releases glucose',anchor:[280,448],dx:-96,dy:-10,info:'liver'}},
   {id:'calm',type:'none',on:[4],label:{org:'heart',always:true,text:'Signs settle',dx:56,dy:-30}}
  ],
 

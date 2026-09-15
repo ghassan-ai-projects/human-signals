@@ -81,7 +81,7 @@ HS.buildWorld=function(){
   <radialGradient id="sheen" cx=".32" cy=".24" r=".9"><stop offset="0" stop-color="#FFFFFF" stop-opacity=".22"/><stop offset=".42" stop-color="#FFFFFF" stop-opacity=".04"/><stop offset="1" stop-color="#000000" stop-opacity=".22"/></radialGradient>
   <linearGradient id="frontGlass" x1=".28" y1="0" x2=".78" y2="1"><stop offset="0" stop-color="#CFEEFF" stop-opacity=".09"/><stop offset=".5" stop-color="#2F7F93" stop-opacity=".03"/><stop offset="1" stop-color="#040E14" stop-opacity=".13"/></linearGradient>
   <radialGradient id="halo"><stop offset="0" stop-color="#8FDCFF" stop-opacity=".5"/><stop offset=".5" stop-color="#8FDCFF" stop-opacity=".14"/><stop offset="1" stop-color="#8FDCFF" stop-opacity="0"/></radialGradient>
-  <radialGradient id="coolWash"><stop offset="0" stop-color="#7FB2FF" stop-opacity=".2"/><stop offset=".6" stop-color="#7FB2FF" stop-opacity=".08"/><stop offset="1" stop-color="#7FB2FF" stop-opacity="0"/></radialGradient>
+  <radialGradient id="coolWash"><stop offset="0" stop-color="#7FB2FF" stop-opacity=".28"/><stop offset=".6" stop-color="#7FB2FF" stop-opacity=".12"/><stop offset="1" stop-color="#7FB2FF" stop-opacity="0"/></radialGradient>
   <clipPath id="insetClip"><circle cx="112" cy="150" r="96"/></clipPath>`;
   ORDER.forEach(k=>{ const f=ORGS[k].fill; s+=`<linearGradient id="gr-${k}" x1=".2" y1="0" x2=".8" y2="1"><stop offset="0" stop-color="${lighten(f,.22)}"/><stop offset=".5" stop-color="${f}"/><stop offset="1" stop-color="${darken(f,.45)}"/></linearGradient>`; ORGS[k].parts.forEach((p,i)=>{ s+=`<clipPath id="cl-${k}${i}"><path d="${p.d}"/></clipPath>`; }); });
   s+=`</defs>`;

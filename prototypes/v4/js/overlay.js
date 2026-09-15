@@ -101,7 +101,7 @@ HS.buildSigns=function(signs){
   signs.forEach(sg=>{
     if(sg.type==='ripple'){ const c=HS.wc(sg.org); s+=`<g id="sg-${sg.id}" class="sign off">${[0,.31].map((d,i)=>`<circle class="beat" style="animation-delay:${d}s" cx="${c[0]}" cy="${c[1]}" r="${sg.r||34}" fill="none" stroke="${sg.color}" stroke-width="${i?1.5:2}"/>`).join('')}</g>`; }
     else if(sg.type==='glyphs'){ const c=HS.wc(sg.org), o=sg.offset||[0,0], dr=sg.drift||[-46,26]; s+=`<g id="sg-${sg.id}" class="sign off">${[[0,0],[14,10],[-10,14],[8,-8],[-16,-2]].map((q,i)=>`<g transform="translate(${c[0]+o[0]+q[0]} ${c[1]+o[1]+q[1]})"><path class="glyph" style="animation-delay:${i*.6}s;--dx:${dr[0]}px;--dy:${dr[1]}px" d="M0 -5 L4.3 -2.5 L4.3 2.5 L0 5 L-4.3 2.5 L-4.3 -2.5Z" fill="rgba(247,216,138,.25)" stroke="#F7D88A" stroke-width="1.2"/></g>`).join('')}</g>`; }
-    else if(sg.type==='wash'){ s+=`<ellipse id="sg-${sg.id}" class="sign off" cx="${sg.anchor[0]}" cy="${sg.anchor[1]}" rx="${sg.r[0]}" ry="${sg.r[1]}" fill="url(#coolWash)" pointer-events="none"/>`; }
+    else if(sg.type==='wash'){ s+=`<ellipse id="sg-${sg.id}" class="sign wsh off" cx="${sg.anchor[0]}" cy="${sg.anchor[1]}" rx="${sg.r[0]}" ry="${sg.r[1]}" fill="url(#coolWash)" pointer-events="none"/>`; }
   });
   $('#gSigns').innerHTML=s;
   ['pupR','pupL'].forEach(p=>$('#'+p).classList.remove('wide')); $('#eyes').classList.remove('sleepy');
