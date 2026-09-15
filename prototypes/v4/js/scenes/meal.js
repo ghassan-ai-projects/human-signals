@@ -18,6 +18,7 @@ HS.scenes.meal={
  pathways:{
   between:{name:'Between meals',node:'betweenP',chip:'over hours',region:'meal',segDur:1000,
    organs:['panc','liver','brain'],draw:['glucagon','glucose'],
+   rebuild:{chain:['panc','liver','brain'],links:['glucagon','glucose'],distractors:['kid','thy'],extra:['insulin','cortisol']},
    time:[
     {w:'after eating',c:'<b>After eating:</b> glucose from your last meal is in the blood.'},
     {w:'hours later',c:'<b>Hours later:</b> cells keep using glucose, and it slowly falls.'},
@@ -62,6 +63,7 @@ HS.scenes.meal={
   },
   after:{name:'After a meal',node:'afterP',chip:'within minutes, over hours',region:'fed',segDur:900,
    organs:['int','panc','liver','muscle'],draw:['absorb','insL','insM'],
+   rebuild:{chain:['int','panc','muscle'],alt:{2:['liver']},links:['glucose','insulin'],distractors:['adr','kid'],extra:['glucagon','cortisol']},
    time:[
     {w:'you eat',c:'<b>You eat:</b> food is digested in the stomach and intestines.'},
     {w:'minutes',c:'<b>Within minutes:</b> glucose from food starts entering the blood.'},

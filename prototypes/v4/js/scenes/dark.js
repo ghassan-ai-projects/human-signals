@@ -14,6 +14,7 @@ HS.scenes.dark={
  pathways:{
   night:{name:'Melatonin at night',node:'melP',chip:'over the evening and night',region:'night',layer:'nervous',segDur:1000,
    organs:['retina','scn','pineal','brain'],draw:['rht','clockPineal','melatonin'],
+   rebuild:{chain:['retina','scn','pineal','brain'],links:['light signals','nerve signals','melatonin'],distractors:['pit','thy'],extra:['cortisol','CRH']},
    hots:[
     {org:'retina',num:1,dx:-22,dy:22,seg:null,t:1,region:'clock',one:'Eyes sense the light fading',adv:'Melanopsin ganglion cells report light through the retinohypothalamic tract',lab:{body:'Eyes',organ:'Eyes · light sensors',structure:'Light-sensing cells report darkness'},ldx:22,ldy:52},
     {org:'scn',num:2,dx:-12,dy:-28,seg:'rht',t:1,region:'clock',one:'Body clock reads it as night',adv:'The SCN signals via the paraventricular nucleus, spinal cord and superior cervical ganglion',lab:{body:'Body clock',organ:'Body clock (SCN)',structure:'SCN signals the pineal gland'},ldx:-26,ldy:-60},

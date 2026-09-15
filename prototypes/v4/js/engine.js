@@ -39,6 +39,7 @@ HS.clickTrigger=async function(id){
 };
 HS.openPathway=function(sceneId,r,playNow){ trigger(sceneId); enterPathway(r,playNow); };
 function leave(cam){
+  if(HS.RB&&HS.RB.active) HS.closeRebuild(false);
   stopPlay(); closeTry(); closeCell(); restoreWhatIf(false);
   E.state='idle'; E.route=null; E.cur=-1; HS.syncTriggers();
   $('#bottom').classList.add('hidden'); $('#caption').innerHTML='';
@@ -85,7 +86,7 @@ HS.setTime=setTime;
   $('#rbWays').addEventListener('click',e=>{ const b=e.target.closest('[data-t]'); if(b){ stopPlay(); setTime(+b.dataset.t,true); } });
   h.addEventListener('keydown',e=>{ if(e.key==='ArrowRight'||e.key==='ArrowUp'){ e.preventDefault(); stopPlay(); setTime(Math.min(lastT(),E.tIdx+1),true); } if(e.key==='ArrowLeft'||e.key==='ArrowDown'){ e.preventDefault(); stopPlay(); setTime(Math.max(0,E.tIdx-1),true); } });
 })();
-function applySigns(){ if(!E.scene) return; const active=E.state==='triggered'; E.scene.signs.forEach(sg=>HS.setSign(sg,active&&signOn(sg),E.tIdx)); }
+function applySigns(){ if(!E.scene) return; const active=E.state==='triggered'&&!(HS.RB&&HS.RB.active);   /* no sign gives away a Rebuild answer */ E.scene.signs.forEach(sg=>HS.setSign(sg,active&&signOn(sg),E.tIdx)); }
 
 /* ---------- what the overlay shows ---------- */
 HS.getLabels=function(){
@@ -95,6 +96,7 @@ HS.getLabels=function(){
     if(n&&n.organs&&!n.children) n.organs.forEach((k,i)=>out.push({key:'sel-'+k,org:k,text:HS.orgName(k),anchor:HS.wc(k),dx:i%2?-36:36,dy:-18,info:k}));
     return out;
   }
+  if(HS.RB&&HS.RB.active) return out;   // Rebuild the route: no hints on the body
   const S=E.scene, p=P(), T=E.tIdx;
   if(E.whatIf==='outcome') p.whatIf.badges.forEach((b,i)=>out.push({key:'wi-'+i,text:b.text,cls:'badge',anchor:HS.wc(b.org),dx:b.dx,dy:b.dy}));
   if(E.whatIf){ const b=p.whatIf.blockLabel; out.push({key:'wi-block',text:b.text,cls:'badge',anchor:HS.ptOn(b.route,b.t),dx:b.dx,dy:b.dy,noLeader:true}); }
@@ -112,6 +114,7 @@ HS.getLabels=function(){
   return out.slice(0,8);
 };
 HS.getHotspots=function(){
+  if(HS.RB&&HS.RB.active) return HS.rebuildMarkers();
   if(E.state!=='triggered'||!E.route) return [];
   const p=P(), v=vis();
   const hs=p.hots.map((h,i)=>({id:E.sceneId+E.route+i,num:h.num,anchor:HS.wc(h.org),dx:h.dx,dy:h.dy,cls:(v.has(i)?'v ':'')+(i===E.cur?'cur':''),
@@ -149,6 +152,7 @@ function setPlayUI(){
 HS.setPlayUI=setPlayUI;
 
 async function enterPathway(r,autoplay){
+  if(HS.RB&&HS.RB.active) HS.closeRebuild(false);
   const S=E.scene; stopPlay(); closeTry(); closeCell(); restoreWhatIf(false);
   E.route=r; E.cur=-1; const p=S.pathways[r];
   HS.setLast(E.sceneId,r); HS.renderContinue();
@@ -167,7 +171,7 @@ async function enterPathway(r,autoplay){
   await HS.camTo(p.region,700);
   HS.syncHash();
   if(p.enterTip) HS.tip(p.enterTip.key,p.enterTip.text,p.enterTip.pos);
-  if(autoplay) play();
+  if(autoplay&&E.route===r&&!(HS.RB&&HS.RB.active)) play();   // a stale autoplay never fires into another pathway or a challenge
 }
 HS.enterPathway=enterPathway;
 function stopPlay(){ if(E.playing){ E.playing=false; HS.cancelTravel(); setPlayUI(); } }
@@ -183,7 +187,7 @@ async function goHot(i,user){
 }
 HS.goHot=goHot;
 async function play(){
-  const p=P(); if(!p) return;
+  const p=P(); if(!p||(HS.RB&&HS.RB.active)) return;
   if(E.playing){ stopPlay(); return; }
   closeTry(); closeCell(); if(p.enterTip) HS.clearTip(p.enterTip.key);
   if(HS.RM()){ const next=E.cur+1<p.hots.length?E.cur+1:0; if(next===0&&E.cur>=0) vis().clear(); await HS.camTo(p.region,0); goHot(next,false); if(next===p.hots.length-1) afterPlay(); return; }
@@ -318,6 +322,7 @@ HS.openWhatIf=openWhatIf; HS.restoreWhatIf=restoreWhatIf;
 
 /* ---------- body & tree ---------- */
 HS.onOrgClick=function(k){
+  if(HS.RB&&HS.RB.active){ HS.rebuildPick(k); return; }
   if(E.tryMode){ togglePick(k); return; }
   const p=P();
   if(p){ const i=p.hots.findIndex(h=>h.org===k); if(i>=0){ goHot(i,true); return; } }

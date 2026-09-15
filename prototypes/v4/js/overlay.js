@@ -135,7 +135,7 @@ HS.renderOverlay=function(){
   const seen=new Set(), placed=[], hots=HS.getHotspots();
   const bt=$('#bottom'), bR=bt.classList.contains('hidden')?null:bt.getBoundingClientRect(), maxY=(bR?bR.top:H)-8;   // labels stay above the pathway bar and ribbon
   const ctl=['.zoomer','#mini','#lvlChip'].map(s=>$(s).getBoundingClientRect()), ctrlL=Math.min(...ctl.map(r=>r.left)), ctrlT=Math.min(...ctl.map(r=>r.top));
-  const shEl=$('#sheet'), cardEl=$('#tryCard')||$('#wiCard')||(shEl.classList.contains('closed')?null:shEl);   // labels also stay clear of an open side sheet
+  const shEl=$('#sheet'), cardEl=$('#tryCard')||$('#wiCard')||$('#rbCard')||(shEl.classList.contains('closed')?null:shEl);   // labels also stay clear of an open side sheet
   const pn=$('#panel'), panelR=pn.classList.contains('closed')?0:pn.offsetLeft+pn.offsetWidth+8, panelB=pn.offsetTop+pn.offsetHeight;   // labels never sit under the open panel
   hots.forEach(h=>{ const [x,y]=project(h.anchor[0],h.anchor[1]); placed.push({x:x+(h.dx||0)-17,y:y+(h.dy||0)-17,w:34,h:34}); });
   items.forEach(it=>{

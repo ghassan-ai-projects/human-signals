@@ -105,7 +105,36 @@ HS.openPassport=function(key,ret){
 };
 $('#sheet').addEventListener('click',e=>{ const b=e.target.closest('[data-pass]'); if(b) HS.openPassport(b.dataset.pass); });
 
-$('#bAdv').addEventListener('click',()=>HS.setAdvanced(!HS.advOn,true));
+/* Advanced menu: the mode switch and the Advanced tools for this pathway (keeps the pathway bar narrow) */
+HS.toggleAdvMenu=function(force){
+  let m=$('#advMenu'); const open=force!==undefined?force:!m;
+  if(m) m.remove(); $('#bAdv').setAttribute('aria-expanded','false');
+  if(!open) return;
+  const p=HS.pathway(), S=HS.E.scene, two=S&&S.toggle&&S.toggle.options.length>1;
+  m=document.createElement('div'); m.id='advMenu'; m.className='advmenu float'; m.setAttribute('role','dialog'); m.setAttribute('aria-label','Advanced');
+  m.innerHTML=`<button class="toggle" role="switch" aria-checked="${HS.advOn}" data-am="mode"><span>Advanced mode<small>Named receptors, molecule classes, passports · A</small></span><span class="sw"></span></button>
+   ${HS.advOn?`<div class="divider"></div>
+    ${p&&p.rebuild?`<button class="menuitem" data-am="rebuild"><b>Rebuild this route</b><small>Put the organs in order, then name each signal</small></button>`:''}
+    ${two&&HS.openCompare?`<button class="menuitem" data-am="compare"><b>Compare ${S.toggle.options.map(o=>o[1]).join(' and ')}</b><small>Both routes on one body, side by side</small></button>`:''}
+    <button class="menuitem" data-am="pass"><b>Signal passports</b><small>What each signal is and where it acts</small></button>`
+   :`<p class="menunote">Turn it on for named receptors, signal passports and the Rebuild challenge. The guided story stays the same.</p>`}`;
+  app.appendChild(m);
+  const r=$('#bAdv').getBoundingClientRect(); m.style.left=Math.max(12,Math.min(r.left-20,app.clientWidth-312))+'px'; m.style.bottom=(app.clientHeight-r.top+10)+'px';
+  $('#bAdv').setAttribute('aria-expanded','true'); m.querySelector('[data-am]').focus();
+};
+document.addEventListener('click',e=>{
+  const m=$('#advMenu'); if(!m) return;
+  const b=e.target.closest('#advMenu [data-am]');
+  if(b){ const a=b.dataset.am;
+    if(a==='mode'){ HS.setAdvanced(!HS.advOn,true); HS.toggleAdvMenu(true); return; }
+    HS.toggleAdvMenu(false);
+    if(a==='rebuild') HS.openRebuild();
+    else if(a==='compare') HS.openCompare();
+    else if(a==='pass'){ const p=HS.pathway(), k=p&&p.draw.map(HS.passKeyForRoute).find(Boolean); if(k) HS.openPassport(k,$('#bAdv')); }
+    return; }
+  if(!e.target.closest('#advMenu,#bAdv')) HS.toggleAdvMenu(false);
+});
+$('#bAdv').addEventListener('click',()=>HS.toggleAdvMenu());
 $('#tAdv').addEventListener('click',()=>HS.setAdvanced($('#tAdv').getAttribute('aria-checked')==='true',true));
 app.classList.toggle('adv',HS.advOn); $('#bAdv').setAttribute('aria-pressed',HS.advOn); $('#tAdv').setAttribute('aria-checked',HS.advOn);
 })(window.HS);

@@ -7,7 +7,7 @@ const cam=HS.cam={region:'body',suppressClick:false};
 const panelOpen=()=>!$('#panel').classList.contains('closed');
 const bottomOn=()=>!$('#bottom').classList.contains('hidden');
 const sheetOn=()=>!$('#sheet').classList.contains('closed');
-const cardOn=()=>!!document.querySelector('#tryCard,#wiCard');
+const cardOn=()=>!!document.querySelector('#tryCard,#wiCard,#rbCard');
 function avail(){ const W=app.clientWidth,H=app.clientHeight; const left=panelOpen()?334:30; const bottom=bottomOn()?200:40; const right=Math.max(sheetOn()?430:150,cardOn()?366:150); return {W,H,x:left,y:84,w:Math.max(200,W-left-right),h:Math.max(200,H-84-bottom)}; }
 function targetVB(r,pad){ const a=avail(); const s=Math.min(a.w/(r.w*(1+pad)),a.h/(r.h*(1+pad))); return {x:(r.x+r.w/2)-(a.x+a.w/2)/s, y:(r.y+r.h/2)-(a.y+a.h/2)/s, w:a.W/s, h:a.H/s}; }
 function bodyScale(){ const a=avail(); return Math.min(a.w/(HS.REG.body.w*1.06),a.h/(HS.REG.body.h*1.06)); }

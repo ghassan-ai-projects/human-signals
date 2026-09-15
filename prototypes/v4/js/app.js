@@ -24,6 +24,8 @@ document.addEventListener('keydown',e=>{
   if(k==='?'){ e.preventDefault(); HS.toggleKeys(); return; }
   if(k==='Escape'){
     if($('#keys')){ HS.toggleKeys(); return; }
+    if($('#advMenu')){ HS.toggleAdvMenu(false); $('#bAdv').focus(); return; }
+    if(HS.RB.active){ HS.closeRebuild(true); return; }
     if($('#cards .card')){ HS.closeCards(); return; }
     if(E.tryMode){ HS.closeTry(); return; }
     if(E.whatIf){ HS.restoreWhatIf(true); return; }

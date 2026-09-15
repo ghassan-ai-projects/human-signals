@@ -18,6 +18,7 @@ HS.scenes.stress={
  pathways:{
   fast:{name:'Fast route',node:'fastP',chip:'within seconds',region:'fast',layer:'nervous',segDur:800,
    organs:['brain','adr','heart','lungs','liver'],draw:['nerve','adrenaline'],
+   rebuild:{chain:['brain','adr','heart'],links:['nerve signals','adrenaline'],distractors:['thy','panc'],extra:['cortisol','insulin']},
    hots:[
     {org:'brain',num:1,dx:-32,dy:4,seg:null,t:1,region:'head',one:'Brain sends nerve signals',adv:'Hypothalamus and brainstem drive sympathetic nerves through the spinal cord',lab:{body:'Brain',organ:'nerve signals',structure:'Hypothalamus starts the nerve alarm'},ldx:34,ldy:-14},
     {org:'adr',num:2,dx:-28,dy:24,seg:'nerve',t:1,region:'adr',one:'Adrenal medulla releases adrenaline',adv:'Acetylcholine from sympathetic fibres makes chromaffin cells release adrenaline',lab:{body:'Adrenal glands',organ:'adrenaline',structure:'Medulla · adrenaline'},ldx:-40,ldy:-30},
@@ -27,6 +28,7 @@ HS.scenes.stress={
   },
   slow:{name:'HPA axis',node:'hpaP',chip:'over minutes, lasting hours',region:'hpa',segDur:1000,minTime:1,orgRegions:{brain:'brain'},
    organs:['hyp','pit','adr','liver'],draw:['crh','acth','cort'],
+   rebuild:{chain:['hyp','pit','adr','liver'],links:['CRH','ACTH','cortisol'],distractors:['thy','kid'],extra:['adrenaline','glucagon']},
    hots:[
     {org:'hyp',num:1,dx:-28,dy:-14,seg:null,t:2,region:'brain',one:'Hypothalamus releases CRH',adv:'Paraventricular nucleus neurons release CRH into portal blood',lab:{body:'Hypothalamus',organ:'CRH',structure:'Releases CRH into portal blood'},ldx:34,ldy:-18,leads:{scene:'dark',path:'night',why:'The body clock next door also shapes cortisol’s daily rhythm.'}},
     {org:'pit',num:2,dx:-28,dy:16,seg:'crh',t:2,region:'brain',one:'Pituitary releases ACTH',adv:'Corticotrophs cut ACTH from POMC and release it',lab:{body:'Pituitary',organ:'ACTH',structure:'Anterior lobe releases ACTH'},ldx:34,ldy:20},
