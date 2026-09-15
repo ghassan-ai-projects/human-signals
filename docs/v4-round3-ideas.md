@@ -241,3 +241,16 @@ Two caveats found while building the audit, both in the *measurement*, not the p
 2. The grayscale check first reported "no dashed distinction" because it read only `#overlay`. The dashed feedback route and the `ghostin` ghosts live in `#world`. Reading both SVGs, the dashed distinction is present (e.g. `route ghostin` at `6px,7px`, feedback at `3.5px,4.5px`).
 
 **What this means for round 4.** The *layout, salience-proxy, grayscale, reduced-motion and console* parts of the bar are already satisfied. The parts of §10 that cannot be measured by a script — whether a first-time learner finds a trigger in 10 s, whether the ghost reads as "not yet revealed" rather than "association", whether the schematic reads as not-a-vessel, and whether negative feedback is explainable in the learner's own words — are the ones still open. Round 4 should therefore target **comprehension and first-run legibility**, not more layout polish, and should add scriptable proxies for those task outcomes where it can.
+
+### Round 4: the comprehension bar, measured
+
+`scripts/v4-comprehension-check.mjs` proxies the §10 prototype tasks that a layout audit cannot see. Baseline: **12/14**, with two real gaps. Both are about *where an answer lives*, not about missing content.
+
+| §10 task | Gap | Evidence |
+|---|---|---|
+| **5** — the dashed `?` must read as *not revealed yet*, not as *an association* | The unrevealed line has **no wording anywhere on the body**. Its only signal is a bare `?` badge. It is also the **brightest route on screen** (opacity 0.82 against 0.24 for a faint route), so it out-shouts the routes the learner is actually following while saying least about itself. | `coverage/v4/ev-ghost-no-words.png` |
+| **6** — the learner must say the line is **not** a blood vessel and **not** a nerve | The disclaimer is correct and present, but **only inside Read the route**, below the fold. The task is asked while looking at the body, so a learner who never opens that panel has nothing on screen answering it. | `coverage/v4/ev-read-route-schematic.png` |
+
+Tasks 1, 7, 8 and 10 proxy as passing: three triggers are visible on first paint with a name and a one-line "what happens" each and ≥24 px targets; the text alternative states the feedback relation and contrasts fast/slow without leaking measured times; and the guided path is keyboard-traversable with no dead tab stop.
+
+The honest read: the round-4 work should be **small and surgical** — put words where the learner is already looking — rather than another broad pass, because everything the scripts can already check is green.
