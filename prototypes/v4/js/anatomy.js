@@ -79,6 +79,7 @@ HS.buildWorld=function(){
   <linearGradient id="rim" x1="0" y1="0" x2=".7" y2="1"><stop offset="0" stop-color="#5A9AAA"/><stop offset=".45" stop-color="#2A5663"/><stop offset="1" stop-color="#14303A"/></linearGradient>
   <radialGradient id="ambient"><stop offset="0" stop-color="#2F7F93" stop-opacity=".2"/><stop offset="1" stop-color="#2F7F93" stop-opacity="0"/></radialGradient>
   <radialGradient id="sheen" cx=".32" cy=".24" r=".9"><stop offset="0" stop-color="#FFFFFF" stop-opacity=".22"/><stop offset=".42" stop-color="#FFFFFF" stop-opacity=".04"/><stop offset="1" stop-color="#000000" stop-opacity=".22"/></radialGradient>
+  <linearGradient id="frontGlass" x1=".28" y1="0" x2=".78" y2="1"><stop offset="0" stop-color="#CFEEFF" stop-opacity=".09"/><stop offset=".5" stop-color="#2F7F93" stop-opacity=".03"/><stop offset="1" stop-color="#040E14" stop-opacity=".13"/></linearGradient>
   <radialGradient id="halo"><stop offset="0" stop-color="#8FDCFF" stop-opacity=".5"/><stop offset=".5" stop-color="#8FDCFF" stop-opacity=".14"/><stop offset="1" stop-color="#8FDCFF" stop-opacity="0"/></radialGradient>
   <radialGradient id="coolWash"><stop offset="0" stop-color="#7FB2FF" stop-opacity=".2"/><stop offset=".6" stop-color="#7FB2FF" stop-opacity=".08"/><stop offset="1" stop-color="#7FB2FF" stop-opacity="0"/></radialGradient>
   <clipPath id="insetClip"><circle cx="112" cy="150" r="96"/></clipPath>`;
@@ -121,6 +122,7 @@ HS.buildWorld=function(){
   });
   s+=`<g id="eyes">${[240,280].map((x,i)=>`<ellipse cx="${x}" cy="108" rx="7.5" ry="4.6" fill="#1C3038" stroke="#3A5E6A" stroke-width=".8"/><circle cx="${x}" cy="108" r="3.4" fill="#3B6573"/><circle class="pupil" id="${i?'pupL':'pupR'}" cx="${x}" cy="108" r="1.9" fill="#030809"/><path class="lid" d="M ${x-8.5} 108 C ${x-6} 101.5 ${x+6} 101.5 ${x+8.5} 108 C ${x+6} 109.5 ${x-6} 109.5 ${x-8.5} 108 Z" fill="#12303A" stroke="#3A5E6A" stroke-width=".8"/>`).join('')}</g>`;
   s+=`</g>`;
+  s+=`<g id="gGlass" transform="translate(50 0)" pointer-events="none"><path d="${bp}" fill="url(#frontGlass)" clip-path="url(#bodyClip)"/><path d="${bp}" fill="none" stroke="#BfeaFF" stroke-opacity=".10" stroke-width="1" clip-path="url(#bodyClip)"/></g>`;   // a translucent front-of-body wall: organs read as inside a body, not painted on it
 
   /* brain · sagittal cutaway inset (front of the head faces left) */
   s+=`<g id="gInset"><path d="M 308 72 L 206 124" stroke="#3E6D79" stroke-dasharray="3 4" fill="none" class="cord"/>
