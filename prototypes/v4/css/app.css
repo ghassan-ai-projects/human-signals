@@ -440,3 +440,14 @@ button{font-family:inherit;color:inherit}
 .cmptable tbody th{color:var(--ink-3);font-weight:500;font-size:11.5px;width:74px}
 .cmptable td{color:var(--ink-2)}
 @media (max-width:1180px){ .cmplegend{top:124px} }
+/* cell mechanisms, step by step */
+.inset{max-height:calc(100% - 220px);overflow:auto}
+.inset ol.csteps{list-style:none;margin:8px 0 4px;padding:0;display:grid;gap:2px}
+.cstep{display:flex;gap:10px;align-items:flex-start;width:100%;border:0;background:transparent;color:var(--ink-2);text-align:left;padding:6px 8px;border-radius:10px;font:13px/18px var(--sans);cursor:pointer}
+.cstep:hover{background:rgba(255,255,255,.04)}
+.cstep .n{flex:none;display:grid;place-items:center;width:20px;height:20px;border-radius:50%;border:1.5px solid #3A5864;font-size:11px;font-weight:700;color:var(--ink-2)}
+.cstep.on{background:var(--primary-soft);color:var(--ink)}
+.cstep.on .n{background:var(--msg);border-color:var(--msg);color:#06202E}
+.advtx{display:block;margin-top:3px;color:#9BEFC9;font-size:12px;line-height:17px}
+.cnav{display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-size:12px;color:var(--ink-3)}
+.cnav .btn{height:32px;padding:0 12px}

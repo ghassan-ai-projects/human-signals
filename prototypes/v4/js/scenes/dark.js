@@ -103,7 +103,9 @@ HS.scenes.dark={
       <circle cx="286" cy="182" r="9" fill="#0B171C" stroke="#7CCBFF"/><text x="286" y="186" text-anchor="middle">4</text>
     </g>`,
    end:[62,74],
-   steps:['At night, a nerve ending releases noradrenaline onto the pineal cell.','It binds a receptor, and a key enzyme inside the cell becomes more active.','The enzyme helps turn serotonin into melatonin.','Melatonin leaves the cell and enters the blood.'],
+   focus:[[56,68,46],[142,92,56],[166,160,64],[312,150,56]],
+  adv:['The fibres come from the superior cervical ganglion and release noradrenaline mainly at night.','β1 receptors raise cAMP and activate PKA, which switches on AANAT; α1 receptors amplify the signal.','AANAT turns serotonin into N-acetylserotonin, and HIOMT (ASMT) then makes melatonin.','Melatonin is not stored: it diffuses out of the cell as it is made.'],
+  steps:['At night, a nerve ending releases noradrenaline onto the pineal cell.','It binds a receptor, and a key enzyme inside the cell becomes more active.','The enzyme helps turn serotonin into melatonin.','Melatonin leaves the cell and enters the blood.'],
    say:'Inside a pineal cell. At night a nerve ending releases noradrenaline, a receptor switches on a key enzyme, serotonin is turned into melatonin, and melatonin enters the blood.'
   }
  },

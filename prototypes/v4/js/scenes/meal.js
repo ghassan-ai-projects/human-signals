@@ -143,7 +143,9 @@ HS.scenes.meal={
       <circle cx="100" cy="190" r="9" fill="#0B171C" stroke="#F7D88A"/><text x="100" y="194" text-anchor="middle">4</text>
     </g>`,
    end:[62,64],
-   steps:['Glucagon in the blood binds its receptor on the liver cell surface. It stays outside the cell.','The receptor passes a signal inside the cell.','The cell breaks down stored glycogen into glucose.','Glucose leaves the cell and enters the blood.'],
+   focus:[[58,70,44],[140,90,46],[240,118,50],[110,166,72]],
+  adv:['The glucagon receptor is a G-protein-coupled receptor on the liver cell surface.','Gs activates adenylyl cyclase: cAMP rises and switches on protein kinase A (PKA).','PKA activates glycogen phosphorylase and supports gluconeogenesis.','Glucose-6-phosphatase frees glucose, which leaves the cell through GLUT2.'],
+  steps:['Glucagon in the blood binds its receptor on the liver cell surface. It stays outside the cell.','The receptor passes a signal inside the cell.','The cell breaks down stored glycogen into glucose.','Glucose leaves the cell and enters the blood.'],
    say:'Inside a liver cell. Glucagon binds a receptor on the surface, a signal passes inside, stored glycogen is broken down, and glucose leaves the cell.'
   },
   muscleIns:{
@@ -167,7 +169,9 @@ HS.scenes.meal={
       <circle cx="112" cy="194" r="9" fill="#0B171C" stroke="#F7D88A"/><text x="112" y="198" text-anchor="middle">4</text>
     </g>`,
    end:[62,64],
-   steps:['Insulin in the blood binds its receptor on the muscle cell surface.','The receptor passes a signal inside the cell.','Glucose transporters move from inside the cell to its surface.','Glucose enters the cell through them, to be used or stored.'],
+   focus:[[60,66,44],[128,92,46],[200,128,48],[88,158,54]],
+  adv:['The insulin receptor is a tyrosine kinase: binding makes it phosphorylate itself.','IRS proteins pass the signal on to PI3K and then Akt.','Akt signalling moves GLUT4 storage vesicles to the cell membrane.','Glucose enters by facilitated diffusion and is trapped as glucose-6-phosphate by hexokinase.'],
+  steps:['Insulin in the blood binds its receptor on the muscle cell surface.','The receptor passes a signal inside the cell.','Glucose transporters move from inside the cell to its surface.','Glucose enters the cell through them, to be used or stored.'],
    say:'Inside a muscle cell. Insulin binds a receptor on the surface, a signal passes inside, glucose transporters move to the surface, and glucose enters the cell.'
   }
  },

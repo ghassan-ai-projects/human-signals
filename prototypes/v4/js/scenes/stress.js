@@ -119,6 +119,8 @@ HS.scenes.stress={
       <circle cx="214" cy="178" r="9" fill="#0B171C" stroke="#F7D88A"/><text x="214" y="182" text-anchor="middle">4</text>
     </g>`,
   end:[250,112],
+  focus:[[72,100,46],[150,122,40],[258,104,62],[110,176,58]],
+  adv:['Cortisol is fat-soluble, so it diffuses through the membrane; most cortisol in the blood travels bound to carrier proteins.','It binds the glucocorticoid receptor (GR) in the cytoplasm, which releases its chaperone proteins.','GR pairs bind glucocorticoid response elements (GREs) on DNA and switch target genes on or off.','Transcription of gluconeogenic enzymes such as PEPCK rises, so the cell makes more glucose.'],
   steps:['Cortisol from the blood crosses the cell membrane.','Inside the cell, it binds its receptor.','Together they move into the nucleus and change which genes are active.','The cell makes more glucose-producing enzymes, so more glucose is released.'],
   say:'Inside a liver cell. Cortisol crosses the membrane, binds its receptor, moves into the nucleus and changes gene activity, so more glucose is released.'
  }},

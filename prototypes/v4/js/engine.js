@@ -269,19 +269,47 @@ HS.closeTry=closeTry;
 /* ---------- cell inset ---------- */
 function openCell(key){
   const C=E.scene&&E.scene.cells&&E.scene.cells[key]; if(E.cellOpen||!C) return; E.cellOpen=true; HS.closeCards();
+  const n=C.steps.length, F=C.focus||[], adv=HS.advOn&&C.adv;
   const d=document.createElement('div'); d.className='inset float'; d.id='cellInset'; d.setAttribute('role','dialog'); d.setAttribute('aria-label',C.aria);
   d.style.right='150px'; d.style.top='96px';
-  d.innerHTML=`<header><div><b>${C.title}</b><small>${C.sub}</small></div><button class="btn t" id="cellX" aria-label="Close cell view">×</button></header><svg viewBox="0 0 376 214" aria-hidden="true">${C.svg}</svg><ol>${C.steps.map(s=>`<li>${s}</li>`).join('')}</ol>`;
-  app.appendChild(d); $('#cellX').onclick=closeCell; $('#cellX').focus();
+  d.innerHTML=`<header><div><b>${C.title}</b><small>${C.sub}${adv?' · Advanced':''}</small></div><button class="btn t" id="cellX" aria-label="Close cell view">×</button></header>
+   <svg viewBox="0 0 376 214" aria-hidden="true">${C.svg}${F.length?`<defs><mask id="cellSpot"><rect width="376" height="214" fill="#fff"/><circle id="spotHole" cx="${F[0][0]}" cy="${F[0][1]}" r="${F[0][2]}" fill="#000"/></mask></defs><rect width="376" height="214" fill="#040A0D" opacity=".58" mask="url(#cellSpot)" pointer-events="none"/>`:''}</svg>
+   <ol class="csteps">${C.steps.map((s,i)=>`<li><button class="cstep" data-cs="${i}"><span class="n" aria-hidden="true">${i+1}</span><span class="tx">${s}${adv?`<small class="advtx">${C.adv[i]}</small>`:''}</span></button></li>`).join('')}</ol>
+   <div class="cnav"><span id="cellPos" aria-live="polite"></span><span><button class="btn t" data-cn="-1">Previous</button> <button class="btn p" data-cn="1">Next</button></span></div>`;
+  app.appendChild(d);
+  const mol=d.querySelector('#cellMol'), path=d.querySelector('#cellPath'), hole=d.querySelector('#spotHole');
+  const put=(x,y)=>{ if(!mol) return; mol.setAttribute('cx',x); mol.setAttribute('cy',y); mol.nextElementSibling.setAttribute('x',x); mol.nextElementSibling.setAttribute('y',y+3.5); };
+  const runMol=()=>{   /* the signal molecule travels on step 1 and rests bound afterwards */
+    if(!mol||!path) return; if(HS.RM()){ put(C.end[0],C.end[1]); return; }
+    const L=path.getTotalLength(), t0=performance.now();
+    const f=now=>{ if(!E.cellOpen||cur!==0) return; const k=Math.min(1,(now-t0)/2200), pt=path.getPointAtLength(L*(k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2)); put(pt.x,pt.y); if(k<1) requestAnimationFrame(f); };
+    requestAnimationFrame(f);
+  };
+  let cur=-1, spotTok=0;
+  const spot=to=>{   /* the spotlight glides to the part the step is about */
+    if(!hole||!to) return; const from=['cx','cy','r'].map(a=>+hole.getAttribute(a));
+    if(HS.RM()){ ['cx','cy','r'].forEach((a,j)=>hole.setAttribute(a,to[j])); return; }
+    const t0=performance.now(), tok=++spotTok;
+    const f=now=>{ if(tok!==spotTok||!E.cellOpen) return; const k=Math.min(1,(now-t0)/450), e=k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2; ['cx','cy','r'].forEach((a,j)=>hole.setAttribute(a,(from[j]+(to[j]-from[j])*e).toFixed(1))); if(k<1) requestAnimationFrame(f); };
+    requestAnimationFrame(f);
+  };
+  const go=(i,quiet)=>{
+    i=Math.max(0,Math.min(n-1,i)); if(i===cur) return; cur=i;
+    d.querySelectorAll('.cstep').forEach((b,j)=>{ b.classList.toggle('on',j===i); if(j===i) b.setAttribute('aria-current','step'); else b.removeAttribute('aria-current'); });
+    $('#cellPos').textContent=`Step ${i+1} of ${n}`;
+    d.querySelector('[data-cn="-1"]').disabled=i===0; d.querySelector('[data-cn="1"]').disabled=i===n-1;
+    spot(F[i]); if(i===0) runMol(); else if(C.end) put(C.end[0],C.end[1]);
+    if(!quiet) HS.say(`Step ${i+1} of ${n}. ${C.steps[i]}${adv?' '+C.adv[i]:''}`);
+  };
+  d.addEventListener('click',e=>{
+    const s=e.target.closest('[data-cs]'); if(s){ go(+s.dataset.cs); return; }
+    const nv=e.target.closest('[data-cn]'); if(nv&&!nv.disabled){ go(cur+(+nv.dataset.cn)); if(nv.disabled) d.querySelector(`[data-cn="${-nv.dataset.cn}"]`).focus(); }
+  });
+  d.addEventListener('keydown',e=>{ if(e.key==='ArrowRight'){ e.preventDefault(); go(cur+1); } else if(e.key==='ArrowLeft'){ e.preventDefault(); go(cur-1); } });
+  $('#cellX').onclick=closeCell;
   $('#lvlChip').innerHTML='Cell · <b>mechanism</b>';
-  HS.say(C.say);
-  const mol=d.querySelector('#cellMol'), path=d.querySelector('#cellPath');
-  const put=(x,y)=>{ mol.setAttribute('cx',x); mol.setAttribute('cy',y); mol.nextElementSibling.setAttribute('x',x); mol.nextElementSibling.setAttribute('y',y+3.5); };
-  if(!mol||!path) return;
-  if(HS.RM()){ put(C.end[0],C.end[1]); return; }
-  const L=path.getTotalLength(), t0=performance.now();
-  const f=now=>{ if(!E.cellOpen) return; const k=Math.min(1,(now-t0)/2600), pt=path.getPointAtLength(L*(k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2)); put(pt.x,pt.y); if(k<1) requestAnimationFrame(f); };
-  requestAnimationFrame(f);
+  go(0,true); HS.say(`${C.say} Step 1 of ${n}. Use Next, or the arrow keys, to step through.`);
+  d.querySelector('[data-cn="1"]').focus();
 }
 function closeCell(){ if(!E.cellOpen) return; E.cellOpen=false; const d=$('#cellInset'); if(d) d.remove(); HS.resetLevel(); HS.updateView(); }
 HS.openCell=openCell; HS.closeCell=closeCell;
