@@ -1,0 +1,514 @@
+<meta charset="utf-8">
+<title>Human Signals Style Frames</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400..700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --sans:"Google Sans Flex","Roboto Flex",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"Roboto Mono",ui-monospace,Menlo,Consolas,monospace;
+  --ground:#EEF2F1;--surface:#FFFFFF;--surface-2:#F0F4F3;--ink:#0F1B1F;--ink-2:#4B5C61;--ink-3:#7C8C90;--line:#D3DDDB;--line-2:#E3EAE8;
+  --primary:#1D5BD6;--on-primary:#FFFFFF;--primary-soft:#E2EBFC;
+  --shadow-lg:0 2px 6px rgba(15,27,31,.05),0 30px 80px rgba(15,27,31,.12);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#0B1113;--surface:#161F23;--surface-2:#1D282C;--ink:#E4ECEB;--ink-2:#A3B3B5;--ink-3:#70828A;--line:#2A373C;--line-2:#222D31;
+    --primary:#8DB0FF;--on-primary:#0A1A3A;--primary-soft:#1B2A48;
+    --shadow-lg:0 2px 6px rgba(0,0,0,.3),0 30px 80px rgba(0,0,0,.45);color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0B1113;--surface:#161F23;--surface-2:#1D282C;--ink:#E4ECEB;--ink-2:#A3B3B5;--ink-3:#70828A;--line:#2A373C;--line-2:#222D31;
+  --primary:#8DB0FF;--on-primary:#0A1A3A;--primary-soft:#1B2A48;
+  --shadow-lg:0 2px 6px rgba(0,0,0,.3),0 30px 80px rgba(0,0,0,.45);color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--primary);outline-offset:2px}
+.page{max-width:1344px;margin:0 auto;padding:36px 32px 72px}
+.head{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;margin-bottom:20px}
+.over{font-size:12px;line-height:16px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+h1{font-size:34px;line-height:40px;font-weight:600;letter-spacing:-.02em;margin:8px 0;text-wrap:balance}
+.lead{margin:0;color:var(--ink-2);font-size:16px;line-height:24px;max-width:66ch}
+.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.switch{display:inline-flex;gap:4px;padding:4px;border-radius:999px;background:var(--surface);border:1px solid var(--line)}
+.switch button{border:0;background:transparent;border-radius:999px;padding:8px 14px 8px 9px;cursor:pointer;display:flex;align-items:center;gap:9px;font-size:14px;font-weight:500;color:var(--ink-2);white-space:nowrap}
+.switch.plain button{padding:8px 14px}
+.switch button kbd{font-family:var(--mono);font-size:11px;width:22px;height:22px;display:grid;place-items:center;border-radius:50%;background:var(--surface-2);color:var(--ink-3)}
+.switch button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+.switch button[aria-pressed="true"] kbd{background:rgba(255,255,255,.18);color:inherit}
+.stagebox{position:relative;width:100%;aspect-ratio:1280/800;border-radius:18px;overflow:hidden;box-shadow:var(--shadow-lg);border:1px solid var(--line)}
+.same{margin:12px 2px 0;font-size:13px;color:var(--ink-3)}
+
+/* ---------- depicted product frame (each style is a fixed look) ---------- */
+.frame{position:absolute;left:0;top:0;width:1280px;height:800px;transform-origin:0 0;overflow:hidden;font-family:var(--sans);font-size:14px;line-height:1.45;color:var(--u-ink);background:var(--u-stage)}
+.frame.sC::before{content:"";position:absolute;inset:0;pointer-events:none;background:
+  repeating-linear-gradient(90deg,#17414C 0 1px,transparent 1px 40px) top/100% 8px no-repeat,
+  repeating-linear-gradient(90deg,#17414C 0 1px,transparent 1px 40px) bottom/100% 8px no-repeat,
+  repeating-linear-gradient(0deg,#17414C 0 1px,transparent 1px 40px) left/8px 100% no-repeat,
+  repeating-linear-gradient(0deg,#17414C 0 1px,transparent 1px 40px) right/8px 100% no-repeat}
+.frame svg.layer{position:absolute;inset:0;width:100%;height:100%}
+.frame .fl{position:absolute;background:var(--u-float);border:1px solid var(--u-line);box-shadow:var(--u-shadow);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.frame .tbar{top:14px;left:14px;height:48px;border-radius:999px;display:flex;align-items:center;gap:4px;padding:0 6px 0 16px}
+.frame .brand{display:flex;align-items:center;gap:9px;font-weight:600;font-size:15px;margin-right:8px;white-space:nowrap}
+.frame .tb{height:36px;border-radius:999px;padding:0 12px;display:inline-flex;align-items:center;gap:8px;font-size:13.5px;color:var(--u-ink2);white-space:nowrap}
+.frame .tb.on{background:var(--u-psoft);color:var(--u-ink)}
+.frame kbd{font-family:var(--mono);font-size:10.5px;padding:2px 6px;border-radius:5px;border:1px solid var(--u-line);color:var(--u-ink3)}
+.frame .draft{top:22px;right:18px;font-size:12px;padding:7px 12px;border-radius:999px;border:1px dashed var(--u-line);color:var(--u-warm);box-shadow:none}
+.frame .capt{position:absolute;top:22px;left:770px;transform:translateX(-50%);text-align:center;white-space:nowrap}
+.frame .capt b{display:block;font-size:20px;font-weight:600;letter-spacing:-.01em}
+.frame .capt span{display:block;font-size:13.5px;color:var(--u-ink2);margin-top:2px}
+.frame .panel{top:74px;left:14px;width:300px;border-radius:18px;padding:14px 10px 12px}
+.frame .sec{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--u-ink3);margin:2px 8px 8px}
+.frame .trig{display:flex;align-items:center;gap:12px;border:1px solid transparent;border-radius:12px;padding:6px 10px;font-size:14px;font-weight:500}
+.frame .trig small{display:block;font-size:12px;color:var(--u-ink3);font-weight:400}
+.frame .trig .ti{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;background:var(--u-ab);flex:none;color:var(--u-ink2)}
+.frame .trig.on{border-color:var(--u-line);background:var(--u-psoft)}
+.frame .trig.on .ti{background:var(--u-msg);color:var(--u-onmsg)}
+.frame .trig.soon{opacity:.55}
+.frame .divider{height:1px;background:var(--u-line);margin:10px 8px}
+.frame .row{display:flex;align-items:center;gap:8px;border-radius:10px;padding:6px 8px;font-size:14px}
+.frame .row.sel{background:var(--u-psoft)}
+.frame .row .chev{width:16px;flex:none;color:var(--u-ink3);display:grid;place-items:center}
+.frame .row .chev.open svg{transform:rotate(90deg)}
+.frame .row .dot{width:9px;height:9px;border-radius:50%;flex:none}
+.frame .row .ab{font-family:var(--mono);font-size:10.5px;padding:3px 0;width:40px;text-align:center;border-radius:6px;background:var(--u-ab);color:var(--u-ink2);flex:none}
+.frame .row .grow{flex:1;min-width:0}
+.frame .row small{color:var(--u-ink3);font-size:12px;display:block;line-height:16px}
+.frame .l2{padding-left:18px}.frame .l3{padding-left:36px}
+.frame .pm{width:26px;height:26px;border-radius:50%;border:1px solid var(--u-line);display:grid;place-items:center;color:var(--u-ink2);flex:none}
+.frame .card{width:290px;border-radius:14px;padding:13px 14px 11px}
+.frame .card .clvl{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--u-ink3);font-weight:600}
+.frame .card h5{margin:2px 0 0;font-size:15.5px;font-weight:600}
+.frame .card p{margin:6px 0 10px;color:var(--u-ink2);font-size:14px;line-height:20px}
+.frame .card .crow{display:flex;justify-content:space-between;align-items:center}
+.frame .card .cev{font-size:11px;padding:3px 8px;border-radius:999px;border:1px dashed var(--u-line);color:var(--u-warm)}
+.frame .card .cmore{color:var(--u-primary);font-weight:600;font-size:13px}
+.frame .card .cx{position:absolute;top:9px;right:12px;color:var(--u-ink3);font-size:16px}
+.frame .bottom{position:absolute;bottom:16px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:10px}
+.frame .bottom .fl{position:relative}
+.frame .ribbon{width:640px;border-radius:16px;padding:10px 18px}
+.frame .rtrack{position:relative;height:30px;margin:0 10px}
+.frame .rline{position:absolute;left:0;right:0;top:13px;height:4px;border-radius:2px;background:var(--u-track)}
+.frame .rfill{position:absolute;left:0;top:13px;height:4px;width:50%;border-radius:2px;background:linear-gradient(90deg,var(--u-msg),var(--u-fb))}
+.frame .rway{position:absolute;top:8px;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:var(--u-plate);border:2px solid var(--u-track)}
+.frame .rway.on{border-color:var(--u-ink2)}
+.frame .rhandle{position:absolute;top:4px;left:50%;width:22px;height:22px;margin-left:-11px;border-radius:50%;background:var(--u-ink);box-shadow:0 0 0 4px var(--u-psoft)}
+.frame .rwords{position:relative;height:18px;margin:0 10px;font-size:12px;color:var(--u-ink3)}
+.frame .rwords span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+.frame .rwords span.on{color:var(--u-ink);font-weight:600}
+.frame .rcap{text-align:center;font-size:13.5px;color:var(--u-ink2);margin-top:4px}
+.frame .rcap b{color:var(--u-ink);font-weight:600}
+.frame .pbar{height:56px;border-radius:999px;display:flex;align-items:center;gap:6px;padding:0 8px 0 18px;white-space:nowrap}
+.frame .pbar .nm{font-weight:600;font-size:14px;margin-right:6px}
+.frame .pbar .sep{width:1px;height:26px;background:var(--u-line);margin:0 6px}
+.frame .playbtn{height:40px;border-radius:999px;background:var(--u-primary);color:var(--u-onp);padding:0 16px 0 12px;font-weight:600;font-size:13.5px;display:inline-flex;align-items:center;gap:8px}
+.frame .dots{display:flex;gap:6px}
+.frame .dots i{font-style:normal;width:28px;height:28px;border-radius:50%;border:1.5px solid var(--u-track);display:grid;place-items:center;font-size:12px;font-weight:600;color:var(--u-ink2);position:relative}
+.frame .dots i.v{border-color:var(--u-msg);color:var(--u-ink)}
+.frame .dots i.v::after{content:"";position:absolute;right:-3px;bottom:-3px;width:10px;height:10px;border-radius:50%;background:var(--u-good);box-shadow:0 0 0 2px var(--u-plate)}
+.frame .dots i.cur{background:var(--u-msg);border-color:var(--u-msg);color:var(--u-onmsg)}
+.frame .dots i.q{border-style:dashed;border-color:var(--u-fb);color:var(--u-fb)}
+.frame .seg{display:inline-flex;background:var(--u-seg);border-radius:999px;padding:3px}
+.frame .seg span{font-size:13px;font-weight:500;padding:6px 12px;border-radius:999px;color:var(--u-ink2)}
+.frame .seg span.on{background:var(--u-segon);color:var(--u-ink)}
+.frame .chip{font-size:12px;color:var(--u-ink3)}
+.frame .mini{right:16px;bottom:16px;width:112px;height:150px;border-radius:14px;padding:6px}
+.frame .mini svg{width:100%;height:100%;display:block}
+.frame .zoomer{right:54px;bottom:176px;border-radius:12px;display:flex;flex-direction:column;overflow:hidden}
+.frame .zoomer span{width:36px;height:36px;display:grid;place-items:center;color:var(--u-ink2);font-size:17px}
+.frame .zoomer span+span{border-top:1px solid var(--u-line)}
+.frame .lvl{right:16px;bottom:296px;font-size:11.5px;padding:5px 10px;border-radius:999px;color:var(--u-ink2);white-space:nowrap}
+.frame .lvl b{color:var(--u-ink)}
+.frame .orient{position:absolute;right:20px;top:62px;font-size:11.5px;color:var(--u-ink3);font-family:var(--mono);letter-spacing:.03em}
+.frame [hidden]{display:none!important}
+
+/* ---------- notes & comparison ---------- */
+.note{display:grid;grid-template-columns:minmax(200px,1fr) repeat(3,minmax(0,1fr));gap:24px;margin-top:28px;padding-top:22px;border-top:1px solid var(--line-2)}
+.note h2{margin:0;font-size:22px;line-height:28px;font-weight:600;letter-spacing:-.01em}
+.note .tag{margin-top:6px;color:var(--ink-2);font-size:14.5px;line-height:21px}
+.note h3{margin:0 0 6px;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+.note p{margin:0;font-size:14.5px;line-height:22px;color:var(--ink-2)}
+.compare{margin-top:40px;overflow-x:auto}
+.compare h2{font-size:20px;margin:0 0 12px;font-weight:600}
+table{border-collapse:collapse;width:100%;min-width:900px;font-size:14px}
+th,td{text-align:left;padding:11px 14px;border-top:1px solid var(--line-2);vertical-align:top;color:var(--ink-2)}
+thead th{border-top:0;color:var(--ink);font-size:15px;font-weight:600}
+thead th small{display:block;font-weight:400;font-size:12.5px;color:var(--ink-3)}
+tbody th{font-weight:500;color:var(--ink-3);font-size:13px;width:170px}
+td.cur,th.cur{background:var(--surface)}
+.pill{display:inline-block;font-size:12px;font-weight:600;padding:2px 9px;border-radius:999px;margin-right:6px}
+.pill.g{background:rgba(18,138,98,.13);color:#0D7A55}
+.pill.w{background:rgba(183,116,26,.14);color:#94580A}
+.pill.b{background:rgba(192,68,52,.12);color:#A63A2C}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .pill.g{color:#7EDDB9} :root:not([data-theme="light"]) .pill.w{color:#F0C27E} :root:not([data-theme="light"]) .pill.b{color:#F2A08F} }
+:root[data-theme="dark"] .pill.g{color:#7EDDB9} :root[data-theme="dark"] .pill.w{color:#F0C27E} :root[data-theme="dark"] .pill.b{color:#F2A08F}
+.decide{margin-top:28px;padding:18px 20px;border-radius:16px;background:var(--surface);border:1px solid var(--line);font-size:15px;line-height:23px;color:var(--ink-2);max-width:90ch}
+.decide b{color:var(--ink)}
+</style>
+
+<div class="page">
+  <header class="head">
+    <div>
+      <div class="over">Phase 0 · Style frames · v4 flagship view</div>
+      <h1>Pick the illustration style by eye</h1>
+      <p class="lead">The same screen in four candidate styles: something stressful happens, HPA axis, hotspots ①–④, ghost feedback, pathway bar and one ⓘ card. Switch to the close-up to see the adrenal cortex and medulla in each style. All content is an illustrative draft, not reviewed science.</p>
+    </div>
+    <div class="controls">
+      <div class="switch" role="group" aria-label="Style" id="styleSw"></div>
+      <div class="switch plain" role="group" aria-label="View" id="viewSw">
+        <button data-v="body" aria-pressed="true">Flagship</button>
+        <button data-v="adr" aria-pressed="false">Adrenal close-up</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="stagebox" id="box">
+    <div class="frame" id="frame" role="img" aria-label="Style frame">
+      <svg class="layer" id="world" viewBox="0 0 1280 800" aria-hidden="true"></svg>
+      <svg class="layer" id="ov" viewBox="0 0 1280 800" aria-hidden="true"><g id="ovA"></g><g id="leads"></g><g id="hots"></g><g id="labs"></g></svg>
+
+      <div class="fl tbar">
+        <div class="brand"><svg width="22" height="22" viewBox="0 0 26 26" aria-hidden="true"><circle cx="6" cy="18" r="4" fill="var(--u-primary)"/><circle cx="20" cy="8" r="4" fill="none" stroke="var(--u-primary)" stroke-width="2"/><path d="M9.5 16 C 13 14, 13 10, 16.5 9.5" fill="none" stroke="var(--u-primary)" stroke-width="2" stroke-linecap="round"/></svg>Human Signals</div>
+        <span class="tb"><svg width="15" height="15" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Search <kbd>⌘K</kbd></span>
+        <span class="tb" id="tbSys"><svg width="15" height="15" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Systems</span>
+        <span class="tb"><svg width="15" height="15" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5 9-5zM3 13l9 5 9-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Layers</span>
+        <span class="tb"><svg width="16" height="16" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+      </div>
+      <div class="fl draft">Illustrative draft · not reviewed science</div>
+      <div class="capt"><b id="capB"></b><span id="capS"></span></div>
+
+      <div class="fl panel" id="fPanel">
+        <div class="sec">What happens if…</div>
+        <div class="trig on"><span class="ti"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z" fill="currentColor"/></svg></span><span>Something stressful happens<small>Watch the fast and slow response</small></span></div>
+        <div class="trig soon"><span class="ti"><svg width="16" height="16" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span>You skip a meal<small>Same scene template</small></span></div>
+        <div class="trig soon"><span class="ti"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="currentColor"/></svg></span><span>It gets dark<small>Same scene template</small></span></div>
+        <div class="divider"></div>
+        <div class="sec">Systems</div>
+        <div id="treeRows"></div>
+      </div>
+
+      <div class="fl card" id="fCard"><span class="cx">×</span><div class="clvl" id="cLvl"></div><h5 id="cH"></h5><p id="cP"></p><div class="crow"><span class="cev">Illustrative · not reviewed</span><span class="cmore">More ›</span></div></div>
+
+      <div class="bottom" id="fBottom">
+        <div class="fl ribbon">
+          <div class="rtrack"><div class="rline"></div><div class="rfill"></div>
+            <i class="rway on" style="left:0"></i><i class="rway on" style="left:25%"></i><i class="rway on" style="left:50%"></i><i class="rway" style="left:75%"></i><i class="rway" style="left:100%"></i>
+            <div class="rhandle"></div></div>
+          <div class="rwords"><span style="left:0">now</span><span style="left:25%">seconds</span><span class="on" style="left:50%">minutes</span><span style="left:75%">hours</span><span style="left:100%">calm again</span></div>
+          <div class="rcap"><b>Minutes:</b> CRH, then ACTH, then cortisol rises in the blood.</div>
+        </div>
+        <div class="fl pbar">
+          <span class="nm">HPA axis</span>
+          <span class="playbtn"><svg width="14" height="14" viewBox="0 0 24 24"><path d="M7 5l12 7-12 7z" fill="currentColor"/></svg>Play pathway</span>
+          <span class="dots"><i class="v">1</i><i class="v">2</i><i class="cur">3</i><i>4</i><i class="q">?</i></span>
+          <span class="sep"></span>
+          <span class="seg"><span>Fast</span><span class="on">Slow</span></span>
+          <span class="chip">over minutes, lasting hours</span>
+          <span class="sep"></span>
+          <span class="tb"><svg width="15" height="15" viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Read</span>
+          <span class="tb">✕</span>
+        </div>
+      </div>
+
+      <div class="fl lvl" id="fLvl"></div>
+      <div class="fl zoomer"><span>+</span><span>−</span><span style="font-size:13px">⟲</span></div>
+      <div class="fl mini"><svg viewBox="0 0 700 780" id="miniSvg"></svg></div>
+      <div class="orient" id="orient"></div>
+    </div>
+  </div>
+  <p class="same">Only the illustration and surface tone change between frames. Layout, controls, words and states are identical, so the choice is purely about the art.</p>
+
+  <section class="note" id="note" aria-live="polite"></section>
+
+  <section class="compare">
+    <h2>Side by side</h2>
+    <table id="cmp"></table>
+  </section>
+
+  <div class="decide"><b>Design lead’s pick: D · Hybrid</b>, with A · Flat tonal as the basis for the light theme. D keeps the depth that makes the close-ups feel credible without texture drifting toward literal anatomy, and routes and hotspots stay the brightest things on screen. This is a recommendation only: the owner chooses by eye (§11 Phase 0), and whichever style wins still goes through anatomy review before any scene ships.</div>
+</div>
+
+<script>
+(function(){
+const $=s=>document.querySelector(s);
+const SANS="'Google Sans Flex','Roboto Flex',system-ui,sans-serif", MONO="'Roboto Mono',ui-monospace,monospace";
+
+/* ---------- shared geometry (same as the interaction prototype) ---------- */
+const RS=[[342,28,366,60,366,104],[366,146,350,176,330,190],[326,200,326,214,328,226],[350,238,400,240,432,256],[462,270,474,300,476,340],[480,400,484,460,490,520],[494,580,500,640,506,700],['L',510,780],['L',452,780],[450,700,446,640,440,590],[434,540,428,480,426,430],[424,400,422,380,420,364],[416,420,404,480,400,520],[398,560,412,600,420,640],[426,690,424,740,422,780],['L',300,780]];
+function bodyPath(){
+  let d='M300 28', cur=[300,28]; const segs=[];
+  RS.forEach(s=>{ if(s[0]==='L'){ segs.push({t:'L',from:cur,to:[s[1],s[2]]}); cur=[s[1],s[2]]; } else { segs.push({t:'C',from:cur,c1:[s[0],s[1]],c2:[s[2],s[3]],to:[s[4],s[5]]}); cur=[s[4],s[5]]; } });
+  segs.forEach(g=>{ d+= g.t==='L'?` L${g.to.join(' ')}`:` C${g.c1.join(' ')} ${g.c2.join(' ')} ${g.to.join(' ')}`; });
+  const m=p=>[600-p[0],p[1]];
+  for(let i=segs.length-1;i>=0;i--){ const g=segs[i]; const to=m(g.from); d+= g.t==='L'?` L${to.join(' ')}`:` C${m(g.c2).join(' ')} ${m(g.c1).join(' ')} ${to.join(' ')}`; }
+  return d+' Z';
+}
+const ORGP={
+ int:['M 190 600 C 190 570 330 570 330 600 L 336 690 C 336 722 184 722 184 690 Z'],
+ lungs:['M 244 268 C 210 272 190 320 188 380 C 186 420 196 440 214 444 C 236 446 248 430 250 410 L 252 300 C 252 280 250 270 244 268 Z','M 276 268 C 310 272 330 320 332 380 C 334 420 324 440 306 444 C 290 446 280 436 276 424 L 272 300 C 270 280 270 270 276 268 Z'],
+ heart:['M 262 350 C 290 336 318 350 314 384 C 312 410 290 428 270 440 C 254 424 238 404 240 380 C 242 362 250 354 262 350 Z'],
+ liver:['M 172 440 C 200 424 262 426 300 440 C 316 446 312 462 296 472 C 262 494 210 506 184 498 C 168 490 162 456 172 440 Z'],
+ stom:['M 300 452 C 324 440 348 450 350 476 C 352 506 334 530 306 534 C 290 536 284 524 294 514 C 312 500 316 480 300 468 Z'],
+ panc:['M 232 520 C 252 508 290 508 330 496 C 346 492 356 496 354 504 C 350 514 320 520 290 528 C 266 534 240 538 232 530 Z'],
+ kid:['M 208 524 C 228 524 232 550 230 566 C 228 586 222 598 208 598 C 192 598 186 580 188 560 C 190 540 194 524 208 524 Z','M 312 530 C 292 530 288 556 290 572 C 292 592 298 604 312 604 C 328 604 334 586 332 566 C 330 546 326 530 312 530 Z'],
+ adr:['M 196 530 C 196 514 206 506 214 504 C 222 510 226 522 222 532 C 214 528 204 528 196 530 Z','M 324 536 C 324 520 314 512 306 510 C 298 516 294 528 298 538 C 306 534 316 534 324 536 Z'],
+ thy:['M 246 222 C 254 220 258 232 256 244 C 254 250 244 252 240 244 C 236 234 238 224 246 222 Z','M 274 222 C 266 220 262 232 264 244 C 266 250 276 252 280 244 C 284 234 282 224 274 222 Z'],
+ brain:['M 214 84 C 214 50 238 36 260 36 C 282 36 306 50 306 84 C 306 100 296 110 282 112 L 238 112 C 224 110 214 100 214 84 Z']
+};
+const ORDER=['int','lungs','heart','liver','stom','panc','kid','adr','thy','brain'];
+const LIT=new Set(['adr','liver']);
+const ROUTES={
+ nerve:'M 372 96 C 540 150 540 430 318 514', adrenaline:'M 298 504 C 262 452 292 404 342 398',
+ crh:'M 108 177 Q 118 189 101 196', acth:'M 102 210 C 130 330 130 480 284 512', cort:'M 312 512 C 340 522 368 512 365 490',
+ f1:'M 284 528 C 60 560 34 400 40 300 C 44 250 58 214 83 200', f2:'M 288 536 C 30 590 12 400 20 300 C 24 230 56 176 90 172'
+};
+const CU={
+ kidney:'M 250 830 C 290 600 990 600 1030 830 Z',
+ cortex:'M 330 640 C 340 470 500 280 640 250 C 780 280 940 470 950 640 C 820 600 460 600 330 640 Z',
+ medulla:'M 470 610 C 480 500 570 390 640 372 C 710 390 800 500 810 610 C 740 585 540 585 470 610 Z',
+ acth:'M 110 150 C 230 190 330 300 378 440', nerve:'M 1180 560 C 1060 555 900 545 775 535', cort:'M 345 612 C 270 606 200 580 140 530'
+};
+/* camera for the flagship view: HPA framing inside the free area */
+const S=.886, TX=528.3, TY=67.3;
+
+/* ---------- styles ---------- */
+const UI_LIGHT={float:'rgba(255,255,255,.9)',line:'#DCE4E2',ink:'#0F1B1F',ink2:'#4B5C61',ink3:'#7C8C90',primary:'#1D5BD6',onp:'#FFFFFF',psoft:'rgba(29,91,214,.10)',shadow:'0 8px 28px rgba(15,27,31,.14)',seg:'#EDF2F1',segon:'#FFFFFF',ab:'#EDF2F1',track:'#D3DDDB',good:'#128A62',warm:'#94580A',plate:'#FFFFFF',sys:['#D0643F','#1E9486','#B7821A','#7A5BD8','#3C63C4']};
+const UI_DARK={float:'rgba(11,22,28,.86)',line:'#1F3A44',ink:'#E6EFEF',ink2:'#A2B6BA',ink3:'#6C858B',primary:'#8DB0FF',onp:'#0A1A3A',psoft:'rgba(141,176,255,.16)',shadow:'0 10px 30px rgba(0,0,0,.45)',seg:'#13252C',segon:'#2A4854',ab:'#15272F',track:'#2A3E46',good:'#43D99A',warm:'#F0C27E',plate:'#0B171C',sys:['#F08A66','#4FC3B2','#E0AE4A','#A58BF5','#7C9BF0']};
+const STY={
+ A:{name:'Flat tonal',ui:UI_LIGHT,dark:false,stage:'#EEF3F2',casing:'#EEF3F2',
+   sil:{fill:'#DDE7E5',stroke:'#C2D1CE'},ribs:'#CCDAD7',cord:'#A99BD6',
+   fills:{int:'#E6D8D0',lungs:'#C5DCE3',heart:'#E6A5A9',liver:'#DDA894',stom:'#E7C6BA',panc:'#EBD79F',kid:'#D5AFB8',adr:'#EDC27A',thy:'#DDB9A5',brain:'#CEC6E3'},
+   oStroke:'#8FA5A8',oOp:.55,lit:'#1D5BD6',
+   inset:{bg:'#F5F8F7',stroke:'#C2D1CE',brain:'#D6CFE8',line:'#B3A9D1',stem:'#C9C1E0',eye:'#C9D6D3',text:'#7C8C90'},gland:'#8E7CC7',
+   route:{msg:'#1F6FB5',fb:'#B8741A',nerve:'#6B52C2'},onmsg:'#FFFFFF',
+   plate:'#FFFFFF',plateLine:'#D3DDDB',plateInk:'#0F1B1F',leader:'#9AB0B5',hsRing:'#8FA5A9',hsInk:'#0F1B1F',
+   medulla:'#CF946F',tissue:null},
+ B:{name:'Semi-realistic',ui:UI_LIGHT,dark:false,stage:'radial-gradient(110% 90% at 55% 40%,#F7FAF9 0%,#DFE7E6 100%)',casing:'#EAF0EF',
+   sil:{fill:'url(#silG)',stroke:'#BCCAC7',g:['#F1F5F4','#D3DDDB']},ribs:'#C6D2CF',cord:'#9C8CD0',
+   fills:{int:'#D6B9AB',lungs:'#A7C4D1',heart:'#C45E66',liver:'#B3634F',stom:'#CF9C8D',panc:'#D6B568',kid:'#AC7C89',adr:'#D69E48',thy:'#BE8B73',brain:'#ADA1CB'},
+   oStroke:'#6F8084',oOp:.4,lit:'#1D5BD6',sheen:[.5,.08,.2],shadow:true,
+   inset:{bg:'#F3F6F5',stroke:'#C2CFCC',brain:'#BDB2D6',line:'#8F84B3',stem:'#A79DC6',eye:'#C3D0CD',text:'#6B7C80'},gland:'#6F5DAE',
+   route:{msg:'#1A64A8',fb:'#AD6810',nerve:'#6048B8'},onmsg:'#FFFFFF',
+   plate:'#FFFFFF',plateLine:'#D3DDDB',plateInk:'#0F1B1F',leader:'#8FA5A9',hsRing:'#8FA5A9',hsInk:'#0F1B1F',
+   medulla:'#8A4A36',tissue:'#E7D9D2'},
+ C:{name:'Luminous scan',ui:UI_DARK,dark:true,stage:'radial-gradient(90% 80% at 55% 40%,#0A1B22 0%,#03080B 100%)',casing:'#040C10',
+   sil:{fill:'#061319',stroke:'#2FA6C4'},ribs:'#0F2A33',cord:'#8E78E0',
+   lum:{int:'#D8B8A8',lungs:'#7FD8FF',heart:'#FF8FA0',liver:'#FFB08A',stom:'#FFC6A8',panc:'#FFE08A',kid:'#E6A0C0',adr:'#FFD27A',thy:'#FFBE9A',brain:'#B9A8FF'},
+   lit:'#FFFFFF',glow:true,
+   inset:{bg:'#05121A',stroke:'#2FA6C4',brain:'rgba(185,168,255,.10)',line:'#B9A8FF',stem:'rgba(185,168,255,.28)',eye:'#123440',text:'#3F8FA3'},gland:'#E3D8FF',
+   route:{msg:'#7FE3FF',fb:'#FFC266',nerve:'#C9B3FF'},onmsg:'#04212B',
+   plate:'#07141A',plateLine:'#1E4A57',plateInk:'#DDF6FA',leader:'#2F7F93',hsRing:'#2FA6C4',hsInk:'#DDF6FA',
+   medulla:'#FF9E7A',tissue:null},
+ D:{name:'Hybrid',ui:UI_DARK,dark:true,stage:'radial-gradient(80% 90% at 58% 42%,#0B1C23 0%,#040A0D 100%)',casing:'#061015',
+   sil:{fill:'url(#silG)',stroke:'#2A5663',g:['#13313B','#0A1A20']},ribs:'#18333C',cord:'#8C74D6',
+   fills:{int:'#3A302D',lungs:'#2B4755',heart:'#7C3A42',liver:'#7B4A3E',stom:'#664A43',panc:'#86703A',kid:'#5C3E47',adr:'#A5763A',thy:'#74503F',brain:'#4B4662'},
+   oStroke:'#3C7582',oOp:.6,lit:'#8FDCFF',sheen:[.34,.05,.32],
+   inset:{bg:'#08141A',stroke:'#23505C',brain:'#2A3346',line:'#46557A',stem:'#3E4C66',eye:'#2A4650',text:'#4F7680'},gland:'#6B5E93',
+   route:{msg:'#7CCBFF',fb:'#FFB547',nerve:'#C4A8FF'},onmsg:'#06202E',
+   plate:'#0B171C',plateLine:'#24444F',plateInk:'#E6EFEF',leader:'#3E6D79',hsRing:'#4A6F7B',hsInk:'#CFE0E2',
+   medulla:'#6E3C2C',tissue:'#14222A'}
+};
+const NOTES={
+ A:{tag:'Calm, diagrammatic and textbook-clean. One tone per organ, no shading.',good:'Routes, numbers and labels stand out most clearly. It reads well at small sizes and in print, and it is the natural light theme.',risk:'It can feel generic or childish. Close-ups lose depth, so cortex and medulla rely on colour and labels alone.',cost:'Lowest. Flat shapes are fast to author, cheap to review and easy to keep consistent across every zoom level.'},
+ B:{tag:'Soft form and shading on a light stage, like a modern medical atlas.',good:'The most credible to clinicians and parents. Organs are recognisable at close-up without needing labels.',risk:'Shading competes with routes, and texture tends to creep toward literal anatomy, which §5.4 forbids. Review load is heaviest.',cost:'High. Every level-of-detail set needs shading passes in both themes.'},
+ C:{tag:'Imaging-inspired glow lines on a dark stage.',good:'Routes and pulses feel alive, and the first impression is dramatic.',risk:'Glow reads as signal strength, which breaks the “never quantitative” guardrail. Dim organs lose contrast, it tires the eyes and can look like sci-fi.',cost:'Medium. Outlines are simple, but glow tuning and a light-theme equivalent are hard.'},
+ D:{tag:'Semi-realistic organ form without texture, on a dark stage.',good:'It has depth for close-ups while keeping routes and hotspots the brightest things on screen. It matches the interaction prototype.',risk:'It is dark-first, so the light theme needs a designed variant (A is the basis). Muted fills need colour-vision checks.',cost:'Medium-high. Form shading is simpler than B because there is no texture and it uses one light direction.'}
+};
+const CMP=[
+ ['Route and hotspot legibility',{A:['g','Excellent'],B:['w','Good'],C:['g','Excellent'],D:['g','Very good']}],
+ ['Close-up credibility',{A:['b','Weak'],B:['g','Strong'],C:['w','Medium'],D:['g','Strong']}],
+ ['Tone',{A:[null,'Friendly, textbook'],B:[null,'Clinical, trustworthy'],C:[null,'Dramatic, technical'],D:[null,'Calm, premium']}],
+ ['Light theme',{A:['g','Native'],B:['g','Native'],C:['b','Needs rework'],D:['w','Needs a variant']}],
+ ['Guardrail risk (§5.4)',{A:['g','Low'],B:['w','Texture drifts literal'],C:['b','Glow reads as quantity'],D:['g','Low']}],
+ ['Production cost',{A:['g','Low'],B:['b','High'],C:['w','Medium'],D:['w','Medium-high']}]
+];
+
+/* ---------- drawing ---------- */
+let STYLE='D', VIEW='body';
+try{ const s=localStorage.getItem('hs-sf-style'); if(STY[s]) STYLE=s; }catch(e){}
+const K=.7; /* close-up drawing scale, so it clears the ribbon */
+const P=(x,y)=>VIEW==='body'?[x*S+TX,y*S+TY]:[640+(x-640)*K,340+(y-470)*K];
+const NS='vector-effect="non-scaling-stroke"';
+
+function defs(st){
+  let d='<defs><clipPath id="insetClip"><circle cx="112" cy="150" r="96"/></clipPath>';
+  if(st.sil.g) d+=`<radialGradient id="silG" cx=".5" cy=".38" r=".78"><stop offset="0" stop-color="${st.sil.g[0]}"/><stop offset="1" stop-color="${st.sil.g[1]}"/></radialGradient>`;
+  if(st.sheen) d+=`<radialGradient id="sheen" cx=".32" cy=".26" r=".9"><stop offset="0" stop-color="#FFFFFF" stop-opacity="${st.sheen[0]}"/><stop offset=".45" stop-color="#FFFFFF" stop-opacity="${st.sheen[1]}"/><stop offset="1" stop-color="#000000" stop-opacity="${st.sheen[2]}"/></radialGradient>`;
+  if(st.shadow) d+='<filter id="dsh" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="3" stdDeviation="3.5" flood-color="#3A2A26" flood-opacity=".22"/></filter>';
+  if(st.glow) d+='<filter id="glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>';
+  return d+'</defs>';
+}
+function shape(d,k,st,lit,extra=''){
+  if(st.lum){ const c=st.lum[k]||st.lum.adr; return `<path d="${d}" ${extra} fill="${c}" fill-opacity="${lit?.2:.08}" stroke="${c}" stroke-width="${lit?1.8:1.1}" stroke-opacity="${lit?1:.55}" ${NS} ${lit?'filter="url(#glow)"':''}/>`; }
+  const f=k==='medulla'?st.medulla:(k==='kidney'?st.fills.kid:st.fills[k]);
+  let s=`<path d="${d}" ${extra} fill="${f}" stroke="${lit?st.lit:st.oStroke}" stroke-opacity="${lit?1:st.oOp}" stroke-width="${lit?1.8:1}" ${NS}/>`;
+  if(st.sheen) s+=`<path d="${d}" ${extra} fill="url(#sheen)" pointer-events="none"/>`;
+  return s;
+}
+function worldBody(st){
+  let s=defs(st)+`<g transform="translate(${TX} ${TY}) scale(${S})">`;
+  s+=`<g transform="translate(50 0)"><path d="${bodyPath()}" fill="${st.sil.fill}" stroke="${st.sil.stroke}" stroke-width="1.2" ${NS} ${st.glow?'stroke-opacity=".7" filter="url(#glow)"':''}/></g>`;
+  let ribs=''; for(let i=0;i<7;i++){ const y=280+i*24, w=64+i*7; ribs+=`<path d="M 260 ${y} C ${260-w*.4} ${y-8} ${260-w} ${y+2} ${260-w-6} ${y+22}"/><path d="M 260 ${y} C ${260+w*.4} ${y-8} ${260+w} ${y+2} ${260+w+6} ${y+22}"/>`; }
+  s+=`<g transform="translate(90 0)" fill="none" stroke="${st.ribs}" stroke-width="2" stroke-linecap="round" opacity=".8">${ribs}<path d="M 176 700 C 200 670 236 664 260 690 C 284 664 320 670 344 700"/></g>`;
+  s+=`<g transform="translate(90 0)" opacity=".18"><path d="M 260 112 L 260 700" stroke="${st.cord}" stroke-width="2.5" stroke-linecap="round" fill="none" ${NS}/></g>`;
+  s+=`<g transform="translate(90 0)">`;
+  ORDER.forEach(k=>{ const lit=LIT.has(k); s+=`<g opacity="${lit?1:.35}" ${st.shadow&&lit?'filter="url(#dsh)"':''}>`; ORGP[k].forEach(d=>s+=shape(d,k,st,lit)); s+='</g>'; });
+  s+=`<circle cx="240" cy="122" r="6" fill="${st.inset.eye}"/><circle cx="280" cy="122" r="6" fill="${st.inset.eye}"/></g>`;
+  const I=st.inset;
+  s+=`<path d="M 304 90 L 206 128" stroke="${st.leader}" stroke-dasharray="3 4" fill="none" ${NS}/>
+   <circle cx="112" cy="150" r="96" fill="${I.bg}" stroke="${I.stroke}" stroke-width="1.2" ${NS}/>
+   <g clip-path="url(#insetClip)"><g transform="translate(112 150) scale(1.7) translate(-196 -70)">
+     <path d="M150 76 C148 44 176 26 204 27 C232 28 248 50 244 76 C242 92 230 98 216 97 C208 102 196 104 186 100 C172 100 156 92 150 76Z" fill="${I.brain}" stroke="${I.line}" stroke-width=".8"/>
+     <g fill="none" stroke="${I.line}" stroke-width=".7" stroke-linecap="round" opacity=".8"><path d="M160 60 C168 50 178 56 186 46"/><path d="M190 40 C200 48 210 38 222 44"/><path d="M226 52 C234 60 238 70 236 80"/><path d="M168 78 C178 70 190 78 200 72 C210 78 220 72 228 80"/></g>
+     <ellipse cx="226" cy="101" rx="13" ry="8" fill="${I.brain}" stroke="${I.line}" stroke-width=".8"/>
+     <path d="M207 97 Q210 112 214 128" stroke="${I.stem}" stroke-width="7" fill="none" stroke-linecap="round"/>
+     <circle cx="156" cy="86" r="5" fill="${I.eye}"/>
+   </g></g>
+   <circle cx="101.8" cy="173.8" r="6.8" fill="${st.gland}" stroke="${st.lit}" stroke-width="1.6" ${NS} ${st.glow?'filter="url(#glow)"':''}/>
+   <circle cx="95" cy="197.6" r="6" fill="${st.gland}" stroke="${st.lit}" stroke-width="1.6" ${NS} ${st.glow?'filter="url(#glow)"':''}/>
+   <text x="112" y="238" text-anchor="middle" font-family="${MONO}" font-size="8" letter-spacing="1" fill="${I.text}">BRAIN · CUTAWAY VIEW</text>`;
+  const R=st.route, rs={nerve:[R.nerve,.24],adrenaline:[R.msg,.24],crh:[R.msg,1],acth:[R.msg,1],cort:[R.msg,1],f1:[R.fb,.62],f2:[R.fb,.62]};
+  Object.entries(rs).forEach(([id,[c,op]])=>{ const ghost=id[0]==='f'; s+=`<path d="${ROUTES[id]}" fill="none" stroke="${st.casing}" stroke-width="8" stroke-linecap="round" opacity="${op>.5?.9:.2}" ${NS}/><path id="rt-${id}" d="${ROUTES[id]}" fill="none" stroke="${c}" stroke-width="2.8" stroke-linecap="round" opacity="${op}" ${ghost?'stroke-dasharray="6 7"':''} ${NS} ${st.glow&&op===1?'filter="url(#glow)"':''}/>`; });
+  return s+'</g>';
+}
+function worldAdr(st){
+  let s=defs(st)+`<g transform="translate(640 340) scale(${K}) translate(-640 -470)">`;
+  if(st.tissue) s+=`<ellipse cx="640" cy="520" rx="560" ry="360" fill="${st.tissue}" opacity=".7"/>`;
+  s+=`<g ${st.shadow?'filter="url(#dsh)"':''}>`+shape(CU.kidney,'kidney',st,false)+'</g>';
+  s+=`<g ${st.shadow?'filter="url(#dsh)"':''}>`+shape(CU.cortex,'adr',st,true)+'</g>';
+  const zone=st.lum?st.lum.adr:(st.dark?'#E8B872':'#8A5A1E');
+  s+=`<path d="${CU.cortex}" transform="translate(640 470) scale(.86) translate(-640 -470)" fill="none" stroke="${zone}" stroke-opacity=".35" stroke-width="1" stroke-dasharray="2 5"/>`;
+  if(st.lum) s+=`<path d="${CU.medulla}" fill="${st.medulla}" fill-opacity=".08" stroke="${st.medulla}" stroke-opacity=".55" stroke-width="1.2"/>`;
+  else { s+=`<g opacity=".7"><path d="${CU.medulla}" fill="${st.medulla}" stroke="${st.oStroke}" stroke-opacity="${st.oOp}" stroke-width="1"/>${st.sheen?`<path d="${CU.medulla}" fill="url(#sheen)"/>`:''}</g>`; }
+  const R=st.route;
+  [['acth',R.msg,1],['cort',R.msg,1],['nerve',R.nerve,.4]].forEach(([id,c,op])=>{ s+=`<path d="${CU[id]}" fill="none" stroke="${st.casing}" stroke-width="9" stroke-linecap="round" opacity="${op===1?.9:.3}" ${NS}/><path id="rt-${id}" d="${CU[id]}" fill="none" stroke="${c}" stroke-width="3" stroke-linecap="round" opacity="${op}" ${NS} ${st.glow&&op===1?'filter="url(#glow)"':''}/>`; });
+  return s+'</g>';
+}
+function arrow(id,col,op){
+  const el=document.getElementById('rt-'+id), L=el.getTotalLength(), a=el.getPointAtLength(L), b=el.getPointAtLength(L-4);
+  const [x2,y2]=P(a.x,a.y), [x1,y1]=P(b.x,b.y), ang=Math.atan2(y2-y1,x2-x1)*180/Math.PI;
+  return `<g transform="translate(${x2.toFixed(1)} ${y2.toFixed(1)}) rotate(${ang.toFixed(1)})" opacity="${op}"><path d="M-10 -6 L2 0 L-10 6Z" fill="${col}"/></g>`;
+}
+function pt(id,t){ const el=document.getElementById('rt-'+id), p=el.getPointAtLength(el.getTotalLength()*t); return P(p.x,p.y); }
+function hotspot([x,y],n,state,st){
+  let fill=st.plate, ring=st.hsRing, ink=st.hsInk, dash='', s='';
+  if(state==='cur'){ fill=st.route.msg; ring=st.route.msg; ink=st.onmsg; s+=`<circle cx="${x}" cy="${y}" r="21" fill="${st.route.msg}" opacity=".18"/>`; }
+  if(state==='v') ring=st.route.msg;
+  if(state==='q'){ ring=st.route.fb; ink=st.route.fb; dash='stroke-dasharray="3 3"'; }
+  s+=`<circle cx="${x}" cy="${y}" r="14" fill="${fill}" stroke="${ring}" stroke-width="1.6" ${dash}/><text x="${x}" y="${y+4.5}" text-anchor="middle" font-size="13" font-weight="700" fill="${ink}" font-family="${SANS}">${n}</text>`;
+  if(state==='v'){ const g=st.ui.good; s+=`<circle cx="${x+10}" cy="${y+10}" r="6" fill="${g}" stroke="${st.plate}" stroke-width="2"/><path d="M${x+7.3} ${y+10.2} l2 2 3.4-3.8" fill="none" stroke="${st.dark?'#06221A':'#FFFFFF'}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>`; }
+  return s;
+}
+const POS={};
+function labels(list,st){
+  const g=$('#labs');
+  g.innerHTML=list.map((l,i)=>{ const mono=l.kind==='sig'||l.kind==='sigdim'; const col=l.kind==='sig'?st.route.msg:l.kind==='sigdim'?st.route.nerve:st.plateInk;
+    return `<g data-i="${i}" opacity="${l.kind==='dim'||l.kind==='sigdim'?.62:1}"><rect rx="8" fill="${st.plate}" stroke="${st.plateLine}"/><text font-family="${mono?MONO:SANS}" font-size="${mono?12:13}" font-weight="${mono?500:(l.kind==='one'?500:600)}" fill="${col}">${l.text}</text>${l.info?`<g class="ii"><circle r="9.5" fill="none" stroke="${st.plateLine}"/><text text-anchor="middle" y="4" font-family="Georgia,serif" font-style="italic" font-size="12" fill="${st.ui.ink2}">i</text></g>`:''}</g>`; }).join('');
+  let leads='';
+  [...g.children].forEach(el=>{
+    const l=list[+el.dataset.i], t=el.querySelector('text'), w=t.getComputedTextLength()+20+(l.info?24:0), h=28, [ax,ay]=l.a;
+    const x=l.dx<0?ax+l.dx-w:ax+l.dx, y=ay+l.dy-h/2;
+    el.setAttribute('transform',`translate(${x.toFixed(1)} ${y.toFixed(1)})`);
+    const r=el.querySelector('rect'); r.setAttribute('width',w.toFixed(1)); r.setAttribute('height',h); t.setAttribute('x',10); t.setAttribute('y',18.5);
+    const ii=el.querySelector('.ii'); if(ii) ii.setAttribute('transform',`translate(${(w-15).toFixed(1)} 14)`);
+    if(!l.noLeader){ const ex=l.dx<0?x+w:x, ey=y+h/2; leads+=`<line x1="${ax.toFixed(1)}" y1="${ay.toFixed(1)}" x2="${ex.toFixed(1)}" y2="${ey.toFixed(1)}" stroke="${st.leader}" stroke-width="1"/><circle cx="${ax.toFixed(1)}" cy="${ay.toFixed(1)}" r="2.4" fill="${st.leader}"/>`; }
+    if(l.id) POS[l.id]={x,y,w,h};
+  });
+  $('#leads').innerHTML=leads;
+}
+function treeHTML(st){
+  const chev=o=>`<span class="chev ${o?'open':''}"><svg width="12" height="12" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></span>`;
+  const pm='<span class="pm"><svg width="10" height="10" viewBox="0 0 24 24"><path d="M7 5l12 7-12 7z" fill="currentColor"/></svg></span>';
+  const c=st.ui.sys;
+  return `<div class="row">${chev(1)}<span class="dot" style="background:${c[0]}"></span><span class="grow">Stress response</span></div>
+   <div class="row l2">${chev(0)}<span class="grow">Fast route<small>nerves → adrenal medulla</small></span>${pm}</div>
+   <div class="row l2 sel">${chev(1)}<span class="grow">HPA axis<small>hypothalamus → pituitary → adrenal</small></span>${pm}</div>
+   <div class="row l3"><span class="chev"></span><span class="ab">CRH</span><span class="grow">CRH</span></div>
+   <div class="row l3"><span class="chev"></span><span class="ab">ACTH</span><span class="grow">ACTH</span></div>
+   <div class="row l3"><span class="chev"></span><span class="ab">CORT</span><span class="grow">Cortisol</span></div>
+   <div class="row">${chev(0)}<span class="dot" style="background:${c[1]}"></span><span class="grow">Thyroid</span></div>
+   <div class="row">${chev(0)}<span class="dot" style="background:${c[2]}"></span><span class="grow">Blood glucose</span></div>
+   <div class="row">${chev(0)}<span class="dot" style="background:${c[3]}"></span><span class="grow">Dopamine</span></div>
+   <div class="row">${chev(0)}<span class="dot" style="background:${c[4]}"></span><span class="grow">Daily rhythms</span></div>`;
+}
+function render(){
+  const st=STY[STYLE], f=$('#frame'), u=st.ui;
+  f.className='frame s'+STYLE;
+  const vars={stage:st.stage,float:u.float,line:u.line,ink:u.ink,ink2:u.ink2,ink3:u.ink3,primary:u.primary,onp:u.onp,psoft:u.psoft,shadow:u.shadow,seg:u.seg,segon:u.segon,ab:u.ab,track:u.track,good:u.good,warm:u.warm,plate:u.plate,msg:st.route.msg,fb:st.route.fb,onmsg:st.onmsg};
+  Object.entries(vars).forEach(([k,v])=>f.style.setProperty('--u-'+k,v));
+  f.setAttribute('aria-label',`Style ${STYLE}, ${st.name}: ${VIEW==='body'?'flagship HPA axis view':'adrenal close-up'}`);
+  $('#treeRows').innerHTML=treeHTML(st);
+  const body=VIEW==='body';
+  $('#world').innerHTML=body?worldBody(st):worldAdr(st);
+  $('#fPanel').hidden=!body; $('#tbSys').classList.toggle('on',body);
+  $('#fBottom').style.left='732px';
+  $('#capB').textContent=body?'Something stressful happens':'Adrenal gland';
+  $('#capS').textContent=body?'Slow route · the HPA axis':'Close-up · outer cortex and inner medulla';
+  $('#fLvl').innerHTML=body?'Whole body · <b>plain story</b>':'Close-up · <b>precise location</b>';
+  $('#orient').textContent=body?'FRONT VIEW · THE BODY’S RIGHT IS ON YOUR LEFT':'ADRENAL GLAND · CLOSE-UP · SCHEMATIC';
+  const R=st.route; let ov='', hs='';
+  if(body){
+    ov+=arrow('crh',R.msg,1)+arrow('acth',R.msg,1)+arrow('cort',R.msg,1)+arrow('nerve',R.nerve,.3)+arrow('adrenaline',R.msg,.3);
+    const [px,py]=pt('cort',.55); ov+=`<circle cx="${px}" cy="${py}" r="16" fill="${R.msg}" opacity=".16"/><circle cx="${px}" cy="${py}" r="7.5" fill="${R.msg}" opacity=".5"/><circle cx="${px}" cy="${py}" r="3.4" fill="#fff"/>`;
+    const hyp=P(101.8,173.8), pit=P(95,197.6), adr=P(300,519), liv=P(330,466);
+    hs+=hotspot([hyp[0]-28,hyp[1]-14],1,'v',st)+hotspot([pit[0]-28,pit[1]+16],2,'v',st)+hotspot([adr[0]-28,adr[1]+24],3,'cur',st)+hotspot([liv[0]-10,liv[1]-34],4,'',st)+hotspot(pt('f1',.5),'?','q',st);
+    $('#hots').innerHTML=hs; $('#ovA').innerHTML=ov;
+    labels([
+      {a:adr,dx:-40,dy:-34,text:'Adrenal cortex releases cortisol',kind:'one',info:true},
+      {a:hyp,dx:34,dy:-20,text:'Hypothalamus',info:true},
+      {a:pit,dx:34,dy:18,text:'Pituitary',info:true,id:'pit'},
+      {a:liv,dx:82,dy:-18,text:'Liver',info:true},
+      {a:pt('acth',.45),dx:20,dy:0,text:'ACTH · schematic route',kind:'sig',noLeader:true}
+    ],st);
+    const p=POS.pit, c=$('#fCard'); c.style.left=(p.x+p.w+24)+'px'; c.style.top=(p.y-128)+'px';
+    $('#cLvl').textContent='Whole body · plain story'; $('#cH').textContent='Pituitary gland'; $('#cP').textContent='A small gland under the brain passes the message on, releasing ACTH into the blood.';
+    $('#miniSvg').innerHTML=miniSVG(st,{x:0,y:50,w:460,h:520});
+  } else {
+    ov+=arrow('acth',R.msg,1)+arrow('cort',R.msg,1)+arrow('nerve',R.nerve,.45);
+    const [px,py]=pt('acth',.7); ov+=`<circle cx="${px}" cy="${py}" r="18" fill="${R.msg}" opacity=".16"/><circle cx="${px}" cy="${py}" r="8" fill="${R.msg}" opacity=".5"/><circle cx="${px}" cy="${py}" r="3.6" fill="#fff"/>`;
+    $('#ovA').innerHTML=ov;
+    $('#hots').innerHTML=hotspot(P(610,302),3,'cur',st);
+    labels([
+      {a:P(800,340),dx:90,dy:-64,text:'Cortex · makes cortisol',info:true,id:'cortex'},
+      {a:P(640,540),dx:170,dy:110,text:'Medulla · makes adrenaline',kind:'dim',info:true},
+      {a:P(420,742),dx:-70,dy:0,text:'Kidney',kind:'dim'},
+      {a:pt('acth',.42),dx:22,dy:-6,text:'ACTH · blood',kind:'sig',noLeader:true},
+      {a:pt('cort',.55),dx:-14,dy:28,text:'cortisol · blood',kind:'sig',noLeader:true},
+      {a:pt('nerve',.12),dx:-10,dy:26,text:'nerve signals · fast route',kind:'sigdim',noLeader:true}
+    ],st);
+    const p=POS.cortex, c=$('#fCard'); c.style.left=(p.x)+'px'; c.style.top=(p.y+p.h+10)+'px';
+    $('#cLvl').textContent='Close-up · precise location'; $('#cH').textContent='Adrenal glands'; $('#cP').textContent='Cortex, the outer layer: cortisol. Medulla, the inner core: adrenaline.';
+    $('#miniSvg').innerHTML=miniSVG(st,{x:262,y:492,w:74,h:54});
+  }
+  $('#styleSw').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.s===STYLE));
+  $('#viewSw').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===VIEW));
+  const n=NOTES[STYLE];
+  $('#note').innerHTML=`<div><div class="over">Style ${STYLE}</div><h2>${st.name}</h2><div class="tag">${n.tag}</div></div><div><h3>Good at</h3><p>${n.good}</p></div><div><h3>Watch out</h3><p>${n.risk}</p></div><div><h3>Production</h3><p>${n.cost}</p></div>`;
+  $('#cmp').innerHTML=`<thead><tr><th></th>${Object.keys(STY).map(k=>`<th class="${k===STYLE?'cur':''}">${k} · ${STY[k].name}<small>${STY[k].dark?'dark stage':'light stage'}</small></th>`).join('')}</tr></thead><tbody>${CMP.map(([r,v])=>`<tr><th scope="row">${r}</th>${Object.keys(STY).map(k=>`<td class="${k===STYLE?'cur':''}">${v[k][0]?`<span class="pill ${v[k][0]}">${v[k][1]}</span>`:v[k][1]}</td>`).join('')}</tr>`).join('')}</tbody>`;
+}
+function miniSVG(st,r){
+  const w=Math.max(r.w,44), h=Math.max(r.h,40), x=r.x+r.w/2-w/2, y=r.y+r.h/2-h/2;
+  return `<g transform="translate(50 0)"><path d="${bodyPath()}" fill="${st.dark?'#12303A':'#DCE6E4'}" stroke="${st.dark?'#2A5663':'#B9C9C6'}" stroke-width="3"/></g><circle cx="112" cy="150" r="96" fill="none" stroke="${st.dark?'#23505C':'#B9C9C6'}" stroke-width="4"/><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="10" fill="${st.ui.psoft}" stroke="${st.ui.primary}" stroke-width="6"/>`;
+}
+
+/* ---------- controls ---------- */
+$('#styleSw').innerHTML=Object.keys(STY).map((k,i)=>`<button data-s="${k}" aria-pressed="false"><kbd>${i+1}</kbd>${k} · ${STY[k].name}</button>`).join('');
+$('#styleSw').addEventListener('click',e=>{ const b=e.target.closest('button'); if(b){ STYLE=b.dataset.s; try{ localStorage.setItem('hs-sf-style',STYLE); }catch(err){} render(); } });
+$('#viewSw').addEventListener('click',e=>{ const b=e.target.closest('button'); if(b){ VIEW=b.dataset.v; render(); } });
+document.addEventListener('keydown',e=>{
+  if(e.metaKey||e.ctrlKey||e.altKey) return;
+  const i='1234'.indexOf(e.key); if(i>=0){ STYLE='ABCD'[i]; try{ localStorage.setItem('hs-sf-style',STYLE); }catch(err){} render(); }
+  if(e.key==='v'||e.key==='V'){ VIEW=VIEW==='body'?'adr':'body'; render(); }
+});
+function fit(){ const k=$('#box').clientWidth/1280; $('#frame').style.transform=`scale(${k})`; }
+window.addEventListener('resize',fit);
+fit(); render();
+if(document.fonts&&document.fonts.ready) document.fonts.ready.then(render);
+})();
+</script>

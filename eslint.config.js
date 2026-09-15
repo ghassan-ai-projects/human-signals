@@ -16,6 +16,8 @@ export default tseslint.config(
       'scripts/*.mjs',
       // Specification artifacts, not application source.
       'documentation/**',
+      // Design prototypes: standalone HTML/JS with no build step, not application source.
+      'prototypes/**',
       'eslint.config.js',
     ],
   },
