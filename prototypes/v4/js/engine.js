@@ -159,6 +159,14 @@ function renderDots(){
   $('#dots').innerHTML=h;
   const done=v.size===p.hots.length&&(!p.gate||isRevealed());
   $('#timeChip').textContent=done?'Route explored':p.chip; $('#timeChip').classList.toggle('done',done);
+  /* "Say it back" becomes reachable on demand. A SIBLING button, not a child of #timeChip:
+     renderDots rewrites #timeChip's textContent on every step, which destroys any element
+     inside it, and a focused child would lose focus to <body> on the next step.
+     Gated on state (a reflect prompt exists, nothing else is open) rather than on the
+     reflectSeen latch, so the affordance does not appear and vanish depending on whether a
+     900 ms timer already fired. Ungraded: it opens a prompt, it never records an attempt. */
+  const say=$('#bSay');
+  if(say) say.hidden=!(p.reflect&&!E.playing&&!E.tryMode&&!E.whatIf&&!E.cellOpen&&!(HS.RB&&HS.RB.active)&&!(HS.CMP&&HS.CMP.active));
   const w=$('#bWhat'); w.hidden=!(p.whatIf&&(!p.gate||isRevealed())); if(p.whatIf) w.setAttribute('aria-label',p.whatIf.q);
 }
 $('#dots').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; if(b.dataset.q) openTry(); else goHot(+b.dataset.h,true); });
@@ -252,23 +260,47 @@ function afterPlay(){
 }
 /* Say it back: an optional, ungraded self-explanation after a pathway is understood (no score, no streak) */
 const reflectSeen=new Set();
+/* Which pathways have had their explanation prompt opened this session. Used ONLY to decide
+   whether the model answer starts hidden: the first visit is where the retrieval effort
+   matters, so the model stays behind the button then; a later visit in the same session opens
+   it for comparison. This is not a progress record and is never persisted or counted. */
+const reflectVisits=new Set();
 function openReflect(){
   const p=P(); if(!p||!p.reflect||E.reflectOpen||E.tryMode||E.whatIf||E.cellOpen||(HS.RB&&HS.RB.active)||(HS.CMP&&HS.CMP.active)) return;
   E.reflectOpen=true; const r=p.reflect; HS.closeCards&&HS.closeCards();
+  /* Remember what opened this, so Escape returns focus where the learner was — pressing Y
+     from a focused hotspot should not throw focus across the screen to the toolbar. */
+  HS._reflFrom=(document.activeElement&&document.activeElement!==document.body)?document.activeElement:$('#bRead');
   const box=document.createElement('div'); box.className='try float'; box.id='reflCard'; box.setAttribute('role','dialog'); box.setAttribute('aria-label','Say it back');
   box.style.right='16px'; box.style.top='96px';
-  box.innerHTML=`<div class="k">Say it back</div><h5>${r.q}</h5><p>Put it in your own words — just for you, nothing is scored.</p>
+  const revisit=reflectVisits.has(key()); reflectVisits.add(key());
+  box.innerHTML=`<div class="k">Say it back</div><h5>${r.q}</h5><p>${revisit?'Reading it again — here is how we\u2019d put it, so you can compare with your own version.':'Put it in your own words — just for you, nothing is scored.'}</p>
    <textarea id="reflText" rows="3" aria-label="Your explanation" placeholder="Type your answer, or just think it through…"></textarea>
    <div id="reflModel" hidden></div>
    <div class="acts"><button class="btn t" id="reflClose">Close</button><button class="btn p" id="reflShow">Show how we’d put it</button></div>`;
   app.appendChild(box);
-  $('#reflShow').onclick=()=>{ const m=$('#reflModel'); m.className='res good'; m.innerHTML='<b>How we’d put it</b>'+r.model; m.hidden=false; $('#reflShow').disabled=true; HS.say('How we’d put it. '+r.model); };
+  const reveal=()=>{ const m=$('#reflModel'); m.className='res good'; m.innerHTML='<b>How we’d put it</b>'+r.model; m.hidden=false; $('#reflShow').disabled=true; HS.say('How we’d put it. '+r.model); };
+  $('#reflShow').onclick=reveal;
+  /* A later visit in the same session opens with the model already there: the effortful
+     first attempt has happened, so the second read is a comparison rather than a test. */
+  if(revisit){ reveal(); $('#reflShow').hidden=true; }
   $('#reflClose').onclick=()=>closeReflect(true);
   box.addEventListener('keydown',e=>{ if(e.key==='Escape'){ e.preventDefault(); closeReflect(true); } });
   $('#reflText').focus(); HS.say('Say it back. '+r.q+' Type an answer if you like, then show how we’d put it.');
 }
-function closeReflect(focus){ if(!E.reflectOpen) return; E.reflectOpen=false; const d=$('#reflCard'); if(d) d.remove(); if(focus&&$('#bRead')) $('#bRead').focus(); }
+function closeReflect(focus){ if(!E.reflectOpen) return; E.reflectOpen=false; const d=$('#reflCard'); if(d) d.remove(); if(focus&&HS._reflFrom&&document.contains(HS._reflFrom)) HS._reflFrom.focus(); else if(focus&&$('#bRead')) $('#bRead').focus(); }
 HS.openReflect=openReflect; HS.closeReflect=closeReflect;
+/* The on-demand entry point. openReflect already has no reflectSeen check of its own — that
+   latch lives in afterPlay as a send-once guard — so this is an alias plus a close-first
+   guard, NOT a `force` flag. #reflCard, #tryCard and #wiCard all sit at right:16/top:96, so
+   opening it over another card would stack three dialogs at identical coordinates. */
+HS.openReflectNow=function(){
+  const p=P(); if(!p||!p.reflect) return;
+  if(E.reflectOpen){ closeReflect(true); return; }
+  if(E.tryMode) closeTry(); if(E.whatIf) restoreWhatIf(false); if(E.cellOpen) closeCell();
+  HS.closeCards&&HS.closeCards();
+  openReflect();
+};
 /* Watch the whole response: play each route in turn across the shared time ribbon (guided, no table) */
 function setAllUI(on){ const b=$('#bAll'); if(!b) return; b.setAttribute('aria-pressed',on); const l=b.querySelector('.lbl'); if(l) l.textContent=on?'Stop':'Watch it all'; }
 function stopAll(){ if(E.playingAll){ E.playingAll=false; setAllUI(false); } }   // a deliberate user action ends the auto sequence

@@ -14,6 +14,7 @@ $('#bAll').addEventListener('click',()=>HS.playAll());
 $('#bRead').addEventListener('click',()=>HS.openRead());
 $('#bExit').addEventListener('click',()=>{ HS.stopAll&&HS.stopAll(); HS.leave(); });
 $('#bWhat').addEventListener('click',()=>HS.openWhatIf());
+$('#bSay').addEventListener('click',()=>HS.openReflectNow());
 $('#bSearch').addEventListener('click',()=>HS.openSearch());
 $('#bSystems').addEventListener('click',()=>{ const p=$('#panel'); p.classList.toggle('closed'); $('#bSystems').setAttribute('aria-pressed',!p.classList.contains('closed')); HS.camTo(HS.cam.region||'body',450); });
 
@@ -53,6 +54,7 @@ document.addEventListener('keydown',e=>{
     else if(k==='r'||k==='R') HS.openRead();
     else if(k==='t'||k==='T') HS.openTry();
     else if(k==='w'||k==='W') HS.openWhatIf();
+    else if(k==='y'||k==='Y') HS.openReflectNow();
     else if(k==='f'||k==='F'||k==='g'||k==='G'){ const b=document.querySelectorAll('#seg [data-route]')[/[fF]/.test(k)?0:1]; if(b) b.click(); }
   }
 });
@@ -74,7 +76,7 @@ $('#labels').addEventListener('focusin',e=>{ if(e.target.matches('.hs,.lab butto
 
 /* keyboard shortcuts (?) */
 const KEYS=[['Anywhere',[['⌘K or /','Search'],['S','Systems panel'],['L','Show all labels'],['+ and −','Zoom'],['0','Whole body'],['Arrows','Pan, when the body has focus'],['A','Advanced mode'],['H','Hints on or off'],['?','This list'],['Esc','Close, then zoom out, then leave']]],
- ['In a pathway',[['Space','Play or pause'],['] and [','Next or previous step'],['T','Try it?'],['W','What if?'],['F and G','First or second route'],['R','Read the route']]]];
+ ['In a pathway',[['Space','Play or pause'],['] and [','Next or previous step'],['T','Try it?'],['W','What if?'],['Y','Say it back in your own words'],['F and G','First or second route'],['R','Read the route']]]];
 HS.toggleKeys=function(){
   let d=$('#keys'); if(d){ const ret=d._ret; d.remove(); if(ret&&document.contains(ret)) ret.focus(); return; }
   d=document.createElement('div'); d.id='keys'; d.className='keys float'; d.setAttribute('role','dialog'); d.setAttribute('aria-label','Keyboard shortcuts'); d._ret=document.activeElement;

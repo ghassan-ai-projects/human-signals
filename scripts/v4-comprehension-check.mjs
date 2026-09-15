@@ -200,6 +200,55 @@ rec('8', 'the text alternative contrasts fast and slow in words', t78.hasContras
 rec('8', 'no invented measured times leak into the explanation', t78.numbers.length === 0,
   t78.numbers.join(', ') || 'none');
 
+/* ---- Task 7/8, behavioural half: an ungraded explanation moment must be reachable
+   ON DEMAND in every pathway, must not be scored or recorded, and must not stack
+   dialogs. The text alternative already carries the mechanism (checked above); this
+   checks the learner can ASK for the explanation moment rather than waiting for it. ---- */
+await page.evaluate(() => window.HS.openPathway('stress', 'slow', false));
+await page.waitForTimeout(700);
+const sayA11y = await page.evaluate(() => {
+  const b = document.querySelector('#bSay');
+  return b ? { exists: true, hidden: b.hidden, label: (b.getAttribute('title') || '') + ' ' + b.textContent.trim() } : { exists: false };
+});
+rec('7', 'an on-demand explanation moment exists in the pathway bar',
+  sayA11y.exists && !sayA11y.hidden, JSON.stringify(sayA11y));
+rec('7', 'the explanation moment is framed as ungraded',
+  /nothing is scored|ungraded|no score/i.test(sayA11y.label), sayA11y.label);
+
+const sayFlow = await page.evaluate(async () => {
+  let attempts = 0;
+  const orig = window.HS.recordAttempt;
+  window.HS.recordAttempt = function () { attempts++; return orig && orig.apply(this, arguments); };
+  window.HS.openReflectNow();
+  await new Promise((r) => setTimeout(r, 300));
+  const card = document.querySelector('#reflCard');
+  const first = { open: !!card, q: card && card.querySelector('h5').textContent.trim(), modelHidden: card && document.querySelector('#reflModel').hidden };
+  const show = document.querySelector('#reflShow');
+  if (show) { show.click(); await new Promise((r) => setTimeout(r, 250)); }
+  const model = (document.querySelector('#reflModel') || {}).innerText || '';
+  window.HS.closeReflect(false);
+  window.HS.recordAttempt = orig;
+  return { first, model: model.trim().slice(0, 80), attempts };
+});
+rec('7', 'the explanation moment opens on demand, ungraded, with the pathway question',
+  sayFlow.first.open && sayFlow.first.q.length > 10, JSON.stringify(sayFlow.first));
+rec('7', 'a model answer is offered for self-comparison, never as a mark',
+  sayFlow.model.length > 10, sayFlow.model);
+rec('7', 'opening the explanation moment NEVER records an attempt or a score',
+  sayFlow.attempts === 0, `${sayFlow.attempts} recordAttempt calls`);
+
+/* Dialog stacking: the reflect card, Try it? and What if? all dock at the same spot. */
+const stack = await page.evaluate(async () => {
+  window.HS.openTry();
+  await new Promise((r) => setTimeout(r, 250));
+  window.HS.openReflectNow();
+  await new Promise((r) => setTimeout(r, 300));
+  const n = ['#reflCard', '#tryCard', '#wiCard'].filter((s) => document.querySelector(s)).length;
+  window.HS.closeReflect(false); window.HS.closeTry && window.HS.closeTry();
+  return n;
+});
+rec('7', 'the explanation moment does not stack over Try it? / What if?', stack <= 1, `${stack} dialogs open`);
+
 /* ---- Keyboard proxy for task 10: the guided path is traversable without a
    mouse. Tab from the top and confirm focus lands on a trigger, the body, and
    the pathway controls without getting trapped. ---- */
