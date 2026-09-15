@@ -10,7 +10,9 @@ HS.openCompare=function(){
   const S=E.scene; if(!S||!S.toggle||S.toggle.options.length<2||CMP.active) return;
   const [a,b]=S.toggle.options.map(o=>o[0]), A=S.pathways[a], B=S.pathways[b];
   if(!A.compare||!B.compare) return;
-  HS.stopPlay(); HS.closeTry(); HS.restoreWhatIf(false); HS.closeCell(); HS.closeCards(); HS.closeRead(false); if(HS.RB.active) HS.closeRebuild(false); $('#tips').innerHTML='';
+  const opener=HS.layers.opener(document.activeElement,$('#bAdv'));
+  HS.layers.start('compare',opener,()=>HS.closeCompare(false),$('#bAdv'));
+  HS.stopPlay(); HS.closeTry(false); HS.restoreWhatIf(false); HS.closeCell(false); HS.closeCards(); HS.closeRead(false); if(HS.RB.active) HS.closeRebuild(false); $('#tips').innerHTML='';
   Object.assign(CMP,{active:true,S,a,b,A,B,tok:0});
   Object.keys(HS.rstate).forEach(id=>{ HS.setRoute(id,'hide'); HS.setHollow(id,false); });
   const side=(p,key,hollow)=>{ p.draw.forEach(id=>{ HS.setRoute(id,'on'); HS.setHollow(id,hollow); }); if(p.gate&&HS.isRevealed(key)) p.gate.routes.forEach(id=>{ HS.setRoute(id,'on'); HS.setHollow(id,hollow); }); };
@@ -20,7 +22,7 @@ HS.openCompare=function(){
   const RA=HS.REG[A.region], RB=HS.REG[B.region], x=Math.min(RA.x,RB.x), y=Math.min(RA.y,RB.y);
   HS.REG['cmp-'+S.id]={x,y,w:Math.max(RA.x+RA.w,RB.x+RB.w)-x,h:Math.max(RA.y+RA.h,RB.y+RB.h)-y};
   const box=document.createElement('div'); box.className='try float cmp'; box.id='cmpCard'; box.setAttribute('role','dialog'); box.setAttribute('aria-label',`Compare ${A.name} and ${B.name}`);
-  box.style.right='16px'; box.style.top='96px'; box.innerHTML=cardHTML(); $('#cards').appendChild(box);
+  box.style.right='16px'; box.style.top='96px'; box.innerHTML=cardHTML(); $('#cards').appendChild(box); HS.layers.mount('compare',box);
   $('#cmpLegend').hidden=false; $('#cmpLegend').innerHTML=`<span class="lg a"><i></i>A · ${A.name}</span><span class="lg b"><i></i>B · ${B.name}</span>`;
   HS.camTo('cmp-'+S.id,650); HS.renderOverlay();
   box.querySelector('[data-cmp="play"]').focus();
@@ -49,10 +51,12 @@ function cardHTML(){
 }
 
 HS.closeCompare=function(restore=true){
-  if(!CMP.active) return; CMP.active=false; CMP.tok++; HS.cancelTravel();
+  if(!CMP.active){ HS.layers.end('compare',restore); return; }
+  CMP.active=false; CMP.tok++; HS.cancelTravel();
   const c=$('#cmpCard'); if(c) c.remove(); $('#cmpLegend').hidden=true;
   Object.keys(HS.rstate).forEach(id=>HS.setHollow(id,false));
   HS.setTime(E.tIdx);
+  HS.layers.end('compare',restore);
   if(restore&&E.route) HS.enterPathway(E.route,false);
 };
 async function playBoth(){

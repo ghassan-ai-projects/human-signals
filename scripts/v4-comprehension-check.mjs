@@ -280,17 +280,41 @@ rec('7', 'a model answer is offered for self-comparison, never as a mark',
 rec('7', 'opening the explanation moment NEVER records an attempt or a score',
   sayFlow.attempts === 0, `${sayFlow.attempts} recordAttempt calls`);
 
-/* Dialog stacking: the reflect card, Try it? and What if? all dock at the same spot. */
+/* Dialog stacking: every true surface shares one active layer. This proxy checks the
+   reproduced reader/reflection overlap, background inertness, Escape, and focus return. */
 const stack = await page.evaluate(async () => {
-  window.HS.openTry();
+  const ids = ['#sheet', '#reflCard', '#tryCard', '#wiCard', '#cellInset', '#rbCard', '#cmpCard', '#connMap', '#keys', '#palette', '#advMenu'];
+  const visible = () => ids.filter((s) => {
+    const el = document.querySelector(s); if (!el) return false;
+    const cs = getComputedStyle(el); return !el.hidden && !el.classList.contains('closed') && cs.display !== 'none' && cs.visibility !== 'hidden';
+  }).map((s) => s.slice(1));
+  window.HS.openRead();
   await new Promise((r) => setTimeout(r, 250));
+  const reader = visible();
   window.HS.openReflectNow();
   await new Promise((r) => setTimeout(r, 300));
-  const n = ['#reflCard', '#tryCard', '#wiCard'].filter((s) => document.querySelector(s)).length;
-  window.HS.closeReflect(false); window.HS.closeTry && window.HS.closeTry();
-  return n;
+  const reflection = visible();
+  const reflectionInert = !!document.querySelector('#world')?.inert;
+  const reflectionClose = document.querySelector('#reflClose');
+  if (reflectionClose) reflectionClose.click();
+  await new Promise((r) => setTimeout(r, 100));
+  const afterReflection = { visible: visible(), focus: document.activeElement && document.activeElement.id };
+  document.querySelector('#bSettings').focus();
+  document.querySelector('#bSettings').click();
+  await new Promise((r) => setTimeout(r, 50));
+  document.querySelector('#bKeys').focus();
+  document.querySelector('#bKeys').click();
+  await new Promise((r) => setTimeout(r, 100));
+  const keysOpen = { visible: visible(), inert: !!document.querySelector('#world')?.inert };
+  const keySurface = document.querySelector('#keys');
+  if (keySurface) keySurface.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+  await new Promise((r) => setTimeout(r, 100));
+  const afterKeys = { visible: visible(), focus: document.activeElement && document.activeElement.id, active: window.HS.layers && window.HS.layers.active && window.HS.layers.active.id };
+  return { reader, reflection, reflectionInert, afterReflection, keysOpen, afterKeys };
 });
-rec('7', 'the explanation moment does not stack over Try it? / What if?', stack <= 1, `${stack} dialogs open`);
+rec('7', 'the explanation moment does not stack over Try it? / What if?', stack.reflection.length <= 1 && stack.reflection.includes('reflCard'), `${stack.reflection.length} visible layer(s): ${stack.reflection.join(', ')}`);
+rec('10', 'a true dialog makes the model background inert', stack.reflectionInert && stack.keysOpen.inert, JSON.stringify({ reflection: stack.reflectionInert, keys: stack.keysOpen.inert }));
+rec('10', 'Escape closes the active dialog and restores its opener', stack.afterKeys.visible.length === 0 && stack.afterKeys.focus === 'bSettings' && !stack.afterKeys.active, JSON.stringify(stack.afterKeys));
 
 /* ---- Task 1/2 support: a dead end on the first screen must explain itself, and a
    system row that HAS content must still lead somewhere. A row that says nothing is

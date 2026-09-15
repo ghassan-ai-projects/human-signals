@@ -309,6 +309,9 @@ const reflectSeen=new Set();
 const reflectVisits=new Set();
 function openReflect(){
   const p=P(); if(!p||!p.reflect||E.reflectOpen||E.playing||E.tryMode||E.whatIf||E.cellOpen||(HS.RB&&HS.RB.active)||(HS.CMP&&HS.CMP.active)) return;
+  const fallback=$('#bSay')&&!$('#bSay').hidden?$('#bSay'):$('#bRead');
+  const opener=HS.layers.opener(document.activeElement,fallback);
+  HS.layers.start('reflect',opener,()=>closeReflect(false),fallback);
   E.reflectOpen=true; const r=p.reflect; HS.closeCards&&HS.closeCards();
   /* Remember what opened this, so Escape returns focus where the learner was — pressing Y
      from a focused hotspot should not throw focus across the screen to the toolbar. */
@@ -320,7 +323,7 @@ function openReflect(){
    <textarea id="reflText" rows="3" aria-label="Your explanation" placeholder="Type your answer, or just think it through…"></textarea>
    <div id="reflModel" hidden></div>
    <div class="acts"><button class="btn t" id="reflClose">Close</button><button class="btn p" id="reflShow">Show how we’d put it</button></div>`;
-  app.appendChild(box);
+  app.appendChild(box); HS.layers.mount('reflect',box);
   const reveal=()=>{ const m=$('#reflModel'); m.className='res good'; m.innerHTML='<b>How we’d put it</b>'+r.model; m.hidden=false; $('#reflShow').disabled=true; HS.say('How we’d put it. '+r.model); };
   $('#reflShow').onclick=reveal;
   /* A later visit in the same session opens with the model already there: the effortful
@@ -331,15 +334,9 @@ function openReflect(){
   $('#reflText').focus(); HS.say('Say it back. '+r.q+' Type an answer if you like, then show how we’d put it.');
 }
 function closeReflect(focus){
-  if(!E.reflectOpen) return; E.reflectOpen=false; const d=$('#reflCard'); if(d) d.remove();
-  if(!focus) return;
-  /* Return focus where it came from. When the card was opened from the document body (the Y
-     shortcut), fall back to the control that owns the feature rather than to the far end of
-     the pathway bar. */
-  const from=HS._reflFrom;
-  if(from&&document.contains(from)&&from!==document.body) from.focus();
-  else if($('#bSay')&&!$('#bSay').hidden) $('#bSay').focus();
-  else if($('#bRead')) $('#bRead').focus();
+  if(!E.reflectOpen){ HS.layers.end('reflect',focus); return; }
+  E.reflectOpen=false; const d=$('#reflCard'); if(d) d.remove();
+  HS.layers.end('reflect',focus);
 }
 HS.openReflect=openReflect; HS.closeReflect=closeReflect;
 /* The on-demand entry point. openReflect already has no reflectSeen check of its own — that
@@ -349,7 +346,7 @@ HS.openReflect=openReflect; HS.closeReflect=closeReflect;
 HS.openReflectNow=function(){
   const p=P(); if(!p||!p.reflect) return;
   if(E.reflectOpen){ closeReflect(true); return; }
-  if(E.tryMode) closeTry(); if(E.whatIf) restoreWhatIf(false); if(E.cellOpen) closeCell();
+  if(E.tryMode) closeTry(false); if(E.whatIf) restoreWhatIf(false); if(E.cellOpen) closeCell(false);
   HS.closeCards&&HS.closeCards();
   openReflect();
 };
@@ -377,6 +374,8 @@ HS.playAll=playAll;
 /* ---------- Try it? ---------- */
 function openTry(){
   const p=P(); if(!p||!p.gate||E.tryMode||E.whatIf) return; const g=p.gate, tr=g.try;
+  const opener=HS.layers.opener(document.activeElement,$('#bRead'));
+  HS.layers.start('try',opener,()=>closeTry(false),$('#bRead'));
   const q=typeof tr.q==='string'?tr.q:(tr.q[HS.level()]||tr.q.organ);   // wording follows the zoom level it was opened at
   stopPlay(); HS.closeCards(); HS.clearTip(g.tipKey); E.tryMode=true; E.picks.clear(); E.tryCtx={exposed:isRevealed(),why:false};
   tr.candidates.forEach(k=>$('#o-'+k).classList.add('cand'));
@@ -384,7 +383,7 @@ function openTry(){
   const box=document.createElement('div'); box.className='try float'; box.id='tryCard'; box.setAttribute('role','dialog'); box.setAttribute('aria-label','Try it');
   box.style.right='16px'; box.style.top='96px';   // docked right; the camera frames the scene in the space beside it
   box.innerHTML=`<div class="k">Try it? <button class="why" id="tryWhy">ⓘ Why?</button></div><h5>${q}</h5><p>${tr.hint} Or choose here:</p><div class="opts" role="group" aria-label="Candidates, head to pelvis">${tr.candidates.map(k=>`<button class="opt" aria-pressed="false" data-pick="${k}">${HS.orgName(k)}</button>`).join('')}</div><div id="tryWhyTxt"></div><div class="sr" id="tryPicks" aria-live="polite">Nothing selected yet</div><div id="tryRes"></div><div class="acts"><button class="btn t" id="tryShow">Show me</button><span><button class="btn t" id="tryClose">Close</button> <button class="btn p" id="tryCheck" disabled>Check</button></span></div>`;
-  $('#cards').appendChild(box);
+  $('#cards').appendChild(box); HS.layers.mount('try',box);
   HS.camTo(tr.region||p.region,600);
   $('#tryWhy').onclick=()=>{ if($('#tryCheck')) E.tryCtx.why=true; $('#tryWhyTxt').innerHTML=`<div class="whytxt">${tr.why}</div>`; $('#tryWhy').remove(); };
   $('#tryShow').onclick=()=>checkTry(true); $('#tryClose').onclick=closeTry; $('#tryCheck').onclick=()=>checkTry(false);
@@ -425,16 +424,20 @@ async function checkTry(show){
   if(g.loopFrom&&E.scene.routes[g.loopFrom]&&isRevealed()&&!E.whatIf) await HS.travel(g.loopFrom,850);   // the output runs downstream, then continues back up the feedback line as one closed circuit
   for(const id of g.routes){ if(!isRevealed()||E.whatIf) break; await HS.travel(id,1100); }
 }
-function closeTry(){
-  if(!E.tryMode) return; E.tryMode=false; const c=$('#tryCard'); if(c) c.remove();
+function closeTry(focus=true){
+  if(!E.tryMode){ HS.layers.end('try',focus); return; }
+  E.tryMode=false; const c=$('#tryCard'); if(c) c.remove();
   const p=P(); p.gate.try.candidates.forEach(k=>$('#o-'+k).classList.remove('cand','pick','good','miss'));
   HS.light.dim=new Set(p.organs); HS.applyOrgs();
+  HS.layers.end('try',focus);
 }
 HS.closeTry=closeTry;
 
 /* ---------- cell inset ---------- */
 function openCell(key){
   const C=E.scene&&E.scene.cells&&E.scene.cells[key]; if(E.cellOpen||!C) return; E.cellOpen=true; HS.closeCards();
+  const opener=HS.layers.opener(document.activeElement,$('#bRead'));
+  HS.layers.start('cell',opener,()=>closeCell(false),$('#bRead'));
   const n=C.steps.length, F=C.focus||[], adv=HS.advOn&&C.adv;
   const d=document.createElement('div'); d.className='inset float'; d.id='cellInset'; d.setAttribute('role','dialog'); d.setAttribute('aria-label',C.aria);
   d.style.right='150px'; d.style.top='96px';
@@ -442,7 +445,7 @@ function openCell(key){
    <svg viewBox="0 0 376 214" aria-hidden="true">${C.svg}${F.length?`<defs><mask id="cellSpot"><rect width="376" height="214" fill="#fff"/><circle id="spotHole" cx="${F[0][0]}" cy="${F[0][1]}" r="${F[0][2]}" fill="#000"/></mask></defs><rect width="376" height="214" fill="#040A0D" opacity=".58" mask="url(#cellSpot)" pointer-events="none"/>`:''}</svg>
    <ol class="csteps">${C.steps.map((s,i)=>`<li><button class="cstep" data-cs="${i}"><span class="n" aria-hidden="true">${i+1}</span><span class="tx">${s}${adv?`<small class="advtx">${C.adv[i]}</small>`:''}</span></button></li>`).join('')}</ol>
    <div class="cnav"><span id="cellPos" aria-live="polite"></span><span><button class="btn t" data-cn="-1">Previous</button> <button class="btn p" data-cn="1">Next</button></span></div>`;
-  app.appendChild(d);
+  app.appendChild(d); HS.layers.mount('cell',d);
   const mol=d.querySelector('#cellMol'), path=d.querySelector('#cellPath'), hole=d.querySelector('#spotHole');
   const put=(x,y)=>{ if(!mol) return; mol.setAttribute('cx',x); mol.setAttribute('cy',y); mol.nextElementSibling.setAttribute('x',x); mol.nextElementSibling.setAttribute('y',y+3.5); };
   const runMol=()=>{   /* the signal molecule travels on step 1 and rests bound afterwards */
@@ -477,19 +480,25 @@ function openCell(key){
   go(0,true); HS.say(`${C.say} Step 1 of ${n}. Use Next, or the arrow keys, to step through.`);
   d.querySelector('[data-cn="1"]').focus();
 }
-function closeCell(){ if(!E.cellOpen) return; E.cellOpen=false; const d=$('#cellInset'); if(d) d.remove(); HS.resetLevel(); HS.depthChip(HS.level()); HS.updateView(); }
+function closeCell(focus=true){
+  if(!E.cellOpen){ HS.layers.end('cell',focus); return; }
+  E.cellOpen=false; const d=$('#cellInset'); if(d) d.remove(); HS.resetLevel(); HS.depthChip(HS.level()); HS.updateView();
+  HS.layers.end('cell',focus);
+}
 HS.openCell=openCell; HS.closeCell=closeCell;
 
 /* ---------- What if? ---------- */
 function openWhatIf(){
   const p=P(); if(!p||!p.whatIf||E.whatIf||(p.gate&&!isRevealed())) return; const w=p.whatIf;
-  stopPlay(); closeTry(); closeCell(); HS.closeCards(); E.whatIf='predict';
+  const opener=HS.layers.opener(document.activeElement,$('#bWhat'));
+  HS.layers.start('what',opener,()=>restoreWhatIf(false),$('#bWhat'));
+  stopPlay(); closeTry(false); closeCell(false); HS.closeCards(); E.whatIf='predict';
   $('#thought').hidden=false; (w.fade||[]).forEach(id=>HS.setRoute(id,'faint'));
   if(w.atmos){ HS.setAtmos(w.atmos); HS.setNight(0); }
   const box=document.createElement('div'); box.className='try float'; box.id='wiCard'; box.setAttribute('role','dialog'); box.setAttribute('aria-label','What if?');
   box.style.right='16px'; box.style.top='96px';
   box.innerHTML=`<div class="k">What if?</div><h5>${w.q}</h5><p>${w.p}</p><div class="opts" role="radiogroup" aria-label="Your prediction">${w.options.map(o=>`<button class="opt" role="radio" aria-checked="false" data-o="${o[0]}">${o[1]}</button>`).join('')}</div><div id="wiRes"></div><div class="acts"><button class="btn t" id="wiRestore">Restore</button><button class="btn p" id="wiGo" disabled>See what happens</button></div>`;
-  $('#cards').appendChild(box);
+  $('#cards').appendChild(box); HS.layers.mount('what',box);
   HS.camTo(w.region||p.region,600);
   box.querySelector('.opts').addEventListener('click',e=>{ const b=e.target.closest('.opt'); if(!b||b.disabled) return; box.querySelectorAll('.opt').forEach(o=>o.setAttribute('aria-checked',o===b)); $('#wiGo').disabled=false; });
   $('#wiGo').onclick=()=>runWhatIf(box.querySelector('.opt[aria-checked="true"]').dataset.o);
@@ -509,12 +518,13 @@ async function runWhatIf(o){
   if(!HS.RM()) for(const id of w.replay||[]){ if(!E.whatIf) break; await HS.travel(id,900); }
 }
 function restoreWhatIf(focus){
-  if(!E.whatIf) return; const p=P(); E.whatIf=null; $('#thought').hidden=true;
+  if(!E.whatIf){ HS.layers.end('what',focus); return; }
+  const p=P(); E.whatIf=null; $('#thought').hidden=true;
   const c=$('#wiCard'); if(c) c.remove();
   if(p) (p.whatIf.fade||[]).forEach(id=>{ if(p.draw.includes(id)) HS.setRoute(id,'on'); });
   if(p&&p.whatIf.atmos) setTime(E.tIdx);
   if(p&&p.gate&&isRevealed()) p.gate.routes.forEach(id=>HS.setRoute(id,'on',{draw:true}));
-  HS.renderOverlay(); if(focus){ $('#bWhat').focus(); HS.say('Restored the normal pathway.'); }
+  HS.renderOverlay(); HS.layers.end('what',focus); if(focus){ HS.say('Restored the normal pathway.'); }
 }
 HS.openWhatIf=openWhatIf; HS.restoreWhatIf=restoreWhatIf;
 

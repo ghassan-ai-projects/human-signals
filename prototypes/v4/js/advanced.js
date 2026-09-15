@@ -90,6 +90,8 @@ function figure(pp){
 
 HS.openPassport=function(key,ret){
   const pp=HS.PASSPORTS[key]; if(!pp) return; const c=CLS[pp.cls], S=HS.E.scene;
+  const opener=HS.layers.opener(ret!==undefined?ret:document.activeElement,$('#bAdv'));
+  HS.layers.start('read',opener,focus=>HS.closeRead(focus),$('#bRead'));
   const rows=[['Made from',pp.from],['Made in',pp.made],['Travels',pp.travels],['Receptor',pp.receptor],['Acts',pp.speed],['Switched off',pp.off]];
   const keys=S?[...new Set(Object.keys(S.routes).map(HS.passKeyForRoute).filter(Boolean))]:[];
   if(!keys.includes(key)) keys.unshift(key);
@@ -100,6 +102,7 @@ HS.openPassport=function(key,ret){
   html+=`<h4>Why the class matters</h4><ul class="why"><li>Peptides and catecholamines dissolve in the blood but can’t cross the cell membrane, so they bind surface receptors and act within seconds to minutes.</li><li>Steroids such as cortisol ride on carrier proteins, cross the membrane and bind receptors inside the cell, changing gene activity over hours.</li><li>Melatonin is an amine that can cross membranes, yet its main effects come through surface MT1 and MT2 receptors.</li></ul><p class="sub">Advanced · illustrative draft, not reviewed science.</p>`;
   $('#tips').innerHTML='';
   const s=$('#sheet'); s.innerHTML=html; s.setAttribute('aria-label',`${pp.name} passport`); s.classList.remove('closed'); s.scrollTop=0;
+  HS.layers.mount('read',s);
   if(ret!==undefined) HS.sheetReturn=ret;
   s.querySelector('.x').onclick=()=>HS.closeRead(true); s.querySelector('.x').focus();
   HS.say(`${pp.name} passport. ${pp.clsName}. Receptor: ${pp.receptor}. Acts: ${pp.speed}.`);
@@ -110,8 +113,11 @@ $('#sheet').addEventListener('click',e=>{ const b=e.target.closest('[data-pass]'
 HS.toggleAdvMenu=function(force){
   let m=$('#advMenu'); const open=force!==undefined?force:!m;
   if(m) m.remove(); $('#bAdv').setAttribute('aria-expanded','false');
+  if(HS.layers&&HS.layers.active&&HS.layers.active.id==='adv') HS.layers.end('adv',false);
   if(!open) return;
   const p=HS.pathway(), S=HS.E.scene, two=S&&S.toggle&&S.toggle.options.length>1;
+  const opener=HS.layers.opener(document.activeElement,$('#bAdv'));
+  HS.layers.start('adv',opener,focus=>{ const d=$('#advMenu'); if(d) d.remove(); $('#bAdv').setAttribute('aria-expanded','false'); HS.layers.end('adv',focus); },$('#bAdv'));
   m=document.createElement('div'); m.id='advMenu'; m.className='advmenu float'; m.setAttribute('role','dialog'); m.setAttribute('aria-label','Advanced');
   m.innerHTML=`<button class="toggle" role="switch" aria-checked="${HS.advOn}" data-am="mode"><span>Advanced mode<small>Named receptors, molecule classes, passports · A</small></span><span class="sw"></span></button>
    ${HS.advOn?`<div class="divider"></div>
@@ -119,8 +125,8 @@ HS.toggleAdvMenu=function(force){
     ${two&&HS.openCompare?`<button class="menuitem" data-am="compare"><b>Compare ${S.toggle.options.map(o=>o[1]).join(' and ')}</b><small>Both routes on one body, side by side</small></button>`:''}
     <button class="menuitem" data-am="pass"><b>Signal passports</b><small>What each signal is and where it acts</small></button>`
    :`<p class="menunote">Turn it on for named receptors, signal passports and the Rebuild challenge. The guided story stays the same.</p>`}`;
-  app.appendChild(m);
   const r=$('#bAdv').getBoundingClientRect(); m.style.left=Math.max(12,Math.min(r.left-20,app.clientWidth-312))+'px'; m.style.bottom=(app.clientHeight-r.top+10)+'px';
+  app.appendChild(m); HS.layers.mount('adv',m);
   $('#bAdv').setAttribute('aria-expanded','true'); m.querySelector('[data-am]').focus();
 };
 document.addEventListener('click',e=>{

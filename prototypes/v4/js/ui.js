@@ -6,15 +6,20 @@ const $=HS.$, app=HS.app, world=$('#world');
 /* ---------- ⓘ cards ---------- */
 const cards=$('#cards');
 const LEVELNAME={body:'Whole body · plain story',organ:'Organ · pathway names',structure:'Close-up · precise location'};
-HS.closeCards=()=>{ cards.querySelectorAll('.card').forEach(c=>c.remove()); };
+HS.closeCards=function(focus=false){
+  cards.querySelectorAll('.card').forEach(c=>c.remove());
+  if(HS.layers&&HS.layers.active&&HS.layers.active.id==='card') HS.layers.end('card',focus);
+};
 HS.showInfoCard=function(key,anchorEl){
   const inf=HS.info(key); if(!inf) return; const L=HS.level();
+  const opener=HS.layers.opener(anchorEl,$('#bRead'));
+  HS.layers.start('card',opener,focus=>HS.closeCards(focus),$('#bRead'));
+  cards.querySelectorAll('.card').forEach(c=>c.remove());
   const r=anchorEl.getBoundingClientRect(), a=app.getBoundingClientRect();
   let x=r.right-a.left+10, y=r.top-a.top-8; if(x+300>app.clientWidth-10) x=r.left-a.left-310; y=Math.max(76,Math.min(app.clientHeight-200,y));
-  HS.closeCards();
   cards.insertAdjacentHTML('beforeend',`<div class="card float" role="dialog" aria-label="${inf.t}" style="left:${x}px;top:${y}px"><button class="x" aria-label="Close">×</button><div class="lvl">${LEVELNAME[L]}</div><h5>${inf.t}</h5><p>${inf[L]}</p><div class="row2"><span class="ev">Illustrative · not reviewed</span><button class="more">More ›</button></div></div>`);
-  const c=cards.querySelector('.card'); c.querySelector('.x').onclick=()=>{ HS.closeCards(); anchorEl.focus(); };
-  c.querySelector('.more').onclick=()=>{ HS.closeCards(); HS.openMore(key,anchorEl); };
+  const c=cards.querySelector('.card'); HS.layers.mount('card',c); c.querySelector('.x').onclick=()=>HS.closeCards(true);
+  c.querySelector('.more').onclick=()=>HS.openMore(key,anchorEl);
   c.querySelector('.more').focus();
 };
 
@@ -28,12 +33,14 @@ HS.showRouteCard=function(id,ev){
   const carrier=HS.carrierOf(id), carrLbl={blood:'carried in the blood',nerve:'a nerve or light signal',portal:'carried straight to the next gland',feedback:'acts back — feedback'}[carrier];
   const cc={blood:'#7CCBFF',nerve:'#C4A8FF',portal:'#7CCBFF',feedback:'#FFB547'}[carrier], dz=HS.routeTexture(id);
   const swatch=`<svg width="30" height="10" aria-hidden="true"><line x1="2" y1="5" x2="28" y2="5" stroke="${cc}" stroke-width="2.6" stroke-linecap="round"${dz?` stroke-dasharray="${dz}"`:''}/></svg>`;
+  const opener=HS.layers.opener(document.activeElement,$('#bRead'));
+  HS.layers.start('card',opener,focus=>HS.closeCards(focus),$('#bRead'));
   const a=app.getBoundingClientRect(); let x=ev.clientX-a.left+16, y=ev.clientY-a.top-12;
   if(x+300>app.clientWidth-10) x-=332; y=Math.max(76,Math.min(app.clientHeight-230,y));
-  HS.closeCards();
+  cards.querySelectorAll('.card').forEach(c=>c.remove());
   cards.insertAdjacentHTML('beforeend',`<div class="card float" role="dialog" aria-label="${cap(sig)}" style="left:${x}px;top:${y}px"><button class="x" aria-label="Close">×</button><div class="lvl">Signal · ${r.kind==='nerve'?'nerve route':r.kind==='fb'?'acts back':'message'}</div><h5>${cap(sig)}</h5><p>${def} ${HOW[how]||''}</p><div class="carr">${swatch}<span>${carrLbl}</span></div><p class="schem">Schematic: not a drawing of a blood vessel or a nerve.</p><div class="row2"><span class="ev">Illustrative · not reviewed</span>${HS.advOn&&pk?'<button class="more" data-passport="1">Passport ›</button>':''}</div></div>`);
-  const c=cards.querySelector('.card'); c.querySelector('.x').onclick=()=>HS.closeCards(); c.querySelector('.x').focus();
-  const pb=c.querySelector('[data-passport]'); if(pb){ pb.onclick=()=>{ HS.closeCards(); HS.openPassport(pk,null); }; pb.focus(); }
+  const c=cards.querySelector('.card'); HS.layers.mount('card',c); c.querySelector('.x').onclick=()=>HS.closeCards(true); c.querySelector('.x').focus();
+  const pb=c.querySelector('[data-passport]'); if(pb){ pb.onclick=()=>HS.openPassport(pk,pb); pb.focus(); }
   HS.say(`${cap(sig)}. ${def} ${HOW[how]||''} Schematic: not a drawing of a blood vessel or a nerve.`);
 };
 
@@ -136,10 +143,12 @@ $('#triggers').addEventListener('click',e=>{ const b=e.target.closest('[data-tri
 /* how the three stories connect: an orientation map generated from the cross-scene leads (never a progress board) */
 const CONNPOS={stress:[170,52],meal:[276,194],dark:[64,194]};
 HS.connEdges=function(){ const seen=new Set(),out=[]; Object.entries(HS.scenes).forEach(([sc,S])=>Object.values(S.pathways).forEach(p=>(p.hots||[]).forEach(h=>{ if(h.leads&&HS.scenes[h.leads.scene]&&h.leads.scene!==sc){ const k=sc+'>'+h.leads.scene; if(!seen.has(k)){ seen.add(k); out.push({from:sc,to:h.leads.scene,why:h.leads.why}); } } }))); return out; };
-function closeConn(){ const d=$('#connMap'); if(d){ const r=d._ret; d.remove(); if(r&&document.contains(r)) r.focus(); } }
+function closeConn(focus=true){ const d=$('#connMap'); if(d) d.remove(); HS.layers.end('conn',focus); }
 HS.closeConnMap=closeConn;
 HS.openConnMap=function(){
   if($('#connMap')) return;
+  const opener=HS.layers.opener(document.activeElement,$('#bConn'));
+  HS.layers.start('conn',opener,focus=>closeConn(focus),$('#bConn'));
   const title=id=>HS.scenes[id].trigger.title;
   const scenes=HS.TRIGGERS.filter(t=>HS.scenes[t.id]&&CONNPOS[t.id]).map(t=>t.id);
   const edges=HS.connEdges().filter(e=>CONNPOS[e.from]&&CONNPOS[e.to]);
@@ -147,12 +156,12 @@ HS.openConnMap=function(){
   const arrow=e=>{ const a=CONNPOS[e.from],b=CONNPOS[e.to],dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy)||1,ux=dx/L,uy=dy/L; const ax=a[0]+ux*62,ay=a[1]+uy*24,bx=b[0]-ux*62,by=b[1]-uy*24,ang=Math.atan2(by-ay,bx-ax)*180/Math.PI;
     return `<g class="cedge"><line x1="${ax.toFixed(1)}" y1="${ay.toFixed(1)}" x2="${bx.toFixed(1)}" y2="${by.toFixed(1)}"/><path d="M-9 -4.5 L0 0 L-9 4.5Z" transform="translate(${bx.toFixed(1)} ${by.toFixed(1)}) rotate(${ang.toFixed(1)})"/></g>`; };
   const list=edges.map(e=>`<li><b>${title(e.from)} → ${title(e.to)}.</b> ${e.why}</li>`).join('');
-  const d=document.createElement('div'); d.className='keys float'; d.id='connMap'; d.setAttribute('role','dialog'); d.setAttribute('aria-label','How the three stories connect'); d._ret=document.activeElement;
+  const d=document.createElement('div'); d.className='keys float'; d.id='connMap'; d.setAttribute('role','dialog'); d.setAttribute('aria-label','How the three stories connect');
   d.innerHTML=`<header><b>How these connect</b><button class="x" aria-label="Close">×</button></header><p class="sub" style="margin:0 0 8px">The three stories share one body. Open any one — the arrows show where it hands off to another.</p><svg class="connsvg" viewBox="0 0 340 246" role="img" aria-label="Map of how the scenes connect">${edges.map(arrow).join('')}${scenes.map(node).join('')}</svg><ul class="connlist">${list}</ul>`;
-  HS.app.appendChild(d);
-  d.querySelector('.x').onclick=closeConn;
-  d.addEventListener('click',e=>{ const n=e.target.closest('[data-goscene]'); if(n){ closeConn(); HS.clickTrigger(n.dataset.goscene); } });
-  d.addEventListener('keydown',e=>{ if(e.key==='Escape'){ e.preventDefault(); closeConn(); } else if((e.key==='Enter'||e.key===' ')){ const n=e.target.closest&&e.target.closest('[data-goscene]'); if(n){ e.preventDefault(); closeConn(); HS.clickTrigger(n.dataset.goscene); } } });
+  HS.app.appendChild(d); HS.layers.mount('conn',d);
+  d.querySelector('.x').onclick=()=>closeConn(true);
+  d.addEventListener('click',e=>{ const n=e.target.closest('[data-goscene]'); if(n){ closeConn(false); HS.clickTrigger(n.dataset.goscene); } });
+  d.addEventListener('keydown',e=>{ if(e.key==='Escape'){ e.preventDefault(); closeConn(true); } else if((e.key==='Enter'||e.key===' ')){ const n=e.target.closest&&e.target.closest('[data-goscene]'); if(n){ e.preventDefault(); closeConn(false); HS.clickTrigger(n.dataset.goscene); } } });
   d.querySelector('.x').focus();
 };
 $('#bConn').addEventListener('click',HS.openConnMap);
@@ -251,10 +260,13 @@ HS.runGo=function(go){
   else if(go.organ){ HS.onOrgClick(go.organ); light.lit=new Set([...light.lit,go.organ]); HS.applyOrgs(); }
 };
 HS.openSearch=function(){
-  if($('#palette')) return; HS.closeCards();
+  if($('#palette')){ HS.closeSearch(true); return; }
+  const opener=HS.layers.opener(document.activeElement,$('#bSearch'));
+  HS.layers.start('search',opener,focus=>HS.closeSearch(focus),$('#bSearch'));
+  HS.closeCards(false);
   const d=document.createElement('div'); d.id='palette'; d.className='palette float'; d.setAttribute('role','dialog'); d.setAttribute('aria-label','Search');
   d.innerHTML=`<div class="pin"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><input id="q" placeholder="Search signals, organs, triggers" aria-label="Search signals, organs and triggers" role="combobox" aria-expanded="true" aria-controls="qList" aria-autocomplete="list" autocomplete="off" spellcheck="false"><kbd>esc</kbd></div><ul class="qlist" id="qList" role="listbox" aria-label="Results"></ul><div class="pfoot">↑ ↓ to move · Enter to open · synonyms like “epinephrine” work</div>`;
-  app.appendChild(d);
+  app.appendChild(d); HS.layers.mount('search',d);
   const input=d.querySelector('input'), list=d.querySelector('ul'), all=HS.searchEntries(); let sel=0, res=[];
   const draw=()=>{
     const q=input.value.trim().toLowerCase();
@@ -278,12 +290,13 @@ HS.openSearch=function(){
   list.addEventListener('click',e=>{ const li=e.target.closest('[data-i]'); if(li) choose(+li.dataset.i); });
   draw(); input.focus();
 };
-HS.closeSearch=function(focus){ const d=$('#palette'); if(!d) return; d.remove(); light.preview=null; HS.applyOrgs(); if(focus) $('#bSearch').focus(); };
+HS.closeSearch=function(focus){ const d=$('#palette'); if(!d) return; d.remove(); light.preview=null; HS.applyOrgs(); HS.layers.end('search',focus); };
 document.addEventListener('pointerdown',e=>{ if($('#palette')&&!e.target.closest('#palette,#bSearch')) HS.closeSearch(false); });
 
 /* ---------- Read the route ---------- */
 HS.openRead=function(){
   const S=HS.E.scene; if(!S) return; const s=$('#sheet');
+  HS.layers.start('read',$('#bRead'),focus=>HS.closeRead(focus),$('#bRead'));
   HS.sheetReturn=$('#bRead'); tipsBox.innerHTML='';
   s.setAttribute('aria-label','Read the route');
   /* The schematic disclaimer belongs at the TOP of this sheet, not buried under the route
@@ -295,12 +308,11 @@ HS.openRead=function(){
   ${HS.E.route?`<span class="eyebrow">${S.pathways[HS.E.route].name} at a glance</span><div class="diagram">${HS.causalSVG(S,HS.E.route,HS.isRevealed)}</div>`:''}${S.read({revealed:HS.isRevealed})}
   <h4>About routes</h4><p class="sub" style="margin:0 0 8px">Routes show that a message travels and where it arrives. They are not drawings of blood vessels or nerves. The line's texture shows how the message is carried; the arrow end shows what it does. Time words show order and rough timescale, not measured time.</p>${HS.grammarLegend()}`;
   s.classList.remove('closed'); s.scrollTop=0;   // match openMore/openPassport: always open at the top
-  s.querySelector('.x').onclick=()=>HS.closeRead(true); s.querySelector('.x').focus();
+  HS.layers.mount('read',s); s.querySelector('.x').onclick=()=>HS.closeRead(true); s.querySelector('.x').focus();
 };
 HS.closeRead=function(focus){
-  const s=$('#sheet'); if(s.classList.contains('closed')) return; s.classList.add('closed');
-  const ret=HS.sheetReturn; HS.sheetReturn=null;
-  if(focus&&ret&&document.contains(ret)) ret.focus();
+  const s=$('#sheet'); if(s.classList.contains('closed')){ HS.layers.end('read',focus); return; } s.classList.add('closed');
+  HS.sheetReturn=null; HS.layers.end('read',focus);
 };
 
 /* ---------- layers & settings ---------- */
@@ -310,11 +322,19 @@ function applyLayer(name,on,user){
   else if(name==='endocrine'){ document.querySelectorAll('#o-adr,#o-thy,#o-panc,#o-hyp,#o-pit').forEach(g=>g.style.filter=on?'':'saturate(.2)'); }
 }
 HS.setLayer=(name,on)=>{ document.querySelector(`[data-layer="${name}"]`).setAttribute('aria-checked',on); applyLayer(name,on,false); };
-function pop(btn,id){ const p=$(id), open=p.hidden; document.querySelectorAll('.pop').forEach(x=>x.hidden=true); document.querySelectorAll('#bLayers,#bSettings').forEach(b=>b.setAttribute('aria-expanded','false')); if(open){ p.hidden=false; btn.setAttribute('aria-expanded','true'); } }
+let popReturn=null;
+HS.closePopovers=function(focus=false){
+  const had=!!document.querySelector('.pop:not([hidden])');
+  document.querySelectorAll('.pop').forEach(x=>x.hidden=true);
+  document.querySelectorAll('#bLayers,#bSettings').forEach(b=>b.setAttribute('aria-expanded','false'));
+  const ret=popReturn; popReturn=null;
+  if(focus&&had&&document.contains(ret)) ret.focus({preventScroll:true});
+};
+function pop(btn,id){ const p=$(id), open=p.hidden; HS.closePopovers(false); if(open){ p.hidden=false; popReturn=btn; btn.setAttribute('aria-expanded','true'); } }
 $('#bLayers').addEventListener('click',e=>{ e.stopPropagation(); pop(e.currentTarget,'#popLayers'); });
 $('#bHints').addEventListener('click',()=>HS.setTips(!HS.tipsOn,true));
 $('#bSettings').addEventListener('click',e=>{ e.stopPropagation(); pop(e.currentTarget,'#popSettings'); });
-document.addEventListener('click',e=>{ if(!e.target.closest('.pop')&&!e.target.closest('#bLayers,#bSettings')){ document.querySelectorAll('.pop').forEach(x=>x.hidden=true); document.querySelectorAll('#bLayers,#bSettings').forEach(b=>b.setAttribute('aria-expanded','false')); } });
+document.addEventListener('click',e=>{ if(!e.target.closest('.pop')&&!e.target.closest('#bLayers,#bSettings')) HS.closePopovers(false); });
 document.querySelectorAll('.toggle[role="switch"]').forEach(t=>t.addEventListener('click',()=>{
   const on=t.getAttribute('aria-checked')!=='true'; t.setAttribute('aria-checked',on);
   if(t.id==='tMotion'){ HS.userRM=on; HS.applyRM(); HS.stopPlay(); HS.setPlayUI(); }

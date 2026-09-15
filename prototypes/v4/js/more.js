@@ -46,6 +46,8 @@ const goBtn=(sc,pa,title,sub)=>`<button class="gobtn" data-go="${sc}:${pa}"><spa
 
 HS.openMore=function(key,anchorEl){
   const E=HS.E, S=E.scene, inf=HS.info(key), L=HS.level(), next=LEVELS[LEVELS.indexOf(L)+1];
+  const opener=HS.layers.opener(anchorEl,$('#bRead'));
+  HS.layers.start('read',opener,focus=>HS.closeRead(focus),$('#bRead'));
   const p=HS.pathway(), hi=p?p.hots.findIndex(h=>h.org===key):-1, h=hi>=0?p.hots[hi]:null;
   let html=`<button class="x" aria-label="Close">×</button><span class="eyebrow">${LNAME[L]}</span><h3>${inf.t}</h3><p class="lead-p">${inf[L]}</p>`;
   if(next&&inf[next]&&inf[next]!==inf[L]) html+=`<button class="linkbtn" id="mDeeper" aria-expanded="false">Read the deeper version ›</button><p class="deeper" id="mDeeperTxt" hidden><span class="eyebrow">${LNAME[next]}</span>${inf[next]}</p>`;
@@ -66,6 +68,7 @@ HS.openMore=function(key,anchorEl){
   if(rel.length) html+=`<h4>Related pathways</h4>${rel.join('')}`;
   $('#tips').innerHTML='';
   const s=$('#sheet'); s.innerHTML=html; s.setAttribute('aria-label',`More about ${inf.t}`); s.classList.remove('closed'); s.scrollTop=0;
+  HS.layers.mount('read',s);
   HS.sheetReturn=anchorEl||null;
   s.querySelector('.x').onclick=()=>HS.closeRead(true);
   const d=s.querySelector('#mDeeper'); if(d) d.onclick=()=>{ const t=$('#mDeeperTxt'); t.hidden=!t.hidden; d.setAttribute('aria-expanded',!t.hidden); d.textContent=t.hidden?'Read the deeper version ›':'Hide the deeper version'; };

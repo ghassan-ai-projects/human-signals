@@ -25,6 +25,7 @@ document.addEventListener('keydown',e=>{
   const k=e.key, p=HS.pathway();
   if(k==='?'){ e.preventDefault(); HS.toggleKeys(); return; }
   if(k==='Escape'){
+    if(HS.layers&&HS.layers.active){ e.preventDefault(); HS.layers.active.close(true); return; }
     if($('#keys')){ HS.toggleKeys(); return; }
     if($('#advMenu')){ HS.toggleAdvMenu(false); $('#bAdv').focus(); return; }
     if(E.reflectOpen){ HS.closeReflect(true); return; }
@@ -78,12 +79,16 @@ $('#labels').addEventListener('focusin',e=>{ if(e.target.matches('.hs,.lab butto
 const KEYS=[['Anywhere',[['⌘K or /','Search'],['S','Systems panel'],['L','Show all labels'],['+ and −','Zoom'],['0','Whole body'],['Arrows','Pan, when the body has focus'],['A','Advanced mode'],['H','Hints on or off'],['?','This list'],['Esc','Close, then zoom out, then leave']]],
  ['In a pathway',[['Space','Play or pause'],['] and [','Next or previous step'],['T','Try it?'],['W','What if?'],['Y','Say it back in your own words'],['F and G','First or second route'],['R','Read the route']]]];
 HS.toggleKeys=function(){
-  let d=$('#keys'); if(d){ const ret=d._ret; d.remove(); if(ret&&document.contains(ret)) ret.focus(); return; }
+  let d=$('#keys'); if(d){ HS.closeKeys(true); return; }
+  const fallback=$('#bKeys')&&$('#bKeys').getClientRects().length?$('#bKeys'):$('#bSettings');
+  const opener=HS.layers.opener(document.activeElement,fallback);
+  HS.layers.start('keys',opener,focus=>HS.closeKeys(focus),fallback);
   d=document.createElement('div'); d.id='keys'; d.className='keys float'; d.setAttribute('role','dialog'); d.setAttribute('aria-label','Keyboard shortcuts'); d._ret=document.activeElement;
   d.innerHTML=`<header><b>Keyboard</b><button class="x" aria-label="Close">×</button></header><div class="kcols">${KEYS.map(([h,rows])=>`<section><h4>${h}</h4><dl>${rows.map(([k,v])=>`<dt><kbd>${k}</kbd></dt><dd>${v}</dd>`).join('')}</dl></section>`).join('')}</div>`;
-  HS.app.appendChild(d); d.querySelector('.x').onclick=HS.toggleKeys; d.querySelector('.x').focus();
+  HS.app.appendChild(d); HS.layers.mount('keys',d); d.querySelector('.x').onclick=()=>HS.closeKeys(true); d.querySelector('.x').focus();
 };
-$('#bKeys').addEventListener('click',()=>{ document.querySelectorAll('.pop').forEach(x=>x.hidden=true); $('#bSettings').setAttribute('aria-expanded','false'); HS.toggleKeys(); });
+HS.closeKeys=function(focus){ const d=$('#keys'); if(!d) return; d.remove(); HS.layers.end('keys',focus); };
+$('#bKeys').addEventListener('click',()=>{ HS.closePopovers(false); HS.toggleKeys(); });
 
 /* When the page or a user stylesheet sets a large root font size (WCAG 1.4.4), the panel and
    the toolbar grow and can meet the centred scene caption. A media query cannot see that, so

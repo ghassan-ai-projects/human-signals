@@ -10,7 +10,9 @@ const shuffle=(arr,seed)=>{ const a=arr.slice(); let s=seed; for(let i=a.length-
 
 HS.openRebuild=function(){
   const p=HS.pathway(); if(!p||!p.rebuild||RB.active) return;
-  HS.stopPlay(); HS.closeTry(); HS.restoreWhatIf(false); HS.closeCell(); HS.closeCards(); HS.closeRead(false); $('#tips').innerHTML='';
+  const opener=HS.layers.opener(document.activeElement,$('#bAdv'));
+  HS.layers.start('rebuild',opener,()=>HS.closeRebuild(false),$('#bAdv'));
+  HS.stopPlay(); HS.closeTry(false); HS.restoreWhatIf(false); HS.closeCell(false); HS.closeCards(); HS.closeRead(false); $('#tips').innerHTML='';
   const R=p.rebuild, seed=(E.sceneId+E.route).split('').reduce((a,c)=>a+c.charCodeAt(0),0);
   Object.assign(RB,{active:true,p,R,picks:[],names:[],stage:'order',orderOk:null,namesOk:null,cands:shuffle([...new Set(R.chain.concat(Object.values(R.alt||{}).flat(),R.distractors))],seed) /* accepted alternatives must be pickable too */,pool:shuffle(R.links.concat(R.extra),seed+11)});
   Object.keys(HS.rstate).forEach(id=>HS.setRoute(id,'hide')); HS.setTime(E.tIdx);
@@ -18,16 +20,18 @@ HS.openRebuild=function(){
   HS.light.dim=new Set(RB.cands); HS.light.lit=new Set(); HS.applyOrgs();
   const box=document.createElement('div'); box.className='try float rb'; box.id='rbCard'; box.setAttribute('role','dialog'); box.setAttribute('aria-label','Rebuild the route');
   box.style.right='16px'; box.style.top='96px';
-  $('#cards').appendChild(box); render(); box.querySelector('[data-rb]').focus();
+  $('#cards').appendChild(box); HS.layers.mount('rebuild',box); render(); box.querySelector('[data-rb]').focus();
   HS.camTo(R.region||p.region,600); HS.renderOverlay();
   HS.say(`Rebuild the route. Tap the organs in the order the signal travels. ${R.distractors.length} don't belong. Candidates: ${RB.cands.map(nm).join(', ')}.`);
 };
 
 HS.closeRebuild=function(restore=true){
-  if(!RB.active) return; RB.active=false;
+  if(!RB.active){ HS.layers.end('rebuild',restore); return; }
+  RB.active=false;
   const c=$('#rbCard'); if(c) c.remove();
   RB.cands.forEach(k=>$('#o-'+k).classList.remove('cand','pick','good','miss'));
   HS.setTime(E.tIdx);
+  HS.layers.end('rebuild',restore);
   if(restore&&E.route) HS.enterPathway(E.route,false);
 };
 
