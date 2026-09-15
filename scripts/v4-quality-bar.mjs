@@ -299,6 +299,29 @@ rec('text-zoom', 'the reading UI doubles its text at 200% base font size',
 rec('text-zoom', 'text containers grow with the text so it is not cramped',
   scale.panel != null && scale2.panel >= scale.panel * 1.9,
   `panel ${scale.panel}→${scale2.panel}`);
+/* Text at 200% must not push a control off screen or hide content under a panel. */
+const bigState = await page.evaluate(() => {
+  const inView = (b) => b.left >= -1 && b.right <= window.innerWidth + 1 && b.top >= -1 && b.bottom <= window.innerHeight + 1;
+  const clipped = [...document.querySelectorAll('#pbar button, #pbar .chip, .panel button, .zoomer button')]
+    .filter((e) => { const b = e.getBoundingClientRect(); return b.width > 0 && !inView(b); })
+    .map((e) => e.id || e.className);
+  const rib = document.querySelector('.ribbon').getBoundingClientRect();
+  const words = [...document.querySelectorAll('.rb-words span')]
+    .filter((e) => { const b = e.getBoundingClientRect(); return b.width > 0 && (b.right > rib.right + 1 || b.left < rib.left - 1); })
+    .map((e) => e.textContent);
+  const cap = document.querySelector('.caption').getBoundingClientRect();
+  const pn = document.querySelector('.panel').getBoundingClientRect();
+  const overlap = Math.max(0, Math.min(cap.right, pn.right) - Math.max(cap.left, pn.left)) > 0
+    && Math.max(0, Math.min(cap.bottom, pn.bottom) - Math.max(cap.top, pn.top)) > 0;
+  return { clipped, words, overlap, capInView: inView(cap) };
+});
+rec('text-zoom', 'no control is pushed off screen at 200%', bigState.clipped.length === 0,
+  bigState.clipped.slice(0, 4).join(', ') || 'none clipped');
+rec('text-zoom', 'the time ribbon words stay inside their plate at 200%', bigState.words.length === 0,
+  bigState.words.join(', ') || 'all inside');
+rec('text-zoom', 'the scene caption is not hidden under the panel at 200%',
+  !bigState.overlap && bigState.capInView,
+  `overlap=${bigState.overlap} inView=${bigState.capInView}`);
 
 /* ---------- 6. routes and hotspots are the most salient marks (squint proxy) ---------- */
 await page.setViewportSize({ width: 1440, height: 900 });

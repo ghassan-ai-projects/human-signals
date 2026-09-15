@@ -119,15 +119,29 @@ HS.getLabels=function(){
      the §10 ceiling of 8. Suppressing the redundant one removes repetition, not content. */
   const stepNames=(E.cur>=0&&p.hots[E.cur])?((HS.advLine(p.hots[E.cur])||p.hots[E.cur].one)||''):'';
   const routeFirst=t=>String(t||'').toLowerCase().split(/[·—-]/)[0].replace(/\s+/g,' ').trim();
-  if(pr&&pr.label&&!(E.cur>=0&&stepNames.toLowerCase().includes(routeFirst(HS.routeText(HS.pulse.route)))))
+  const pulseNamed=!!(pr&&pr.label);
+  const redundant=pulseNamed&&E.cur>=0&&!!stepNames&&stepNames.toLowerCase().includes(routeFirst(HS.routeText(HS.pulse.route)));
+  if(pulseNamed&&!redundant)
     out.push({key:'rl-'+HS.pulse.route,text:HS.routeText(HS.pulse.route),cls:'sig',anchor:HS.ptOn(HS.pulse.route,pr.at),dx:pr.dx,dy:pr.dy,noLeader:true});
-  else if(L!=='body'){ p.draw.concat(p.gate&&isRevealed()?p.gate.labelRoutes:[]).forEach(id=>{ const r=S.routes[id]; if(HS.rstate[id]==='on'&&r.label) out.push({key:'rl-'+id,text:HS.routeText(id),cls:'sig',anchor:HS.ptOn(id,r.at),dx:r.dx,dy:r.dy,noLeader:true}); }); }
+  /* Only when NO pulse is travelling do the resting route names show. Previously this was an
+     `else if`, so suppressing a redundant pulse name fell through here and re-added every
+     on-route name at once (1 label became 3). */
+  else if(!pulseNamed&&L!=='body'){ p.draw.concat(p.gate&&isRevealed()?p.gate.labelRoutes:[]).forEach(id=>{ const r=S.routes[id]; if(HS.rstate[id]==='on'&&r.label) out.push({key:'rl-'+id,text:HS.routeText(id),cls:'sig',anchor:HS.ptOn(id,r.at),dx:r.dx,dy:r.dy,noLeader:true}); }); }
   if(L==='body'){
     const has=k=>out.some(o=>o.org===k);
     S.signs.forEach(sg=>{ const lab=sg.label; if(!lab||!signOn(sg)) return; if(lab.org&&!lab.always&&has(lab.org)) return;
       out.push({key:'s-'+sg.id,org:lab.org,text:typeof lab.text==='function'?lab.text(T):lab.text,anchor:lab.anchor||HS.wc(lab.org),dx:lab.dx,dy:lab.dy,info:lab.info}); });
   }
   p.hots.forEach((h,i)=>{ if(i===E.cur||out.some(o=>o.org===h.org)) return; out.push({key:'h-'+h.org,org:h.org,text:h.lab[L],cls:L==='organ'?'sig':'',anchor:HS.wc(h.org),dx:h.ldx,dy:h.ldy,info:h.org,cell:L==='structure'&&h.cell}); });
+  /* The unrevealed route names its own state, always on, wherever the learner is. It is added
+     HERE, inside the list that is capped below, so it competes for one of the 8 slots rather
+     than being added on top of them (adding it in the renderer made 9 labels on screen in the
+     manual-step + pulse state — over the §10 ceiling). `unshift` gives it the first slot, so
+     the label that loses out is the lowest-priority one, never this explanation.
+     No level test: dark:night opens at organ level. Not during Rebuild or Compare, which hide
+     routes on purpose and would otherwise draw this label over a hidden line. */
+  const g=(!HS.RB||!HS.RB.active)&&(!HS.CMP||!HS.CMP.active)&&p.gate&&!E.whatIf&&!E.tryMode&&!isRevealed();
+  if(g) out.unshift({key:'ghostword',text:HS.GHOST_WORD,cls:'badge ghostword',anchor:HS.ptOn(p.gate.at[0],p.gate.at[1]),dx:0,dy:-30,aria:true});
   return out.slice(0,8);
 };
 HS.getHotspots=function(){
@@ -162,11 +176,11 @@ function renderDots(){
   /* "Say it back" becomes reachable on demand. A SIBLING button, not a child of #timeChip:
      renderDots rewrites #timeChip's textContent on every step, which destroys any element
      inside it, and a focused child would lose focus to <body> on the next step.
-     Gated on state (a reflect prompt exists, nothing else is open) rather than on the
-     reflectSeen latch, so the affordance does not appear and vanish depending on whether a
-     900 ms timer already fired. Ungraded: it opens a prompt, it never records an attempt. */
-  const say=$('#bSay');
-  if(say) say.hidden=!(p.reflect&&!E.playing&&!E.tryMode&&!E.whatIf&&!E.cellOpen&&!(HS.RB&&HS.RB.active)&&!(HS.CMP&&HS.CMP.active));
+     Visibility is owned by setSayUI (see below), which is called on EVERY state change rather
+     than only from renderDots — the state that decides it also changes from play/stopPlay,
+     Try it?, What if?, a cell inset, Rebuild and Compare, none of which call renderDots.
+     Ungraded: it opens a prompt, it never records an attempt. */
+  setSayUI();
   const w=$('#bWhat'); w.hidden=!(p.whatIf&&(!p.gate||isRevealed())); if(p.whatIf) w.setAttribute('aria-label',p.whatIf.q);
 }
 $('#dots').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; if(b.dataset.q) openTry(); else goHot(+b.dataset.h,true); });
@@ -174,8 +188,23 @@ function setPlayUI(){
   const p=P(); if(!p) return;
   $('#playTxt').textContent=E.playing?'Pause':(HS.RM()?'Next step':(E.cur>=p.hots.length-1&&vis().size?'Play again':'Play pathway'));
   $('#playIcon').innerHTML=E.playing?'<path d="M7 5h4v14H7zM13 5h4v14h-4z" fill="currentColor"/>':'<path d="M7 5l12 7-12 7z" fill="currentColor"/>';
+  setSayUI();
 }
 HS.setPlayUI=setPlayUI;
+/* One owner for the "Say it back" affordance's visibility, so it can never be shown while it
+   would be useless or discarded: no reflect prompt on this pathway, mid-playback, or while
+   another card has the right dock (Try it?, What if?, a cell inset, Rebuild, Compare).
+   It also respects the gate, matching afterPlay: while a feedback loop is still unrevealed,
+   the model answer would give away the very thing Try it? asks, so the prompt stays away
+   until the learner has revealed it. Called from setPlayUI, renderDots, and HS.renderOverlay —
+   the last of which every state change in this file goes through. */
+function setSayUI(){
+  const say=$('#bSay'); if(!say) return;
+  const p=P();
+  say.hidden=!(p&&p.reflect&&(!p.gate||isRevealed())&&!E.playing&&!E.tryMode&&!E.whatIf&&!E.cellOpen
+    &&!(HS.RB&&HS.RB.active)&&!(HS.CMP&&HS.CMP.active));
+}
+HS.setSayUI=setSayUI;
 
 async function enterPathway(r,autoplay){
   if(HS.RB&&HS.RB.active) HS.closeRebuild(false);
@@ -193,9 +222,13 @@ async function enterPathway(r,autoplay){
   const was={...HS.rstate};
   Object.keys(S.routes).forEach(id=>HS.setRoute(id,'hide'));
   Object.entries(S.pathways).forEach(([k,q])=>q.draw.forEach(id=>{ if(k===r){ HS.rstate[id]=was[id]; HS.setRoute(id,'on',{draw:true}); } else HS.setRoute(id,'faint'); }));
-  if(p.gate) p.gate.routes.forEach(id=>HS.setRoute(id,isRevealed()?'on':'ghost'));
+  /* The unrevealed loop is drawn open, breaking at the `?` badge's own position (gate.at), so
+     the shape says "not finished" before any words do. */
+  if(p.gate){ const gt=(p.gate.at&&p.gate.at[1]!=null)?p.gate.at[1]:.5;
+    p.gate.routes.forEach(id=>HS.setRoute(id,isRevealed()?'on':'ghost',{frac:gt})); }
   HS.light.dim=new Set(p.organs); HS.light.lit=new Set(p.organs); HS.applyOrgs();
   HS.selectNode(p.node); renderDots(); setPlayUI(); HS.renderOverlay();
+  if(HS.applyTextScale) HS.applyTextScale();   // the panel/toolbar may have just been re-measured
   await HS.camTo(p.region,700);
   HS.syncHash();
   if(p.enterTip) HS.tip(p.enterTip.key,p.enterTip.text,p.enterTip.pos);
@@ -206,16 +239,18 @@ async function enterPathway(r,autoplay){
      Takes priority over the grammar tip below: it is specific to what is on screen now. */
   const ghostTip=p.gate&&p.gate.unrevealed&&!isRevealed(r);
   if(ghostTip) HS.tip('ghosthow_'+E.sceneId+'_'+r,p.gate.unrevealed,{right:16,bottom:214});
-  /* Teach the line grammar ONCE, on the first pathway the learner opens, using the existing
-     one-shot tip channel (dismissible, remembered, Settings-switchable) rather than a new
-     per-session latch. The textures are on the body at all times and were explained only at
-     the bottom of Read the route; §10 task 6 asks the learner to tell a nerve from a blood
-     route, so the key to that distinction has to arrive on the body at least once.
+  /* Teach the line grammar ONCE, using the existing one-shot tip channel (dismissible,
+     remembered, Settings-switchable) rather than a new latch. The textures are on the body at
+     all times and were explained only at the bottom of Read the route; §10 task 6 asks the
+     learner to tell a nerve from a blood route, so the key to that distinction has to arrive
+     on the body at least once.
      It teaches by SHOWING: the same legend (line samples + end glyphs) used in Read.
-     Tips replace one another, so it defers to the unrevealed-line tip: that one names what is
-     on screen right now, and this one still lands on the next pathway that has no gate tip. */
-  if(HS.tipRich&&!HS._grammarShown&&!ghostTip){ HS._grammarShown=true;
-    HS.tipRich('linegrammar','The line styles tell you how a message travels.',HS.grammarLegend());
+     The latch records that the tip was RENDERED, not that it was offered, so: a learner whose
+     first scene is gated (meal or dark — neither has an ungated pathway) still gets it on the
+     first pathway that is not showing a gate instruction, and a learner with hints off does
+     not lose it for the session. */
+  if(HS.tipRich&&!HS._grammarShown&&!ghostTip){
+    if(HS.tipRich('linegrammar','The line styles tell you how a message travels.',HS.grammarLegend())) HS._grammarShown=true;
   }
   if(autoplay&&E.route===r&&!(HS.RB&&HS.RB.active)) play();   // a stale autoplay never fires into another pathway or a challenge
 }
@@ -256,7 +291,14 @@ function afterPlay(){
   if(a.whenHidden&&isRevealed()) return;
   if(a.time!=null) setTime(a.time);
   if(a.tip&&!E.playingAll) HS.tip(a.tip.key,a.tip.text,a.tip.pos);   // no hand-off tip mid "Watch it all"
-  const p=P(); if(p&&p.reflect&&!reflectSeen.has(key())&&!E.playingAll&&(!p.gate||isRevealed())){ reflectSeen.add(key()); setTimeout(openReflect,900); }
+  const p=P(); if(p&&p.reflect&&!reflectSeen.has(key())&&!E.playingAll&&(!p.gate||isRevealed())){
+    reflectSeen.add(key());
+    /* The deferred open must belong to the pathway it was scheduled for. Without this guard,
+       finishing the fast route and switching to the slow one inside 900 ms opened the SLOW
+       route's card (the wrong question), and because openReflect records the visit, the
+       learner's first genuine visit then showed the model answer straight away. */
+    const tok=key(); setTimeout(()=>{ if(key()===tok&&E.state==='triggered') openReflect(); },900);
+  }
 }
 /* Say it back: an optional, ungraded self-explanation after a pathway is understood (no score, no streak) */
 const reflectSeen=new Set();
@@ -266,7 +308,7 @@ const reflectSeen=new Set();
    it for comparison. This is not a progress record and is never persisted or counted. */
 const reflectVisits=new Set();
 function openReflect(){
-  const p=P(); if(!p||!p.reflect||E.reflectOpen||E.tryMode||E.whatIf||E.cellOpen||(HS.RB&&HS.RB.active)||(HS.CMP&&HS.CMP.active)) return;
+  const p=P(); if(!p||!p.reflect||E.reflectOpen||E.playing||E.tryMode||E.whatIf||E.cellOpen||(HS.RB&&HS.RB.active)||(HS.CMP&&HS.CMP.active)) return;
   E.reflectOpen=true; const r=p.reflect; HS.closeCards&&HS.closeCards();
   /* Remember what opened this, so Escape returns focus where the learner was — pressing Y
      from a focused hotspot should not throw focus across the screen to the toolbar. */
@@ -288,7 +330,17 @@ function openReflect(){
   box.addEventListener('keydown',e=>{ if(e.key==='Escape'){ e.preventDefault(); closeReflect(true); } });
   $('#reflText').focus(); HS.say('Say it back. '+r.q+' Type an answer if you like, then show how we’d put it.');
 }
-function closeReflect(focus){ if(!E.reflectOpen) return; E.reflectOpen=false; const d=$('#reflCard'); if(d) d.remove(); if(focus&&HS._reflFrom&&document.contains(HS._reflFrom)) HS._reflFrom.focus(); else if(focus&&$('#bRead')) $('#bRead').focus(); }
+function closeReflect(focus){
+  if(!E.reflectOpen) return; E.reflectOpen=false; const d=$('#reflCard'); if(d) d.remove();
+  if(!focus) return;
+  /* Return focus where it came from. When the card was opened from the document body (the Y
+     shortcut), fall back to the control that owns the feature rather than to the far end of
+     the pathway bar. */
+  const from=HS._reflFrom;
+  if(from&&document.contains(from)&&from!==document.body) from.focus();
+  else if($('#bSay')&&!$('#bSay').hidden) $('#bSay').focus();
+  else if($('#bRead')) $('#bRead').focus();
+}
 HS.openReflect=openReflect; HS.closeReflect=closeReflect;
 /* The on-demand entry point. openReflect already has no reflectSeen check of its own — that
    latch lives in afterPlay as a send-once guard — so this is an alias plus a close-first
@@ -363,6 +415,12 @@ async function checkTry(show){
   HS.say(fb.head+' '+fb.txt);
   if(!show) HS.recordAttempt({scene:E.sceneId,path:E.route,type:E.tryCtx.exposed?'practice':E.tryCtx.why?'assisted':'unassisted',correct:all&&!wrong});
   revealed[key()]=true; g.routes.forEach(id=>HS.setRoute(id,'on',{draw:true})); renderDots(); HS.renderOverlay(); HS.saveSoon(); HS.syncHash();
+  /* The grammar tip defers to the gate instruction while a loop is unrevealed. Once it is
+     revealed the slot is free, so offer it here too: "You skip a meal" and "It gets dark"
+     have no ungated pathway, and a learner who starts there would otherwise never be taught
+     the line grammar at all. */
+  if(HS.tipRich&&!HS._grammarShown)
+    setTimeout(()=>{ if(HS.tipRich('linegrammar','The line styles tell you how a message travels.',HS.grammarLegend())) HS._grammarShown=true; },1200);
   await HS.sleep(HS.RM()?0:650);
   if(g.loopFrom&&E.scene.routes[g.loopFrom]&&isRevealed()&&!E.whatIf) await HS.travel(g.loopFrom,850);   // the output runs downstream, then continues back up the feedback line as one closed circuit
   for(const id of g.routes){ if(!isRevealed()||E.whatIf) break; await HS.travel(id,1100); }

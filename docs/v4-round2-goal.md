@@ -61,3 +61,25 @@ Plan: [v4-round4-plan.md](v4-round4-plan.md) · three plan reviews: [visual](v4-
 | `scripts/v4-quality-bar.mjs` | **97/97** — layout, overlaps, leader crossings, bottom bar at 1280/1440/1920, label ceiling **during playback**, active-route naming, grayscale state separation, reduced motion (two-pronged), text scaling, console |
 | `scripts/v4-comprehension-check.mjs` | **33/33** — §10 tasks 1, 5, 6, 7/8 and 10, including the behavioural halves |
 | Console errors | none, across every view and both audits |
+
+## Round 4: verification pass
+
+Two subagents reviewed the shipped changes through a **learner-experience** lens and a **code-craft/correctness** lens: [verify-learner.md](v4-round4-verify-learner.md) · [verify-craft.md](v4-round4-verify-craft.md). Both re-ran the audits green and then found what the audits could not see. Every finding was reproduced before it was fixed.
+
+| Finding | Severity | What it was | Fix |
+|---|---|---|---|
+| `setTips` crash | High | `HS.tipRich` stored an undefined position, so turning Hints off and on after a pathway opened threw `TypeError: Cannot convert undefined or null to object` and the tip never returned | Position defaults inside `tipRich`/`renderTip` |
+| `#bSay` stale gating | High | Visibility was only evaluated in `renderDots`, so the button was live during playback, Try it?, What if?, a cell inset, Rebuild and Compare; clicking it mid-Try-it? discarded the attempt | One `setSayUI()` owner, re-evaluated from `renderOverlay` (the funnel every state change passes through) plus `setPlayUI`; `E.playing` guard added to `openReflect` |
+| Stale reflect timer | High | Finishing fast and switching routes inside 900 ms opened the **wrong pathway's** card and consumed that pathway's first-visit flag, so a genuine first visit showed the model answer straight away | Deferred open is guarded by the pathway key it was scheduled for |
+| Route-name fall-through | High | The dedup `if` gained a condition but the `else if` did not move, so suppressing a redundant pulse name re-added **all** on-route names (1 → 3 labels) | Restructured so the resting names show only when no pulse is travelling |
+| Label ceiling during manual step | High | The always-on unrevealed label was added in the renderer **on top of** the capped list, reaching 9 labels in the manual-step + pulse state | The label moved into `getLabels` before the `slice(0,8)`, so it competes for a slot instead of exceeding the cap |
+| Ghost label in Rebuild/Compare | Medium | It rendered over routes those modes deliberately hide | Suppressed while Rebuild or Compare is active |
+| `Y` typed a literal "y" | High | The shortcut opened the card, which focuses the textarea, and the key's default insertion landed in it | `preventDefault()` |
+| Grammar tip unreachable | High | A learner starting with "You skip a meal" or "It gets dark" never saw it — both land on gated pathways, neither scene has an ungated one — and hints-off consumed it for the session | Latch on the **render** not the offer; also offered once the loop is revealed, which is when the tip slot frees |
+| `.schem` specificity | Medium | `.card p` (0,1,1) outranked `.schem` (0,1,0), so the route-card caveat rendered as ordinary body copy | `.card p.schem` |
+| 13 px fonts + 200% clipping | Medium | My R4-7 commit message claimed "all 100 px font-sizes … are now rem"; 13 `font:` shorthands were missed, and at 200% the pathway bar clipped its last controls, the ribbon's "calm again" ran off the plate, and the panel covered the scene caption | All 13 converted (0 px font sizes remain, verified by a multiset comparison); the bar wraps instead of clipping; the ribbon's end labels clamp inside and its width is rem; the caption drops and anchors clear of the panel at large text, via both an EM media query and a root-font-size class |
+| Over-claimed docs | High | R4-2's commit message and two design docs said the `?` terminates the line, but no path geometry or cap had changed and the pre-round build already skipped the ghost's end glyph | **Implemented** what the docs claimed: the unrevealed route is drawn unfinished — it stops at the badge's own position with a blunt cap, so the loop reads open until it is revealed. Evidence 36 vs 37 shows open → closed |
+
+**Three of these were mine, in work I had already reported as done** — the over-claimed shape change, the false "all 100 px" claim, and the label cap. They are recorded here rather than quietly corrected, because the round's whole point is that the checks and the docs should not claim more than the build does.
+
+Audits after the fix pass: **100/100** quality bar (five text-scaling checks now, including no-clipping and no-overlap at 200%) and **43/43** comprehension, with a regression check for each finding above.

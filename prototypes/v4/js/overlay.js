@@ -61,7 +61,23 @@ HS.setRoute=function(id,st,opt){
   const hit=document.querySelector(`#gRoutes .rhit[data-route="${id}"]`); if(hit) hit.dataset.st=st;
   const gl=document.getElementById('g-'+id); if(gl) gl.style.opacity=st==='on'?.14:0;   // active routes carry a quiet static glow
   if(st==='ghost'&&was!=='ghost'&&!HS.RM()){ p.classList.remove('ghostin'); void p.getBoundingClientRect(); p.classList.add('ghostin'); setTimeout(()=>p.classList.remove('ghostin'),1700); }   // a new ghost breathes once so the eye finds it
-  if(st==='ghost') p.setAttribute('stroke-dasharray','6 7'); else { const dz=HS.routeTexture(id); if(dz) p.setAttribute('stroke-dasharray',dz); else p.removeAttribute('stroke-dasharray'); }
+  /* The unrevealed route is drawn UNFINISHED: it stops where the `?` sits and the remainder of
+     the path is never stroked, with a blunt (not round) cap at the break. So a feedback loop
+     reads as an open ring rather than a closed one, and the `?` is visibly the point where the
+     line breaks — not a badge floating on a complete connection. This is the SHAPE half of the
+     task-5 fix; the always-on wording is the other half. It is a state, never a magnitude. */
+  if(st==='ghost'){
+    const at=(opt&&opt.frac!=null)?opt.frac:((ROUTES[id]&&ROUTES[id].at!=null)?ROUTES[id].at:.5);
+    let L=0; try{ L=p.getTotalLength(); }catch(e){ L=0; }
+    if(L>0){
+      const up=Math.max(0.05,Math.min(0.95,at))*L;
+      p.setAttribute('stroke-dasharray',`${up.toFixed(1)} ${(L*2).toFixed(1)}`);
+      p.setAttribute('stroke-linecap','butt');
+    } else p.setAttribute('stroke-dasharray','6 7');
+  } else {
+    p.removeAttribute('stroke-linecap');   // back to the round cap the other states use
+    const dz=HS.routeTexture(id); if(dz) p.setAttribute('stroke-dasharray',dz); else p.removeAttribute('stroke-dasharray');
+  }
   if(opt&&opt.draw&&st==='on'&&was!=='on') drawOn(id);
 };
 /* draw-on: the route grows from source to target once (600 ms). Strokes are non-scaling, so while
@@ -140,6 +156,10 @@ function endGlyph(kind,x,y,a,op,c){
 
 const labEls=new Map(), hsEls=new Map();
 HS.renderOverlay=function(){
+  /* Every state change that matters to the overlay funnels through here, which makes it the
+     one reliable place to re-evaluate controls whose visibility depends on engine state.
+     (Engine loads after this file, so this is a run-time call, like HS.getLabels below.) */
+  if(HS.setSayUI) HS.setSayUI();
   const W=app.clientWidth,H=app.clientHeight, project=HS.project;
   overlay.setAttribute('viewBox',`0 0 ${W} ${H}`);
   let svg='';
@@ -163,20 +183,14 @@ HS.renderOverlay=function(){
   const hl=hr||(hh&&hh.seg);
   Object.entries(pathEl).forEach(([id,el])=>el.classList.toggle('hl',id===hl));
   const items=HS.getLabels().slice();
-  /* The unrevealed route names its own state, always on, wherever the learner is. Pushed
-     FIRST so it wins collision resolution and cannot be dropped by the 8-label cap.
-     No level test: dark:night opens at organ level, so a body-only gate would silently skip
-     one of the four gated pathways. Suppressed only while a gated card is open, where the
-     card itself carries the words. */
-  const gp=HS.pathway&&HS.pathway();
-  const ghostOn=gp&&gp.gate&&!HS.isRevealed()&&!HS.E.tryMode&&!HS.E.whatIf;
-  if(ghostOn){
-    const g=gp.gate;
-    items.unshift({key:'ghostword',text:HS.GHOST_WORD,cls:'badge ghostword',
-      anchor:HS.ptOn(g.at[0],g.at[1]),dx:0,dy:-30,aria:true,noLeader:false});
-  }
   if(hr){ const ghost=rstate[hr]==='ghost', r=ROUTES[hr]; if(!ghost) items.push({key:'hovroute',text:(r.label||HS.gateLabel(hr)||'feedback'),cls:'sig hover',anchor:HS.ov.hoverAt||HS.ptOn(hr,.5),dx:14,dy:-20,noLeader:true}); }
-  if(hh&&hh.tip&&!items.some(i=>i.key==='one'&&i.org===hh.org)){ const d=hh.dx||0; items.push({key:'hovhot',text:hh.tip,cls:'one hover',anchor:hh.anchor,dx:d>=0?d+24:d-24,dy:hh.dy||0,noLeader:true}); }
+  /* The `?` hotspot's own hover tip is suppressed while the always-on unrevealed label is
+     showing: they say the same thing, the label already carries it, and adding the hover one
+     pushed stress:slow and dark:night to 9 labels — over the §10 ceiling the label exists to
+     respect. The hotspot keeps its aria-label, so keyboard and screen-reader users are
+     unaffected; this only stops the same sentence being drawn twice. */
+  const ghostWordShown=items.some(i=>i.key==='ghostword');
+  if(hh&&hh.tip&&!(ghostWordShown&&hh.id==='q')&&!items.some(i=>i.key==='one'&&i.org===hh.org)){ const d=hh.dx||0; items.push({key:'hovhot',text:hh.tip,cls:'one hover',anchor:hh.anchor,dx:d>=0?d+24:d-24,dy:hh.dy||0,noLeader:true}); }
   if(HS.ov.showAll){ HS.orgKeys().forEach(k=>{ if(!items.some(i=>i.org===k)) items.push({key:'all-'+k,org:k,text:HS.orgName(k),anchor:HS.wc(k),dx:34,dy:-20,info:k}); }); }
   const hk=HS.ov.hoverKey;
   if(hk && !items.some(i=>i.org===hk)) items.push({key:'hover',org:hk,text:HS.orgName(hk),anchor:HS.wc(hk),dx:24,dy:-24,cls:'hover'});

@@ -23,7 +23,9 @@ const HOW={blood:'Carried in the blood.',portal:'Carried a short way in portal b
 HS.showRouteCard=function(id,ev){
   const r=HS.routeDef(id), label=r.label||HS.gateLabel(id)||'signal · route', [sig,how]=label.split(' · ');
   const key=Object.keys(HS.GLOSSARY).find(k=>k.toLowerCase()===sig.toLowerCase()), def=key?HS.GLOSSARY[key]:'', pk=HS.passKeyForRoute(id);
-  const carrier=HS.carrierOf(id), carrLbl={blood:'carried in the blood',nerve:'a nerve or light signal',portal:'a short portal hop',feedback:'acts back — feedback'}[carrier];
+  /* "a short portal hop" reads as an amount (§5.4); describe the carrier by what it does,
+     matching HOW's own "carried a short way in portal blood, straight to the next gland". */
+  const carrier=HS.carrierOf(id), carrLbl={blood:'carried in the blood',nerve:'a nerve or light signal',portal:'carried straight to the next gland',feedback:'acts back — feedback'}[carrier];
   const cc={blood:'#7CCBFF',nerve:'#C4A8FF',portal:'#7CCBFF',feedback:'#FFB547'}[carrier], dz=HS.routeTexture(id);
   const swatch=`<svg width="30" height="10" aria-hidden="true"><line x1="2" y1="5" x2="28" y2="5" stroke="${cc}" stroke-width="2.6" stroke-linecap="round"${dz?` stroke-dasharray="${dz}"`:''}/></svg>`;
   const a=app.getBoundingClientRect(); let x=ev.clientX-a.left+16, y=ev.clientY-a.top-12;
@@ -43,15 +45,20 @@ HS.toast=m=>{ toastEl.textContent=m; toastEl.style.display='flex'; clearTimeout(
   const ms=Math.min(7000,Math.max(2800,String(m).length*55));
   toastT=setTimeout(()=>toastEl.style.display='none',ms); };
 const tipsSeen=HS.tipsSeen=new Set(), tipsBox=$('#tips'); HS.tipsOn=true; HS._curTip=null;
-function renderTip(key,text,pos){
+/* A tip's position is optional; the default is the same dock the callers use. Never pass it
+   straight to Object.entries — the restore path (HS.setTips) replays whatever was stored, and
+   a tip created without a position would throw there instead of being ignored. */
+const TIP_POS={right:16,bottom:214};
+function renderTip(key,text,pos,html){
   tipsBox.innerHTML='';   // one tip at a time: a newer tip replaces the older one
-  const d=document.createElement('div'); d.className='tip float'; d.dataset.key=key;
-  Object.entries(pos).forEach(([k,v])=>d.style[k]=v+'px');
-  d.innerHTML=`<svg class="bulb" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>${text}</span><button aria-label="Dismiss tip">×</button>`;
+  const d=document.createElement('div'); d.className='tip float'+(html?' tiprich':''); d.dataset.key=key;
+  Object.entries(pos||TIP_POS).forEach(([k,v])=>d.style[k]=v+'px');
+  d.innerHTML=html?`<span>${text}</span>${html}<button aria-label="Dismiss tip">×</button>`
+    :`<svg class="bulb" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>${text}</span><button aria-label="Dismiss tip">×</button>`;
   d.querySelector('button').onclick=()=>d.remove(); tipsBox.appendChild(d);
 }
 HS.tip=function(key,text,pos){
-  HS._curTip={key,text,pos};   // remembered so the hints control can bring it back
+  HS._curTip={key,text,pos:pos||TIP_POS};   // remembered so the hints control can bring it back
   if(!HS.tipsOn||tipsSeen.has(key)) return; tipsSeen.add(key);
   renderTip(key,text,pos);
 };
@@ -59,13 +66,11 @@ HS.tip=function(key,text,pos){
    HS.tip, but with the legend's line samples rendered inside it. Used once, to teach the route
    grammar on the body, where the textures actually are. */
 HS.tipRich=function(key,text,html,pos){
-  HS._curTip={key,text,pos};
-  if(!HS.tipsOn||tipsSeen.has(key)) return; tipsSeen.add(key);
-  tipsBox.innerHTML='';
-  const d=document.createElement('div'); d.className='tip float tiprich'; d.dataset.key=key;
-  Object.entries(pos||{right:16,bottom:214}).forEach(([k,v])=>d.style[k]=v+'px');
-  d.innerHTML=`<span>${text}</span>${html}<button aria-label="Dismiss tip">×</button>`;
-  d.querySelector('button').onclick=()=>d.remove(); tipsBox.appendChild(d);
+  const at=pos||TIP_POS;
+  HS._curTip={key,text,pos:at,html};
+  if(!HS.tipsOn||tipsSeen.has(key)) return false;
+  tipsSeen.add(key); renderTip(key,text,at,html);
+  return true;   // the caller latches on the RENDER, not on the offer
 };
 HS.clearTip=key=>{ const d=tipsBox.querySelector(`[data-key="${key}"]`); if(d) d.remove(); };
 /* hints control: one switch for all the little bulb tips */
@@ -75,7 +80,7 @@ HS.setTips=function(on,announce){
   if(b){ b.setAttribute('aria-pressed',HS.tipsOn); b.setAttribute('aria-label',HS.tipsOn?'Hints on':'Hints off'); }
   if(t) t.setAttribute('aria-checked',HS.tipsOn);
   if(!HS.tipsOn){ tipsBox.innerHTML=''; }
-  else if(HS._curTip){ tipsSeen.delete(HS._curTip.key); renderTip(HS._curTip.key,HS._curTip.text,HS._curTip.pos); tipsSeen.add(HS._curTip.key); }
+  else if(HS._curTip){ const t=HS._curTip; tipsSeen.delete(t.key); renderTip(t.key,t.text,t.pos,t.html); tipsSeen.add(t.key); }
   if(announce) HS.toast(HS.tipsOn?'Hints on: a short tip appears once at each depth.':'Hints hidden. Turn them back on any time with the bulb, or H.');
 };
 

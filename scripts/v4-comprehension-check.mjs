@@ -84,13 +84,22 @@ await page.evaluate(() => window.HS.openPathway('stress', 'slow', false));
 await page.waitForTimeout(800);
 const ghost = await page.evaluate(() => {
   const routes = [...document.querySelectorAll('#world path.route')];
-  const isGhost = (p) => p.getAttribute('stroke-dasharray') === '6 7';
+  /* The unrevealed route is drawn UNFINISHED: a dasharray whose first run is a prefix of the
+     path and whose second run is longer than the path, so the remainder is never stroked.
+     Identify it by that property rather than a fixed pattern. */
+  const isGhost = (p) => {
+    const d = p.getAttribute('stroke-dasharray');
+    if (!d) return false;
+    const [up, gap] = d.split(/[\s,]+/).map(Number);
+    if (!(up > 0 && gap > 0)) return false;
+    let L = 0; try { L = p.getTotalLength(); } catch { return false; }
+    return up < L * 0.95 && gap >= L;
+  };
   const g = routes.find(isGhost);
-  const revealed = routes.filter((p) => !isGhost(p));
+  const revealed = routes.filter((p) => !isGhost(p) && p.getAttribute('stroke-dasharray'));
   const cs = g ? getComputedStyle(g) : null;
   const labs = [...document.querySelectorAll('#labels .lab')];
   const ghostLabs = labs.filter((l) => /not revealed|not shown|hidden yet/i.test(l.textContent));
-  /* is the wording attached to the dashed line? measure against the ? badge */
   const q = document.querySelector('#labels .hs.q');
   let anchorDist = null;
   if (q && ghostLabs.length) {
@@ -100,20 +109,28 @@ const ghost = await page.evaluate(() => {
   const tip = document.querySelector('.tip span');
   return {
     found: !!g,
+    /* the drawn run must STOP SHORT: proof the line does not reach its own end */
+    stoppedShort: !!g && (() => { try { const [up] = g.getAttribute('stroke-dasharray').split(/[\s,]+/).map(Number); return up < g.getTotalLength() * 0.95; } catch { return false; } })(),
+    bluntCap: g ? g.getAttribute('stroke-linecap') : null,
     opacity: cs ? +cs.opacity : null,
     dash: g ? g.getAttribute('stroke-dasharray') : null,
     revealedOpacity: revealed.length ? +getComputedStyle(revealed[0]).opacity : null,
     ghostWords: ghostLabs.map((l) => l.textContent.trim()),
-    anchored: anchorDist != null && anchorDist < 240,
+    anchored: anchorDist != null && anchorDist < 90,
     anchorDist,
     hasInstruction: !!tip && /revealed|try it|\? dot/i.test(tip.textContent),
     instruction: tip ? tip.textContent.trim().slice(0, 90) : '',
     hasGate: !!(window.HS.pathway() && window.HS.pathway().gate),
   };
 });
-rec('5', 'the unrevealed (ghost) route is distinguished from a revealed route by dash pattern',
-  ghost.found && ghost.dash === '6 7',
-  `dash=${ghost.dash}`);
+rec('5', 'the unrevealed route is drawn unfinished (it stops short of its own end)',
+  ghost.found && ghost.stoppedShort, `dash=${ghost.dash} bluntCap=${ghost.bluntCap}`);
+rec('5', 'the unrevealed route is visually distinct from revealed and faint routes',
+  ghost.opacity !== null && ghost.revealedOpacity !== null && ghost.opacity !== ghost.revealedOpacity
+    && ghost.opacity > 0.5 && ghost.revealedOpacity < 0.5,
+  `ghost op=${ghost.opacity} vs faint op=${ghost.revealedOpacity}`);
+rec('5', 'the unrevealed route is distinguished without relying on hue alone',
+  ghost.found && !!ghost.dash, `dash=${ghost.dash}`);
 /* The ghost is deliberately brighter than a faint not-yet-current route (it is
    the thing inviting Try it?), so the check is that it is *visually distinct*
    from both a revealed route and a faint one, not that it is dimmer. */
@@ -203,17 +220,43 @@ rec('8', 'no invented measured times leak into the explanation', t78.numbers.len
 /* ---- Task 7/8, behavioural half: an ungraded explanation moment must be reachable
    ON DEMAND in every pathway, must not be scored or recorded, and must not stack
    dialogs. The text alternative already carries the mechanism (checked above); this
-   checks the learner can ASK for the explanation moment rather than waiting for it. ---- */
-await page.evaluate(() => window.HS.openPathway('stress', 'slow', false));
-await page.waitForTimeout(700);
+   checks the learner can ASK for the explanation moment rather than waiting for it.
+   Note the gate: while a feedback loop is still unrevealed the prompt stays away,
+   because its model answer gives away what Try it? asks. That is intended, so this
+   check uses an ungated pathway and separately asserts the gated behaviour. ---- */
+await page.evaluate(() => window.HS.openPathway('stress', 'fast', false));
+await page.waitForTimeout(800);
 const sayA11y = await page.evaluate(() => {
   const b = document.querySelector('#bSay');
   return b ? { exists: true, hidden: b.hidden, label: (b.getAttribute('title') || '') + ' ' + b.textContent.trim() } : { exists: false };
 });
-rec('7', 'an on-demand explanation moment exists in the pathway bar',
+rec('7', 'an on-demand explanation moment exists on a pathway',
   sayA11y.exists && !sayA11y.hidden, JSON.stringify(sayA11y));
 rec('7', 'the explanation moment is framed as ungraded',
   /nothing is scored|ungraded|no score/i.test(sayA11y.label), sayA11y.label);
+
+/* While the gate is unrevealed the prompt must stay away — its model answer is the answer. */
+const gatedHidden = await page.evaluate(async () => {
+  window.HS.openPathway('stress', 'slow', false);
+  await new Promise((r) => setTimeout(r, 700));
+  const hidden = document.querySelector('#bSay').hidden;
+  /* and it must come back once the loop is revealed */
+  window.HS.E.cur = -1;
+  window.HS.openTry();
+  await new Promise((r) => setTimeout(r, 300));
+  window.HS.pathway().gate.try.answer.forEach((k) => { const o = document.querySelector(`#tryCard [data-pick="${k}"]`); if (o) o.click(); });
+  const go = document.querySelector('#tryCheck'); if (go) go.click();
+  await new Promise((r) => setTimeout(r, 1000));
+  window.HS.closeTry && window.HS.closeTry();
+  await new Promise((r) => setTimeout(r, 300));
+  return { hiddenBeforeReveal: hidden, revealed: window.HS.isRevealed(), hiddenAfterReveal: document.querySelector('#bSay').hidden };
+});
+rec('7', 'the explanation moment respects the gate, then appears once it is revealed',
+  gatedHidden.hiddenBeforeReveal === true && gatedHidden.revealed === true && gatedHidden.hiddenAfterReveal === false,
+  JSON.stringify(gatedHidden));
+
+await page.evaluate(() => window.HS.openPathway('stress', 'fast', false));
+await page.waitForTimeout(600);
 
 const sayFlow = await page.evaluate(async () => {
   let attempts = 0;
@@ -299,6 +342,89 @@ for (let i = 0; i < 14; i++) {
 const uniq = new Set(tabbed.filter((t) => !t.startsWith('none')));
 rec('10', 'keyboard reaches triggers, body and controls (no dead tab path)', uniq.size >= 5,
   `${uniq.size} distinct stops`);
+
+/* ---- Regressions found by the round-4 change reviews. Each of these was a real
+   defect that both audits passed over, so each gets its own check. ---- */
+
+/* The advertised Y shortcut must not type a literal "y" into the answer box it opens. */
+await page.evaluate(() => window.HS.openPathway('stress', 'fast', false));
+await page.waitForTimeout(600);
+const yKey = await page.evaluate(async () => {
+  try { window.HS.closeReflect(false); window.HS.openRead && window.HS.closeRead(false); } catch { /* none */ }
+  document.querySelector('#bRead').focus();
+  return true;
+});
+await page.keyboard.press('y');
+await page.waitForTimeout(400);
+const yState = await page.evaluate(() => {
+  const card = document.querySelector('#reflCard');
+  const ta = card && card.querySelector('#reflText');
+  return { open: !!card, typed: ta ? ta.value : null, focused: document.activeElement && document.activeElement.id };
+});
+rec('10', 'the Y shortcut opens the explanation moment without typing into it',
+  yState.open && yState.typed === '', `open=${yState.open} textarea value=${JSON.stringify(yState.typed)}`);
+await page.evaluate(() => window.HS.closeReflect(false));
+
+/* Toggling Hints after a pathway is open must not throw and must bring the tip back. */
+const hintErrs = [];
+const onErr = (e) => hintErrs.push(String(e && e.message || e));
+page.on('pageerror', onErr);
+await page.evaluate(() => { window.HS.setTips(false, false); });
+await page.waitForTimeout(150);
+await page.evaluate(() => { window.HS.setTips(true, true); });
+await page.waitForTimeout(250);
+page.off('pageerror', onErr);
+rec('10', 'toggling Hints off and on after a pathway opens does not throw',
+  hintErrs.length === 0, hintErrs.slice(0, 2).join(' | ') || 'no error');
+const tipBack = await page.evaluate(() => document.querySelectorAll('#tips .tip').length > 0);
+rec('10', 'the tip comes back when Hints is turned on again', tipBack,
+  tipBack ? 'tip restored' : 'tip lost');
+
+/* Hovering the ? badge must not push the label count over the §10 ceiling of 8. */
+for (const [scene, path] of [['stress', 'slow'], ['dark', 'night']]) {
+  await page.evaluate(([s, p]) => window.HS.openPathway(s, p, false), [scene, path]);
+  await page.waitForTimeout(700);
+  const hovered = await page.evaluate(async () => {
+    const before = document.querySelectorAll('#labels .lab').length;
+    const q = document.querySelector('#labels .hs.q');
+    if (q) q.dispatchEvent(new PointerEvent('pointerenter', { bubbles: true }));
+    await new Promise((r) => setTimeout(r, 300));
+    return { before, after: document.querySelectorAll('#labels .lab').length };
+  });
+  rec('5', `hovering the ? on ${scene}:${path} stays within the 8-label ceiling`,
+    hovered.after <= 8, `${hovered.before} → ${hovered.after} labels`);
+}
+
+/* The line grammar must reach a learner whose first scene is gated — "You skip a meal" and
+   "It gets dark" have no ungated pathway, so a learner who starts there must still be taught
+   the textures. This is tested in a FRESH PAGE, which is what "a learner who starts here"
+   actually means: the tip is one-shot by design, so the checks above have legitimately already
+   consumed it, and reusing their page would measure the wrong thing. */
+const freshPage = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+const freshErrs = [];
+freshPage.on('pageerror', (e) => freshErrs.push('pageerror: ' + e.message));
+freshPage.on('console', (m) => { if (m.type() === 'error') freshErrs.push(m.text()); });
+await freshPage.goto(BASE, { waitUntil: 'networkidle' });
+await freshPage.waitForTimeout(1400);
+await freshPage.evaluate(() => { window.HS.openPathway('meal', 'between', false); });
+await freshPage.waitForTimeout(900);
+const g1 = await freshPage.evaluate(() => !!document.querySelector('.tip.tiprich'));
+/* Revealing the loop frees the single tip slot, so the grammar tip follows. The reveal
+   schedules it, so wait past that delay plus the render. */
+await freshPage.evaluate(async () => {
+  window.HS.E.cur = -1;
+  window.HS.openTry();
+  await new Promise((r) => setTimeout(r, 300));
+  window.HS.pathway().gate.try.answer.forEach((k) => { const o = document.querySelector(`#tryCard [data-pick="${k}"]`); if (o) o.click(); });
+  const go = document.querySelector('#tryCheck'); if (go) go.click();
+});
+await freshPage.waitForTimeout(2600);
+const g2 = await freshPage.evaluate(() => ({ rich: !!document.querySelector('.tip.tiprich'), revealed: window.HS.isRevealed() }));
+rec('6', 'the line grammar reaches a learner who starts on a gated scene',
+  g1 || g2.rich, `on first entry=${g1}, after revealing the loop=${g2.rich} (revealed=${g2.revealed})`);
+rec('6', 'a gated-scene starter sees no console errors on that path',
+  freshErrs.length === 0, freshErrs.slice(0, 2).join(' | ') || 'clean');
+await freshPage.close();
 
 rec('console', 'no console errors during the comprehension check', errs.length === 0, errs.slice(0, 4).join(' | '));
 

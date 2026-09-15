@@ -54,7 +54,7 @@ document.addEventListener('keydown',e=>{
     else if(k==='r'||k==='R') HS.openRead();
     else if(k==='t'||k==='T') HS.openTry();
     else if(k==='w'||k==='W') HS.openWhatIf();
-    else if(k==='y'||k==='Y') HS.openReflectNow();
+    else if(k==='y'||k==='Y'){ e.preventDefault(); HS.openReflectNow(); }   // preventDefault: otherwise the keypress lands as a literal "y" in the textarea the card focuses
     else if(k==='f'||k==='F'||k==='g'||k==='G'){ const b=document.querySelectorAll('#seg [data-route]')[/[fF]/.test(k)?0:1]; if(b) b.click(); }
   }
 });
@@ -84,6 +84,17 @@ HS.toggleKeys=function(){
   HS.app.appendChild(d); d.querySelector('.x').onclick=HS.toggleKeys; d.querySelector('.x').focus();
 };
 $('#bKeys').addEventListener('click',()=>{ document.querySelectorAll('.pop').forEach(x=>x.hidden=true); $('#bSettings').setAttribute('aria-expanded','false'); HS.toggleKeys(); });
+
+/* When the page or a user stylesheet sets a large root font size (WCAG 1.4.4), the panel and
+   the toolbar grow and can meet the centred scene caption. A media query cannot see that, so
+   this flags it. Cheap, and re-checked on load, on resize, and whenever a pathway is entered —
+   all points at which the layout has just been recomputed. */
+HS.applyTextScale=function(){
+  const px=parseFloat(getComputedStyle(document.documentElement).fontSize)||16;
+  document.documentElement.classList.toggle('bigtext',px>20);
+};
+HS.applyTextScale();
+window.addEventListener('resize',HS.applyTextScale);
 
 /* first paint */
 HS.buildWorld(); HS.renderTriggers(); HS.renderTree();
