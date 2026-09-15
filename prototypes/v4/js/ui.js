@@ -29,10 +29,10 @@ HS.showRouteCard=function(id,ev){
   const a=app.getBoundingClientRect(); let x=ev.clientX-a.left+16, y=ev.clientY-a.top-12;
   if(x+300>app.clientWidth-10) x-=332; y=Math.max(76,Math.min(app.clientHeight-230,y));
   HS.closeCards();
-  cards.insertAdjacentHTML('beforeend',`<div class="card float" role="dialog" aria-label="${cap(sig)}" style="left:${x}px;top:${y}px"><button class="x" aria-label="Close">×</button><div class="lvl">Signal · ${r.kind==='nerve'?'nerve route':r.kind==='fb'?'acts back':'message'}</div><h5>${cap(sig)}</h5><p>${def} ${HOW[how]||''}</p><div class="carr">${swatch}<span>${carrLbl}</span></div><div class="row2"><span class="ev">Illustrative · not reviewed</span>${HS.advOn&&pk?'<button class="more" data-passport="1">Passport ›</button>':''}</div></div>`);
+  cards.insertAdjacentHTML('beforeend',`<div class="card float" role="dialog" aria-label="${cap(sig)}" style="left:${x}px;top:${y}px"><button class="x" aria-label="Close">×</button><div class="lvl">Signal · ${r.kind==='nerve'?'nerve route':r.kind==='fb'?'acts back':'message'}</div><h5>${cap(sig)}</h5><p>${def} ${HOW[how]||''}</p><div class="carr">${swatch}<span>${carrLbl}</span></div><p class="schem">Schematic: not a drawing of a blood vessel or a nerve.</p><div class="row2"><span class="ev">Illustrative · not reviewed</span>${HS.advOn&&pk?'<button class="more" data-passport="1">Passport ›</button>':''}</div></div>`);
   const c=cards.querySelector('.card'); c.querySelector('.x').onclick=()=>HS.closeCards(); c.querySelector('.x').focus();
   const pb=c.querySelector('[data-passport]'); if(pb){ pb.onclick=()=>{ HS.closeCards(); HS.openPassport(pk,null); }; pb.focus(); }
-  HS.say(`${cap(sig)}. ${def} ${HOW[how]||''}`);
+  HS.say(`${cap(sig)}. ${def} ${HOW[how]||''} Schematic: not a drawing of a blood vessel or a nerve.`);
 };
 
 /* ---------- toast & tips ---------- */
@@ -260,10 +260,16 @@ HS.openRead=function(){
   const S=HS.E.scene; if(!S) return; const s=$('#sheet');
   HS.sheetReturn=$('#bRead'); tipsBox.innerHTML='';
   s.setAttribute('aria-label','Read the route');
+  /* The schematic disclaimer belongs at the TOP of this sheet, not buried under the route
+     steps where it sat below the fold (the sheet is ~1330px tall in a ~640px viewport).
+     §10 task 6 is asked while looking at the body, so the answer must be reachable; the
+     route card carries it too, and this is the text-alternative home for it. */
   s.innerHTML=`<button class="x" aria-label="Close">×</button><h3>Read the route</h3><p class="sub">${S.trigger.title} · illustrative draft, not reviewed science</p>
+  <p class="schem">Routes are schematic: a line is not a drawing of a blood vessel or a nerve. Its texture shows how the message is carried and its end shows what it does.</p>
   ${HS.E.route?`<span class="eyebrow">${S.pathways[HS.E.route].name} at a glance</span><div class="diagram">${HS.causalSVG(S,HS.E.route,HS.isRevealed)}</div>`:''}${S.read({revealed:HS.isRevealed})}
   <h4>About routes</h4><p class="sub" style="margin:0 0 8px">Routes show that a message travels and where it arrives. They are not drawings of blood vessels or nerves. The line's texture shows how the message is carried; the arrow end shows what it does. Time words show order and rough timescale, not measured time.</p>${HS.grammarLegend()}`;
-  s.classList.remove('closed'); s.querySelector('.x').onclick=()=>HS.closeRead(true); s.querySelector('.x').focus();
+  s.classList.remove('closed'); s.scrollTop=0;   // match openMore/openPassport: always open at the top
+  s.querySelector('.x').onclick=()=>HS.closeRead(true); s.querySelector('.x').focus();
 };
 HS.closeRead=function(focus){
   const s=$('#sheet'); if(s.classList.contains('closed')) return; s.classList.add('closed');

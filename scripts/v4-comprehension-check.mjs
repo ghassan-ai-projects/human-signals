@@ -135,22 +135,49 @@ rec('5', 'the unrevealed line is operable (leads to the gated Try it?)', ghost.h
 /* ---- Task 6: does anything on screen say the route is NOT a vessel/nerve, and
    is it reachable WITHOUT knowing to open a text panel? The task is asked while
    looking at the body, so a disclaimer that lives only inside Read the route
-   does not answer it. Measured both ways on purpose. ---- */
-const t6Before = await page.evaluate(() => {
-  const body = document.body.innerText || '';
-  return { mentionsVessel: /blood vessel/i.test(body), denies: /not drawings of blood vessels|not a vessel/i.test(body) };
+   does not answer it. Measured both ways on purpose: first by clicking a route on
+   the body (the one action a learner takes when asking this), then via Read. ---- */
+await page.evaluate(() => { try { window.HS.closeCards && window.HS.closeCards(); } catch { /* none */ } });
+const t6Body = await page.evaluate(() => {
+  const rt = [...document.querySelectorAll('#world .rhit')].find((x) => x.getAttribute('data-st') === 'on');
+  if (!rt) return { clicked: false };
+  rt.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+  return { clicked: true };
 });
+await page.waitForTimeout(450);
+const t6Before = await page.evaluate(() => {
+  const txt = (document.querySelector('#cards') || document.body).innerText || '';
+  const card = document.querySelector('.card');
+  const sw = card && card.querySelector('.carr svg');
+  const sr = sw ? sw.getBoundingClientRect() : null;
+  return {
+    denies: /not a drawing of a blood vessel or a nerve/i.test(txt),
+    mentionsVessel: /blood vessel/i.test(txt),
+    /* the visual evidence for the claim must be on screen with it, not scrolled away */
+    swatchOnScreen: !!sr && sr.top >= 0 && sr.bottom <= window.innerHeight,
+  };
+});
+rec('6', 'the not-a-vessel answer is one click from the body (route card)', t6Before.denies,
+  t6Before.denies ? 'present in the route card' : 'not reachable from the body');
+rec('6', 'the route card shows the texture swatch alongside the claim',
+  t6Before.swatchOnScreen, t6Before.swatchOnScreen ? 'swatch on screen' : 'swatch off screen or missing');
+
+await page.evaluate(() => { try { window.HS.closeCards && window.HS.closeCards(); } catch { /* none */ } });
 await page.evaluate(() => window.HS.openRead && window.HS.openRead());
 await page.waitForTimeout(600);
 const t6After = await page.evaluate(() => {
-  const body = document.body.innerText || '';
-  return { mentionsVessel: /blood vessel/i.test(body), denies: /not drawings of blood vessels|not a vessel/i.test(body) };
+  const s = document.querySelector('#sheet');
+  const sc = s && s.querySelector('.schem');
+  const r = sc ? sc.getBoundingClientRect() : null;
+  return {
+    denies: !!sc && /not a drawing of a blood vessel or a nerve/i.test(sc.textContent),
+    onScreen: !!r && r.top >= 0 && r.bottom <= window.innerHeight,
+  };
 });
-rec('6', 'the "not a vessel" disclaimer exists somewhere reachable', t6After.denies && t6After.mentionsVessel,
-  `vessel=${t6After.mentionsVessel} denies=${t6After.denies}`);
-rec('6', 'the "not a vessel" answer is available while looking at the body (not only inside Read)',
-  t6Before.denies && t6Before.mentionsVessel,
-  `before opening Read: vessel=${t6Before.mentionsVessel} denies=${t6Before.denies}`);
+rec('6', 'the "not a vessel" disclaimer exists in the text alternative', t6After.denies,
+  t6After.denies ? 'present' : 'missing');
+rec('6', 'the disclaimer is visible on opening Read, not below the fold', t6After.onScreen,
+  t6After.onScreen ? 'on screen' : 'below the fold');
 
 /* ---- Task 7/8: can negative feedback and fast-vs-slow be explained from what
    the app says? Proxy: the text alternative contains an explicit feedback

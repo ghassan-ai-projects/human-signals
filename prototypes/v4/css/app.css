@@ -103,6 +103,11 @@ button{font-family:inherit;color:inherit}
 .card .lvl{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
 .card p{margin:6px 0 10px;color:var(--ink-2);font-size:.875rem;line-height:1.4}
 .card .row2{display:flex;justify-content:space-between;align-items:center}
+/* The "not a vessel, not a nerve" claim, wherever a route is explained. A dashed left edge
+   reuses the system's "not real / not yet" grammar, so it reads as a caveat rather than body
+   copy, and it sits next to the texture swatch that is the visual evidence for the claim. */
+.schem{margin:8px 0 10px;padding:6px 8px;border-left:2px dashed rgba(255,181,71,.5);color:var(--warm);font-size:12px;line-height:1.4}
+#sheet .schem{margin:0 0 12px}
 .card .ev{font-size:11px;padding:3px 8px;border-radius:999px;border:1px dashed #3A5560;color:var(--warm)}
 .card .more{border:0;background:transparent;color:var(--primary);font-weight:600;font-size:13px;cursor:pointer;padding:4px 2px}
 .card .x{position:absolute;top:8px;right:8px;width:26px;height:26px;border:0;background:transparent;border-radius:50%;color:var(--ink-3);cursor:pointer;font-size:16px}
