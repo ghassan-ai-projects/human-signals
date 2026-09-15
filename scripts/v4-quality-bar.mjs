@@ -363,6 +363,63 @@ rec('reader-focus@1280', 'systems panel yields the narrow reader focus', readerF
 rec('reader-focus@1280', 'bottom timeline stops before the reader sheet', readerFocus.bottomBeforeReader,
   JSON.stringify(readerFocus));
 
+/* The laptop-width boundary is the failure case for a side reader: the panel disappears from
+   the stage, so the camera and caption must use the newly available left-hand space too. Keep
+   this as a real route/state probe rather than a CSS-only assertion. */
+await page.setViewportSize({ width: 1024, height: 768 });
+await page.evaluate(() => {
+  window.HS.closeRead(false);
+  window.HS.openPathway('meal', 'between', false);
+  window.HS.markRevealed('meal', 'between');
+});
+await page.waitForTimeout(1100);
+await page.evaluate(() => window.HS.openRead());
+await page.waitForTimeout(500);
+const readerFocus1024 = await page.evaluate(() => {
+  const el = (s) => document.querySelector(s);
+  const rect = (e) => e ? e.getBoundingClientRect() : null;
+  const inView = (b) => !!b && b.left >= -1 && b.right <= innerWidth + 1 && b.top >= -1 && b.bottom <= innerHeight + 1;
+  const sheet = rect(el('#sheet')), bottom = rect(el('#bottom')), caption = rect(el('#caption'));
+  const active = ['panc', 'liver', 'brain'].map((k) => rect(el(`#o-${k}`)));
+  const controlsInView = [...document.querySelectorAll('#pbar button')]
+    .filter((e) => !e.hidden && rect(e)?.width > 0 && getComputedStyle(e).display !== 'none')
+    .every((e) => inView(rect(e)));
+  return {
+    reader: !!sheet && !el('#sheet').classList.contains('closed'),
+    focusClass: el('#app').classList.contains('reader-focus'),
+    sheet,
+    bottom,
+    caption,
+    captionClear: !!sheet && !!caption && caption.right <= sheet.left + 1,
+    bottomBeforeReader: !!sheet && !!bottom && bottom.right <= sheet.left + 2,
+    activeClear: !!bottom && active.every((b) => !!b && b.bottom <= bottom.top + 1),
+    controlsInView,
+    bodyScroll: [document.documentElement.scrollWidth, document.documentElement.scrollHeight],
+  };
+});
+rec('reader-focus@1024', 'reader reflows objective and controls into the left workspace',
+  readerFocus1024.reader && readerFocus1024.focusClass && readerFocus1024.captionClear
+    && readerFocus1024.bottomBeforeReader && readerFocus1024.controlsInView
+    && readerFocus1024.bodyScroll[0] <= 1025,
+  JSON.stringify(readerFocus1024));
+rec('reader-focus@1024', 'active pathway anatomy stays above the timeline', readerFocus1024.activeClear,
+  JSON.stringify(readerFocus1024));
+
+await page.evaluate(() => window.HS.closeRead(false));
+await page.waitForTimeout(300);
+const restored1024 = await page.evaluate(() => {
+  const panel = document.querySelector('#panel');
+  const r = panel.getBoundingClientRect();
+  const s = getComputedStyle(panel);
+  return {
+    readerFocus: document.querySelector('#app').classList.contains('reader-focus'),
+    panelRestored: !panel.classList.contains('closed') && r.left >= 0 && +s.opacity > 0.05 && s.pointerEvents !== 'none',
+  };
+});
+rec('reader-focus@1024', 'closing the reader restores the systems workspace',
+  !restored1024.readerFocus && restored1024.panelRestored,
+  JSON.stringify(restored1024));
+
 await browser.close();
 
 /* ---------- report ---------- */

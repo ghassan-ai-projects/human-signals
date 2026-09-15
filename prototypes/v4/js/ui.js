@@ -310,11 +310,11 @@ HS.openRead=function(){
   <p class="schem">Routes are schematic: a line is not a drawing of a blood vessel or a nerve. Its texture shows how the message is carried and its end shows what it does.</p>
   ${HS.E.route?`<span class="eyebrow">${S.pathways[HS.E.route].name} at a glance</span><div class="diagram">${HS.causalSVG(S,HS.E.route,HS.isRevealed)}</div>`:''}<div class="mechanism-block">${HS.evidenceStatus()}${S.read({revealed:HS.isRevealed})}</div>
   <h4>About routes</h4><p class="sub" style="margin:0 0 8px">Routes show that a message travels and where it arrives. They are not drawings of blood vessels or nerves. The line's texture shows how the message is carried; the arrow end shows what it does. Time words show order and rough timescale, not measured time.</p>${HS.grammarLegend()}`;
-  s.classList.remove('closed'); app.classList.add('reader-focus'); s.scrollTop=0;   // match openMore/openPassport: always open at the top
+  s.classList.remove('closed'); HS.setReaderFocus(true); s.scrollTop=0;   // match openMore/openPassport: always open at the top
   HS.layers.mount('read',s); s.querySelector('.x').onclick=()=>HS.closeRead(true); s.querySelector('.x').focus();
 };
 HS.closeRead=function(focus){
-  const s=$('#sheet'); if(s.classList.contains('closed')){ app.classList.remove('reader-focus'); HS.layers.end('read',focus); return; } s.classList.add('closed'); app.classList.remove('reader-focus');
+  const s=$('#sheet'); if(s.classList.contains('closed')){ HS.setReaderFocus(false); HS.layers.end('read',focus); return; } s.classList.add('closed'); HS.setReaderFocus(false);
   HS.sheetReturn=null; HS.layers.end('read',focus);
 };
 

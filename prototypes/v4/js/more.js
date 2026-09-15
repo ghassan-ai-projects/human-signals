@@ -67,7 +67,7 @@ HS.openMore=function(key,anchorEl){
   if(S) Object.entries(S.pathways).forEach(([pk,q])=>{ if(pk!==E.route) rel.push(goBtn(S.id,pk,q.name,q.chip)); });
   if(rel.length) html+=`<h4>Related pathways</h4>${rel.join('')}`;
   $('#tips').innerHTML='';
-  const s=$('#sheet'); s.innerHTML=html; s.setAttribute('aria-label',`More about ${inf.t}`); s.classList.remove('closed'); app.classList.add('reader-focus'); s.scrollTop=0;
+  const s=$('#sheet'); s.innerHTML=html; s.setAttribute('aria-label',`More about ${inf.t}`); s.classList.remove('closed'); HS.setReaderFocus(true); s.scrollTop=0;
   HS.layers.mount('read',s);
   HS.sheetReturn=anchorEl||null;
   s.querySelector('.x').onclick=()=>HS.closeRead(true);

@@ -473,6 +473,7 @@ html.bigtext .panel{max-height:calc(100% - 300px)}
    route, and timeline visible while stopping the timeline before the reader's right edge. */
 @media (max-width:1350px){
   .reader-focus .panel{transform:translateX(-330px);opacity:0;pointer-events:none}
+  .reader-focus .caption{left:30px;width:calc(100vw - 460px);max-width:calc(100vw - 460px);transform:none}
   .reader-focus .bottom{left:14px;transform:none;width:min(45rem,calc(100vw - 430px));max-width:calc(100vw - 430px);align-items:stretch}
   .reader-focus .ribbon,.reader-focus .pbar{width:100%;max-width:100%}
 }

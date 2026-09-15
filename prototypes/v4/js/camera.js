@@ -8,7 +8,7 @@ const panelOpen=()=>!$('#panel').classList.contains('closed');
 const bottomOn=()=>!$('#bottom').classList.contains('hidden');
 const sheetOn=()=>!$('#sheet').classList.contains('closed');
 const cardOn=()=>!!document.querySelector('#tryCard,#wiCard,#rbCard,#cmpCard');
-function avail(){ const W=app.clientWidth,H=app.clientHeight; const left=panelOpen()?334:30; const bottom=bottomOn()?200:40; const right=Math.max(sheetOn()?430:150,cardOn()?366:150); return {W,H,x:left,y:84,w:Math.max(200,W-left-right),h:Math.max(200,H-84-bottom)}; }
+function avail(){ const W=app.clientWidth,H=app.clientHeight; const left=app.classList.contains('reader-focus')?30:(panelOpen()?334:30); const bottom=bottomOn()?200:40; const right=Math.max(sheetOn()?430:150,cardOn()?366:150); return {W,H,x:left,y:84,w:Math.max(200,W-left-right),h:Math.max(200,H-84-bottom)}; }
 function targetVB(r,pad){ const a=avail(); const s=Math.min(a.w/(r.w*(1+pad)),a.h/(r.h*(1+pad))); return {x:(r.x+r.w/2)-(a.x+a.w/2)/s, y:(r.y+r.h/2)-(a.y+a.h/2)/s, w:a.W/s, h:a.H/s}; }
 function bodyScale(){ const a=avail(); return Math.min(a.w/(HS.REG.body.w*1.06),a.h/(HS.REG.body.h*1.06)); }
 const scale=()=>app.clientWidth/vb.w;
@@ -44,6 +44,15 @@ const HEAD=new Set(['brain','head','pit','clock','night']);
 HS.camTo=function(name,dur=650,pad=.12){ cam.region=name;
   if(HEAD.has(name)&&dur>0&&!HS.RM()){ const g=document.getElementById('gInset'); if(g){ g.classList.remove('lensfocus'); void g.getBoundingClientRect(); g.classList.add('lensfocus'); clearTimeout(g._lf); g._lf=setTimeout(()=>g.classList.remove('lensfocus'),1200); } }   // the cutaway reads as a lens drawing focus from the head
   return animateTo(targetVB(HS.REG[name],pad),dur); };
+/* Reader focus removes the systems panel visually, so it must also be removed from the
+   camera's layout budget. Keep that transition here so every reader surface enters and leaves
+   with the same framing behavior. */
+HS.setReaderFocus=function(on){
+  const active=app.classList.contains('reader-focus');
+  if(active===on){ HS.camTo(cam.region||'body',0); return; }
+  app.classList.toggle('reader-focus',on);
+  HS.camTo(cam.region||'body',0);
+};
 function animateTo(t,dur){
   cancelAnimationFrame(camRaf); app.classList.remove('busy');
   if(HS.RM()||dur===0){ vb=t; HS.updateView(); return Promise.resolve(); }
