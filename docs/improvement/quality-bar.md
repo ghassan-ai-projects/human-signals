@@ -103,3 +103,15 @@ explicit.
 | Visual quality | 3/5 | 5/5 | [Browser review](browser-review-2026-09-15.md), screenshots, quality-bar results | In progress |
 | Interactivity | 3/5 | 5/5 | [Browser review](browser-review-2026-09-15.md), behavioural browser checks, regression tests | In progress |
 | Learning experience | 3/5 | 5/5 | [Browser review](browser-review-2026-09-15.md), comprehension proxies, independent browser judgement | In progress |
+
+## Current round status
+
+The final narrow-reader finding `V4-FINAL-01` is implemented in `f8a2215` and
+has fresh 1280×800 and 1024×768 browser evidence in
+`validation-v4-reader-focus-postfix.md`. The expanded quality-bar probe now
+covers caption clearance, active-anatomy clearance, control reachability, and
+reader-close restoration at the 1024px boundary.
+
+The scorecard remains **In progress** until an independent post-fix browser
+report confirms that no P0/P1 finding remains. Scientific and anatomical
+review remain separate gates.
