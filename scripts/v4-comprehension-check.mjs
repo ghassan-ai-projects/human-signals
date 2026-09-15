@@ -249,6 +249,40 @@ const stack = await page.evaluate(async () => {
 });
 rec('7', 'the explanation moment does not stack over Try it? / What if?', stack <= 1, `${stack} dialogs open`);
 
+/* ---- Task 1/2 support: a dead end on the first screen must explain itself, and a
+   system row that HAS content must still lead somewhere. A row that says nothing is
+   built and then navigates to an unrelated pathway would assert a relationship the
+   prototype has not established. ---- */
+await page.evaluate(() => { try { window.HS.leave && window.HS.leave(); } catch { /* none */ } });
+await page.waitForTimeout(300);
+const treeRows = {};
+for (const id of ['thyroid', 'dopa', 'glucoseSys']) {
+  treeRows[id] = await page.evaluate(async (rid) => {
+    const row = document.querySelector(`#tree [data-id="${rid}"]`);
+    if (!row) return { missing: true };
+    const before = document.querySelectorAll('#tree .row').length;
+    row.click();
+    await new Promise((r) => setTimeout(r, 250));
+    const after = document.querySelectorAll('#tree .row').length;
+    const toast = document.querySelector('.tip[role="status"]');
+    const toastText = toast && getComputedStyle(toast).display !== 'none' ? toast.textContent.trim() : '';
+    return { before, after, toastText, route: window.HS.E.route, scene: window.HS.E.sceneId };
+  }, id);
+}
+/* The two systems with no pathways here must say what they are and that they are not built. */
+for (const id of ['thyroid', 'dopa']) {
+  const r = treeRows[id];
+  rec('1', `the "${id}" row explains itself instead of dead-ending silently`,
+    /not built/i.test(r.toastText), r.toastText.slice(0, 70) || 'no explanation shown');
+  rec('1', `the "${id}" row does not navigate to an unrelated pathway`,
+    r.before === r.after && !r.route, `rows ${r.before}->${r.after} route=${r.route}`);
+}
+/* A system that DOES have pathways must still open them — the dead-end fix must not
+   have flattened a working destination. */
+rec('1', 'a system with real content still expands and leads somewhere',
+  treeRows.glucoseSys.after > treeRows.glucoseSys.before,
+  `rows ${treeRows.glucoseSys.before}->${treeRows.glucoseSys.after}`);
+
 /* ---- Keyboard proxy for task 10: the guided path is traversable without a
    mouse. Tab from the top and confirm focus lands on a trigger, the body, and
    the pathway controls without getting trapped. ---- */

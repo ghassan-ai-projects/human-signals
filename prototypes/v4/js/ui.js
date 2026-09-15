@@ -37,7 +37,11 @@ HS.showRouteCard=function(id,ev){
 
 /* ---------- toast & tips ---------- */
 let toastT=0; const toastEl=document.createElement('div'); toastEl.className='tip float'; toastEl.style.cssText='left:50%;top:84px;transform:translateX(-50%);display:none'; toastEl.setAttribute('role','status'); app.appendChild(toastEl);
-HS.toast=m=>{ toastEl.textContent=m; toastEl.style.display='flex'; clearTimeout(toastT); toastT=setTimeout(()=>toastEl.style.display='none',2800); };
+/* A short confirmation can go in 2.8s, but an explanation of why something is not built needs
+   reading time. Duration scales with length, bounded, so a long sentence is not flashed. */
+HS.toast=m=>{ toastEl.textContent=m; toastEl.style.display='flex'; clearTimeout(toastT);
+  const ms=Math.min(7000,Math.max(2800,String(m).length*55));
+  toastT=setTimeout(()=>toastEl.style.display='none',ms); };
 const tipsSeen=HS.tipsSeen=new Set(), tipsBox=$('#tips'); HS.tipsOn=true; HS._curTip=null;
 function renderTip(key,text,pos){
   tipsBox.innerHTML='';   // one tip at a time: a newer tip replaces the older one
@@ -157,11 +161,11 @@ HS.TREE=[
  {id:'stress',label:'Stress response',dot:'#F08A66',children:[
   {id:'fastP',label:'Fast route',scene:'stress',path:'fast',sub:'nerves → adrenal medulla',organs:['brain','adr','heart','lungs','liver'],children:[{id:'adrenaline',ab:'ADR',label:'Adrenaline',organs:['adr','heart','lungs','liver']},{id:'noradrenaline',ab:'NA',label:'Noradrenaline',organs:['brain','adr','heart']}]},
   {id:'hpaP',label:'HPA axis',scene:'stress',path:'slow',sub:'hypothalamus → pituitary → adrenal',organs:['hyp','pit','adr','liver'],children:[{id:'crh',ab:'CRH',label:'CRH',organs:['hyp','pit']},{id:'acth',ab:'ACTH',label:'ACTH',organs:['pit','adr']},{id:'cortisol',ab:'CORT',label:'Cortisol',organs:['adr','liver']}]}]},
- {id:'thyroid',label:'Thyroid',dot:'#4FC3B2'},
+ {id:'thyroid',label:'Thyroid',dot:'#4FC3B2',unbuilt:'The thyroid axis sets the pace of metabolism. It is not built in this prototype — the three scenes here cover stress, blood glucose and daily rhythms.'},
  {id:'glucoseSys',label:'Blood glucose',dot:'#E0AE4A',children:[
   {id:'betweenP',label:'Between meals',scene:'meal',path:'between',sub:'pancreas → glucagon → liver',organs:['panc','liver','brain'],children:[{id:'glucagon',ab:'GCG',label:'Glucagon',organs:['panc','liver']},{id:'glucoseSig',ab:'GLU',label:'Glucose',organs:['int','liver','brain','muscle']}]},
   {id:'afterP',label:'After a meal',scene:'meal',path:'after',sub:'pancreas → insulin → liver, muscle',organs:['int','panc','liver','muscle'],children:[{id:'insulin',ab:'INS',label:'Insulin',organs:['panc','liver','muscle']}]}]},
- {id:'dopa',label:'Dopamine',dot:'#A58BF5'},
+ {id:'dopa',label:'Dopamine',dot:'#A58BF5',unbuilt:'Dopamine carries signals for movement, reward and attention. It is not built in this prototype — the three scenes here cover stress, blood glucose and daily rhythms.'},
  {id:'rhythm',label:'Daily rhythms',dot:'#7C9BF0',children:[
   {id:'melP',label:'Melatonin at night',scene:'dark',path:'night',sub:'eyes → body clock → pineal',organs:['retina','scn','pineal','brain'],children:[{id:'melatonin',ab:'MEL',label:'Melatonin',organs:['pineal','scn','brain']}]}]}
 ];
@@ -173,7 +177,7 @@ HS.renderTree=function(){
   const rowHTML=(n,lvl)=>{
     const has=!!n.children, open=openNodes.has(n.id);
     let inner='';
-    if(n.dot) inner=`<span class="chev">${has?CHEV:''}</span><span class="dot" style="background:${n.dot}"></span><span class="grow">${n.label}${has?'':' <small>· not in this concept</small>'}</span>`;
+    if(n.dot) inner=`<span class="chev">${has?CHEV:''}</span><span class="dot" style="background:${n.dot}"></span><span class="grow">${n.label}${has?'':' <small>· not built yet</small>'}</span>`;
     else if(n.path) inner=`<span class="chev">${CHEV}</span><span class="grow">${n.label}<br><small>${n.sub}</small></span><span class="play-mini" data-play="1" aria-hidden="true"><svg width="10" height="10" viewBox="0 0 24 24"><path d="M7 5l12 7-12 7z" fill="currentColor"/></svg></span>`;
     else inner=`<span class="chev"></span><span class="ab">${n.ab}</span><span class="grow">${n.label}</span>`;
     return `<li role="none"><button class="row" role="treeitem" data-id="${n.id}" aria-level="${lvl}" ${has?`aria-expanded="${open}"`:''} aria-selected="${HS.selectedNode===n.id}">${inner}</button>${has&&open?`<ul role="group">${n.children.map(c=>rowHTML(c,lvl+1)).join('')}</ul>`:''}</li>`;
@@ -199,7 +203,12 @@ treeEl.addEventListener('focusin',e=>{ const r=e.target.closest('.row'); const n
 treeEl.addEventListener('focusout',()=>{ light.preview=null; HS.applyOrgs(); });
 treeEl.addEventListener('click',e=>{
   const r=e.target.closest('.row'); if(!r) return; const n=NODE[r.dataset.id];
-  if(n.dot && !n.children){ HS.toast(`${n.label} is not part of this concept. It uses the same scene template.`); return; }
+  /* A system with no pathways here is an honest dead end, not a destination: it says what the
+     system is for and that it is not built, and it navigates NOWHERE. Sending a thyroid
+     question to the HPA axis would assert that the thyroid axis IS the HPA axis — a physiology
+     claim produced by a navigation button, in a prototype whose whole honesty claim is that it
+     asserts no relationship it has not established. */
+  if(n.dot && !n.children){ HS.toast(n.unbuilt||`${n.label} is not built in this prototype.`); return; }
   if(n.dot){ openNodes.has(n.id)?openNodes.delete(n.id):openNodes.add(n.id); HS.renderTree(); treeEl.querySelector(`[data-id="${n.id}"]`).focus(); return; }
   HS.selectNode(n.id); treeEl.querySelector(`[data-id="${n.id}"]`).focus();
   if(n.path) HS.openPathway(n.scene,n.path,!!e.target.closest('[data-play]')); else { HS.onSignalSelect(n); if(HS.advOn&&HS.NODE2PASS[n.id]) HS.openPassport(HS.NODE2PASS[n.id],r); }
