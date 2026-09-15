@@ -6,7 +6,7 @@ HS.scenes.stress={
  toggle:{label:'Route speed',options:[['fast','Fast'],['slow','Slow']]},
 
  routes:{
-  nerve:{d:'M 372 96 C 540 150 540 430 318 514',kind:'nerve',label:'nerve signals · schematic route',at:.42,dx:18,dy:0},
+  nerve:{d:'M 372 96 C 540 150 540 430 318 514',kind:'nerve',pass:'sympStress',label:'nerve signals · schematic route',at:.42,dx:18,dy:0},
   adrenaline:{d:'M 298 504 C 262 452 292 404 342 398',kind:'msg',label:'adrenaline · blood',at:.45,dx:-18,dy:0},
   crh:{d:'M 108 177 Q 118 189 101 196',kind:'msg',label:'CRH · portal',at:.5,dx:40,dy:26},
   acth:{d:'M 102 210 C 130 330 130 480 284 512',kind:'msg',label:'ACTH · schematic route',at:.45,dx:20,dy:0},
@@ -19,19 +19,19 @@ HS.scenes.stress={
   fast:{name:'Fast route',node:'fastP',chip:'within seconds',region:'fast',layer:'nervous',segDur:800,
    organs:['brain','adr','heart','lungs','liver'],draw:['nerve','adrenaline'],
    hots:[
-    {org:'brain',num:1,dx:-32,dy:4,seg:null,t:1,region:'head',one:'Brain sends nerve signals',lab:{body:'Brain',organ:'nerve signals',structure:'Hypothalamus starts the nerve alarm'},ldx:34,ldy:-14},
-    {org:'adr',num:2,dx:-28,dy:24,seg:'nerve',t:1,region:'adr',one:'Adrenal medulla releases adrenaline',lab:{body:'Adrenal glands',organ:'adrenaline',structure:'Medulla · adrenaline'},ldx:-40,ldy:-30},
-    {org:'heart',num:3,dx:-38,dy:-18,seg:'adrenaline',t:1,region:'heart',one:'Heart beats faster',lab:{body:'Heart',organ:'adrenaline',structure:'Heart muscle responds'},ldx:52,ldy:-24},
-    {org:'liver',num:4,dx:-10,dy:-34,seg:null,t:1,region:'liver',one:'Liver releases glucose',lab:{body:'Liver',organ:'glucose',structure:'Liver cells release glucose'},ldx:-70,ldy:-4,leads:{scene:'meal',path:'after',why:'Glucose released into the blood is sensed by the pancreas, which releases insulin.'}}],
+    {org:'brain',num:1,dx:-32,dy:4,seg:null,t:1,region:'head',one:'Brain sends nerve signals',adv:'Hypothalamus and brainstem drive sympathetic nerves through the spinal cord',lab:{body:'Brain',organ:'nerve signals',structure:'Hypothalamus starts the nerve alarm'},ldx:34,ldy:-14},
+    {org:'adr',num:2,dx:-28,dy:24,seg:'nerve',t:1,region:'adr',one:'Adrenal medulla releases adrenaline',adv:'Acetylcholine from sympathetic fibres makes chromaffin cells release adrenaline',lab:{body:'Adrenal glands',organ:'adrenaline',structure:'Medulla · adrenaline'},ldx:-40,ldy:-30},
+    {org:'heart',num:3,dx:-38,dy:-18,seg:'adrenaline',t:1,region:'heart',one:'Heart beats faster',adv:'Adrenaline and noradrenaline on β1 receptors: faster, stronger beats',lab:{body:'Heart',organ:'adrenaline',structure:'Heart muscle responds'},ldx:52,ldy:-24},
+    {org:'liver',num:4,dx:-10,dy:-34,seg:null,t:1,region:'liver',one:'Liver releases glucose',adv:'Adrenergic receptors switch on glycogen breakdown in liver cells',lab:{body:'Liver',organ:'glucose',structure:'Liver cells release glucose'},ldx:-70,ldy:-4,leads:{scene:'meal',path:'after',why:'Glucose released into the blood is sensed by the pancreas, which releases insulin.'}}],
    afterPlay:{tip:{key:'slow',text:'That was the fast route, within seconds. Now follow the slow route: choose Slow.',pos:{right:16,bottom:214}}}
   },
   slow:{name:'HPA axis',node:'hpaP',chip:'over minutes, lasting hours',region:'hpa',segDur:1000,minTime:1,orgRegions:{brain:'brain'},
    organs:['hyp','pit','adr','liver'],draw:['crh','acth','cort'],
    hots:[
-    {org:'hyp',num:1,dx:-28,dy:-14,seg:null,t:2,region:'brain',one:'Hypothalamus releases CRH',lab:{body:'Hypothalamus',organ:'CRH',structure:'Releases CRH into portal blood'},ldx:34,ldy:-18,leads:{scene:'dark',path:'night',why:'The body clock next door also shapes cortisol’s daily rhythm.'}},
-    {org:'pit',num:2,dx:-28,dy:16,seg:'crh',t:2,region:'brain',one:'Pituitary releases ACTH',lab:{body:'Pituitary',organ:'ACTH',structure:'Anterior lobe releases ACTH'},ldx:34,ldy:20},
-    {org:'adr',num:3,dx:-28,dy:24,seg:'acth',t:2,region:'adr',one:'Adrenal cortex releases cortisol',lab:{body:'Adrenal glands',organ:'cortisol',structure:'Cortex · cortisol'},ldx:-40,ldy:-30},
-    {org:'liver',num:4,dx:-10,dy:-34,seg:'cort',t:3,region:'liver',one:'Liver makes glucose available',lab:{body:'Liver',organ:'glucose',structure:'Liver cells make glucose'},ldx:-70,ldy:-4,cell:'liverCort',leads:{scene:'meal',path:'after',why:'Glucose made available by cortisol is sensed by the pancreas, which releases insulin.'}}],
+    {org:'hyp',num:1,dx:-28,dy:-14,seg:null,t:2,region:'brain',one:'Hypothalamus releases CRH',adv:'Paraventricular nucleus neurons release CRH into portal blood',lab:{body:'Hypothalamus',organ:'CRH',structure:'Releases CRH into portal blood'},ldx:34,ldy:-18,leads:{scene:'dark',path:'night',why:'The body clock next door also shapes cortisol’s daily rhythm.'}},
+    {org:'pit',num:2,dx:-28,dy:16,seg:'crh',t:2,region:'brain',one:'Pituitary releases ACTH',adv:'Corticotrophs cut ACTH from POMC and release it',lab:{body:'Pituitary',organ:'ACTH',structure:'Anterior lobe releases ACTH'},ldx:34,ldy:20},
+    {org:'adr',num:3,dx:-28,dy:24,seg:'acth',t:2,region:'adr',one:'Adrenal cortex releases cortisol',adv:'Zona fasciculata cells make cortisol from cholesterol',lab:{body:'Adrenal glands',organ:'cortisol',structure:'Cortex · cortisol'},ldx:-40,ldy:-30},
+    {org:'liver',num:4,dx:-10,dy:-34,seg:'cort',t:3,region:'liver',one:'Liver makes glucose available',adv:'Cortisol raises gluconeogenic enzymes through the glucocorticoid receptor',lab:{body:'Liver',organ:'glucose',structure:'Liver cells make glucose'},ldx:-70,ldy:-4,cell:'liverCort',leads:{scene:'meal',path:'after',why:'Glucose made available by cortisol is sensed by the pancreas, which releases insulin.'}}],
    enterTip:{key:'numbers',text:'Numbers show the order. Press ▶ to watch the signal travel, or click any number.',pos:{right:16,bottom:214}},
    afterPlay:{whenHidden:true,time:3,tip:{key:'ghost',text:'Something acts back on the brain. Open Try it? on the dashed line.',pos:{left:340,top:150}}},
    gate:{

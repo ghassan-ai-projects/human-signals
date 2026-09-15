@@ -33,6 +33,7 @@
   <div class="pop float" id="popSettings" hidden style="left:390px">
     <h4>Settings</h4>
     <button class="toggle" role="switch" aria-checked="false" id="tMotion"><span>Reduce motion<small>No travelling pulses or animated signs</small></span><span class="sw"></span></button>
+    <button class="toggle" role="switch" aria-checked="false" id="tAdv"><span>Advanced mode<small>Receptors, molecule classes, passports · A</small></span><span class="sw"></span></button>
     <button class="toggle" role="switch" aria-checked="false" id="tLabels"><span>Show all labels<small>For review and teaching · L</small></span><span class="sw"></span></button>
     <button class="toggle" role="switch" aria-checked="true" id="tTips"><span>Tips<small>One per zoom level, shown once</small></span><span class="sw"></span></button>
     <button class="toggle" id="bKeys"><span>Keyboard shortcuts<small>Press ? anytime</small></span><kbd class="kk">?</kbd></button>
@@ -78,6 +79,7 @@
       <span class="sep"></span>
       <div class="seg" id="seg" role="group" aria-label="Route"></div>
       <span class="chip" id="timeChip"></span>
+      <button class="tb adv" id="bAdv" aria-pressed="false" title="Advanced · A"><svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6M10 3v6l-5.2 9.2A2 2 0 0 0 6.5 21h11a2 2 0 0 0 1.7-2.8L14 9V3M7.5 15h9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="lbl">Advanced</span></button>
       <button class="tb whatif" id="bWhat" hidden>What if?</button>
       <span class="sep"></span>
       <button class="tb" id="bRead"><svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span class="lbl">Read the route</span></button>
@@ -101,6 +103,7 @@
 <script src="js/overlay.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/more.js"></script>
+<script src="js/advanced.js"></script>
 <script src="js/scenes/stress.js"></script>
 <script src="js/scenes/meal.js"></script>
 <script src="js/scenes/dark.js"></script>

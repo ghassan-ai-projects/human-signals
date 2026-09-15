@@ -98,11 +98,11 @@ HS.getLabels=function(){
   const S=E.scene, p=P(), T=E.tIdx;
   if(E.whatIf==='outcome') p.whatIf.badges.forEach((b,i)=>out.push({key:'wi-'+i,text:b.text,cls:'badge',anchor:HS.wc(b.org),dx:b.dx,dy:b.dy}));
   if(E.whatIf){ const b=p.whatIf.blockLabel; out.push({key:'wi-block',text:b.text,cls:'badge',anchor:HS.ptOn(b.route,b.t),dx:b.dx,dy:b.dy,noLeader:true}); }
-  if(E.cur>=0){ const h=p.hots[E.cur]; out.push({key:'one',org:h.org,text:h.one,cls:'one',anchor:HS.wc(h.org),dx:h.ldx,dy:h.ldy,info:h.org,cell:L!=='body'&&h.cell,lead:!E.tryMode&&!E.whatIf&&!E.playing&&h.leads}); }
+  if(E.cur>=0){ const h=p.hots[E.cur]; out.push({key:'one',org:h.org,text:HS.advLine(h)||h.one,cls:'one'+(HS.advLine(h)?' adv':''),anchor:HS.wc(h.org),dx:h.ldx,dy:h.ldy,info:h.org,cell:L!=='body'&&h.cell,lead:!E.tryMode&&!E.whatIf&&!E.playing&&h.leads}); }
   HS.lodLabels(L).forEach(l=>out.push(l));
   const pr=HS.pulse.on&&S.routes[HS.pulse.route];
-  if(pr&&pr.label) out.push({key:'rl-'+HS.pulse.route,text:pr.label,cls:'sig',anchor:HS.ptOn(HS.pulse.route,pr.at),dx:pr.dx,dy:pr.dy,noLeader:true});
-  else if(L!=='body'){ p.draw.concat(p.gate&&isRevealed()?p.gate.labelRoutes:[]).forEach(id=>{ const r=S.routes[id]; if(HS.rstate[id]==='on'&&r.label) out.push({key:'rl-'+id,text:r.label,cls:'sig',anchor:HS.ptOn(id,r.at),dx:r.dx,dy:r.dy,noLeader:true}); }); }
+  if(pr&&pr.label) out.push({key:'rl-'+HS.pulse.route,text:HS.routeText(HS.pulse.route),cls:'sig',anchor:HS.ptOn(HS.pulse.route,pr.at),dx:pr.dx,dy:pr.dy,noLeader:true});
+  else if(L!=='body'){ p.draw.concat(p.gate&&isRevealed()?p.gate.labelRoutes:[]).forEach(id=>{ const r=S.routes[id]; if(HS.rstate[id]==='on'&&r.label) out.push({key:'rl-'+id,text:HS.routeText(id),cls:'sig',anchor:HS.ptOn(id,r.at),dx:r.dx,dy:r.dy,noLeader:true}); }); }
   if(L==='body'){
     const has=k=>out.some(o=>o.org===k);
     S.signs.forEach(sg=>{ const lab=sg.label; if(!lab||!signOn(sg)) return; if(lab.org&&!lab.always&&has(lab.org)) return;
@@ -116,7 +116,7 @@ HS.getHotspots=function(){
   const p=P(), v=vis();
   const hs=p.hots.map((h,i)=>({id:E.sceneId+E.route+i,num:h.num,anchor:HS.wc(h.org),dx:h.dx,dy:h.dy,cls:(v.has(i)?'v ':'')+(i===E.cur?'cur':''),
     aria:E.tryMode?`Select ${HS.orgName(h.org)} as an answer${E.picks.has(h.org)?', selected':''}`:`Step ${h.num} of ${p.hots.length}: ${h.one}${v.has(i)?', visited':''}`,
-    tip:E.tryMode?null:h.one, seg:h.seg, org:h.org,
+    tip:E.tryMode?null:HS.advLine(h)||h.one, seg:h.seg, org:h.org,
     onClick:()=>{ if(E.tryMode){ togglePick(h.org); HS.renderOverlay(); } else goHot(i,true); }}));
   if(p.gate&&!E.whatIf){ const g=p.gate; hs.push({id:'q',num:'?',anchor:HS.ptOn(g.at[0],g.at[1]),cls:'q'+(isRevealed()?' v':''),aria:isRevealed()?g.ariaRevealed:g.aria,tip:E.tryMode?null:isRevealed()?'Feedback, revealed':'Something acts back here · Try it?',seg:g.routes[0],onClick:openTry}); }
   return hs;

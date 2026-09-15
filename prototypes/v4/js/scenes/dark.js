@@ -5,8 +5,8 @@ HS.scenes.dark={
  trigger:{title:'It gets dark',sub:'Watch the body clock prepare for sleep',caption:'The eyes sense the light fading',lights:['retina','scn'],first:'night',autoplay:true,atmosphere:'rgba(150,120,220,.12)'},
 
  routes:{
-  rht:{d:'M 40 175 C 54 162 70 160 81 167',kind:'nerve',label:'light signals · nerve',at:.4,dx:-6,dy:-34},
-  clockPineal:{d:'M 88 178 C 94 234 152 228 142 172',kind:'nerve',label:'nerve signals · schematic route',at:.5,dx:0,dy:26},
+  rht:{d:'M 40 175 C 54 162 70 160 81 167',kind:'nerve',pass:'light',label:'light signals · nerve',at:.4,dx:-6,dy:-34},
+  clockPineal:{d:'M 88 178 C 94 234 152 228 142 172',kind:'nerve',pass:'sympPineal',label:'nerve signals · schematic route',at:.5,dx:0,dy:26},
   melatonin:{d:'M 148 160 C 196 120 258 62 310 68',kind:'msg',label:'melatonin · blood',at:.6,dx:0,dy:-22},
   fbMel:{d:'M 196 124 C 170 92 106 112 89 164',kind:'fb',end:'diamond',label:'melatonin · acts on the clock',at:.42,dx:0,dy:-22}
  },
@@ -15,10 +15,10 @@ HS.scenes.dark={
   night:{name:'Melatonin at night',node:'melP',chip:'over the evening and night',region:'night',layer:'nervous',segDur:1000,
    organs:['retina','scn','pineal','brain'],draw:['rht','clockPineal','melatonin'],
    hots:[
-    {org:'retina',num:1,dx:-22,dy:22,seg:null,t:1,region:'clock',one:'Eyes sense the light fading',lab:{body:'Eyes',organ:'Eyes · light sensors',structure:'Light-sensing cells report darkness'},ldx:22,ldy:52},
-    {org:'scn',num:2,dx:-12,dy:-28,seg:'rht',t:1,region:'clock',one:'Body clock reads it as night',lab:{body:'Body clock',organ:'Body clock (SCN)',structure:'SCN signals the pineal gland'},ldx:-26,ldy:-60},
-    {org:'pineal',num:3,dx:10,dy:-30,seg:'clockPineal',t:2,region:'clock',one:'Pineal gland releases melatonin',lab:{body:'Pineal gland',organ:'Pineal gland',structure:'Pineal cells make melatonin'},ldx:34,ldy:-62,cell:'pinealMel'},
-    {org:'brain',num:4,dx:42,dy:8,seg:'melatonin',t:2,region:'head',one:'Brain and body get ready for sleep',lab:{body:'Brain',organ:'melatonin',structure:'Melatonin acts on brain receptors'},ldx:58,ldy:-18,leads:{scene:'stress',path:'slow',why:'Before waking, cortisol rises too, as part of its daily rhythm.'}}],
+    {org:'retina',num:1,dx:-22,dy:22,seg:null,t:1,region:'clock',one:'Eyes sense the light fading',adv:'Melanopsin ganglion cells report light through the retinohypothalamic tract',lab:{body:'Eyes',organ:'Eyes · light sensors',structure:'Light-sensing cells report darkness'},ldx:22,ldy:52},
+    {org:'scn',num:2,dx:-12,dy:-28,seg:'rht',t:1,region:'clock',one:'Body clock reads it as night',adv:'The SCN signals via the paraventricular nucleus, spinal cord and superior cervical ganglion',lab:{body:'Body clock',organ:'Body clock (SCN)',structure:'SCN signals the pineal gland'},ldx:-26,ldy:-60},
+    {org:'pineal',num:3,dx:10,dy:-30,seg:'clockPineal',t:2,region:'clock',one:'Pineal gland releases melatonin',adv:'Noradrenaline on β1 receptors raises AANAT activity, so melatonin is made',lab:{body:'Pineal gland',organ:'Pineal gland',structure:'Pineal cells make melatonin'},ldx:34,ldy:-62,cell:'pinealMel'},
+    {org:'brain',num:4,dx:42,dy:8,seg:'melatonin',t:2,region:'head',one:'Brain and body get ready for sleep',adv:'Melatonin acts on MT1 and MT2 receptors, including in the SCN',lab:{body:'Brain',organ:'melatonin',structure:'Melatonin acts on brain receptors'},ldx:58,ldy:-18,leads:{scene:'stress',path:'slow',why:'Before waking, cortisol rises too, as part of its daily rhythm.'}}],
    afterPlay:{whenHidden:true,tip:{key:'darkGhost',text:'Melatonin also acts back on something. Open Try it? on the dashed line.',pos:{right:16,bottom:214}}},
    gate:{
     routes:['fbMel'],at:['fbMel',.5],labelRoutes:['fbMel'],tipKey:'darkGhost',from:'pineal',blocksEnd:false,

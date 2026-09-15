@@ -133,7 +133,9 @@ HS.renderOverlay=function(){
   const hk=HS.ov.hoverKey;
   if(hk && !items.some(i=>i.org===hk)) items.push({key:'hover',org:hk,text:HS.orgName(hk),anchor:HS.wc(hk),dx:24,dy:-24,cls:'hover'});
   const seen=new Set(), placed=[], hots=HS.getHotspots();
-  const cardEl=$('#tryCard')||$('#wiCard');
+  const bt=$('#bottom'), bR=bt.classList.contains('hidden')?null:bt.getBoundingClientRect(), maxY=(bR?bR.top:H)-8;   // labels stay above the pathway bar and ribbon
+  const ctl=['.zoomer','#mini','#lvlChip'].map(s=>$(s).getBoundingClientRect()), ctrlL=Math.min(...ctl.map(r=>r.left)), ctrlT=Math.min(...ctl.map(r=>r.top));
+  const shEl=$('#sheet'), cardEl=$('#tryCard')||$('#wiCard')||(shEl.classList.contains('closed')?null:shEl);   // labels also stay clear of an open side sheet
   const pn=$('#panel'), panelR=pn.classList.contains('closed')?0:pn.offsetLeft+pn.offsetWidth+8, panelB=pn.offsetTop+pn.offsetHeight;   // labels never sit under the open panel
   hots.forEach(h=>{ const [x,y]=project(h.anchor[0],h.anchor[1]); placed.push({x:x+(h.dx||0)-17,y:y+(h.dy||0)-17,w:34,h:34}); });
   items.forEach(it=>{
@@ -145,11 +147,17 @@ HS.renderOverlay=function(){
     el.className='lab'+(it.cls?' '+it.cls:''); el._it=it;
     const [ax,ay]=project(it.anchor[0],it.anchor[1]); const w=el.offsetWidth, h=el.offsetHeight;
     let lx=it.dx<0?ax+it.dx-w:ax+it.dx, ly=ay+it.dy-h/2;
-    lx=Math.max(8,Math.min(W-w-8,lx)); ly=Math.max(74,Math.min(H-h-8,ly));
+    lx=Math.max(8,Math.min(W-w-8,lx)); ly=Math.max(74,Math.min(maxY-h,ly));
+    if(lx+w>ctrlL-8&&ly+h>ctrlT) lx=ctrlL-8-w;   // clear of the zoom controls and mini-map
     if(panelR&&lx<panelR&&ly<panelB) lx=panelR;
     if(cardEl&&lx+w>cardEl.offsetLeft-8&&ly<cardEl.offsetTop+cardEl.offsetHeight) lx=Math.max(panelR||8,cardEl.offsetLeft-8-w);   // nor under a docked Try it? / What if? card
-    for(let n=0;n<14;n++){ const hit=placed.find(p=>lx<p.x+p.w+6&&lx+w+6>p.x&&ly<p.y+p.h+5&&ly+h+5>p.y); if(!hit) break; ly=it.dy<0?hit.y-h-5:hit.y+hit.h+5; if(ly<74||ly>H-h-8){ ly=Math.max(74,Math.min(H-h-8,ly)); lx=it.dx<0?hit.x-w-8:hit.x+hit.w+8; } }
-    placed.push({x:lx,y:ly,w,h});
+    for(let n=0;n<14;n++){ const hit=placed.find(p=>lx<p.x+p.w+6&&lx+w+6>p.x&&ly<p.y+p.h+5&&ly+h+5>p.y); if(!hit) break; ly=it.dy<0?hit.y-h-5:hit.y+hit.h+5; if(ly<74||ly>maxY-h){ ly=Math.max(74,Math.min(maxY-h,ly)); lx=it.dx<0?hit.x-w-8:hit.x+hit.w+8; } }
+    ly=Math.max(74,Math.min(maxY-h,ly)); if(lx+w>ctrlL-8&&ly+h>ctrlT) lx=ctrlL-8-w;
+    for(let n=0;n<10;n++){ const hit=placed.find(p=>lx<p.x+p.w+6&&lx+w+6>p.x&&ly<p.y+p.h+5&&ly+h+5>p.y); if(!hit) break; const up=hit.y-h-5; if(up>=74) ly=up; else lx=hit.x-w-8; }   // clamping can land on a neighbour again: resolve upward
+    const still=placed.find(p=>lx<p.x+p.w+2&&lx+w+2>p.x&&ly<p.y+p.h+2&&ly+h+2>p.y);
+    const drop=!!still&&it.noLeader&&/\bsig\b/.test(it.cls||'');   // a route name with nowhere free steps aside; hover and Read the route still name it
+    el.style.visibility=drop?'hidden':'';
+    if(!drop) placed.push({x:lx,y:ly,w,h});
     el.style.transform=`translate(${lx.toFixed(1)}px,${ly.toFixed(1)}px)`;
     if(!it.noLeader){ const ex=it.dx<0?lx+w:lx, ey=ly+h/2; svg+=`<line x1="${ax.toFixed(1)}" y1="${ay.toFixed(1)}" x2="${ex.toFixed(1)}" y2="${ey.toFixed(1)}" stroke="#3E6D79" stroke-width="1"/><circle cx="${ax.toFixed(1)}" cy="${ay.toFixed(1)}" r="2.2" fill="#6FA0AC"/>`; }
   });

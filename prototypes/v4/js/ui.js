@@ -22,12 +22,13 @@ const cap=s=>/^[A-Z]{2,}/.test(s)?s:s.charAt(0).toUpperCase()+s.slice(1);
 const HOW={blood:'Carried in the blood.',portal:'Carried a short way in portal blood, straight to the next gland.','schematic route':'The line shows that a message travels and where it arrives, not the path it takes.',nerve:'Carried along nerves.',feedback:'Acts back on an earlier step.','acts on the clock':'Acts back on the body clock.'};
 HS.showRouteCard=function(id,ev){
   const r=HS.routeDef(id), label=r.label||HS.gateLabel(id)||'signal · route', [sig,how]=label.split(' · ');
-  const key=Object.keys(HS.GLOSSARY).find(k=>k.toLowerCase()===sig.toLowerCase()), def=key?HS.GLOSSARY[key]:'';
+  const key=Object.keys(HS.GLOSSARY).find(k=>k.toLowerCase()===sig.toLowerCase()), def=key?HS.GLOSSARY[key]:'', pk=HS.passKeyForRoute(id);
   const a=app.getBoundingClientRect(); let x=ev.clientX-a.left+16, y=ev.clientY-a.top-12;
   if(x+300>app.clientWidth-10) x-=332; y=Math.max(76,Math.min(app.clientHeight-230,y));
   HS.closeCards();
-  cards.insertAdjacentHTML('beforeend',`<div class="card float" role="dialog" aria-label="${cap(sig)}" style="left:${x}px;top:${y}px"><button class="x" aria-label="Close">×</button><div class="lvl">Signal · ${r.kind==='nerve'?'nerve route':r.kind==='fb'?'acts back':'message'}</div><h5>${cap(sig)}</h5><p>${def} ${HOW[how]||''}</p><div class="row2"><span class="ev">Illustrative · not reviewed</span><span></span></div></div>`);
+  cards.insertAdjacentHTML('beforeend',`<div class="card float" role="dialog" aria-label="${cap(sig)}" style="left:${x}px;top:${y}px"><button class="x" aria-label="Close">×</button><div class="lvl">Signal · ${r.kind==='nerve'?'nerve route':r.kind==='fb'?'acts back':'message'}</div><h5>${cap(sig)}</h5><p>${def} ${HOW[how]||''}</p><div class="row2"><span class="ev">Illustrative · not reviewed</span>${HS.advOn&&pk?'<button class="more" data-passport="1">Passport ›</button>':''}</div></div>`);
   const c=cards.querySelector('.card'); c.querySelector('.x').onclick=()=>HS.closeCards(); c.querySelector('.x').focus();
+  const pb=c.querySelector('[data-passport]'); if(pb){ pb.onclick=()=>{ HS.closeCards(); HS.openPassport(pk,null); }; pb.focus(); }
   HS.say(`${cap(sig)}. ${def} ${HOW[how]||''}`);
 };
 
@@ -132,7 +133,7 @@ treeEl.addEventListener('click',e=>{
   if(n.dot && !n.children){ HS.toast(`${n.label} is not part of this concept. It uses the same scene template.`); return; }
   if(n.dot){ openNodes.has(n.id)?openNodes.delete(n.id):openNodes.add(n.id); HS.renderTree(); treeEl.querySelector(`[data-id="${n.id}"]`).focus(); return; }
   HS.selectNode(n.id); treeEl.querySelector(`[data-id="${n.id}"]`).focus();
-  if(n.path) HS.openPathway(n.scene,n.path,!!e.target.closest('[data-play]')); else HS.onSignalSelect(n);
+  if(n.path) HS.openPathway(n.scene,n.path,!!e.target.closest('[data-play]')); else { HS.onSignalSelect(n); if(HS.advOn&&HS.NODE2PASS[n.id]) HS.openPassport(HS.NODE2PASS[n.id],r); }
 });
 /* WAI-ARIA tree keyboard model: Up/Down, Home/End, Right expands or enters, Left collapses or goes to parent, type-ahead */
 const focusRow=id=>{ const r=treeEl.querySelector(`[data-id="${id}"]`); if(!r) return; treeEl.querySelectorAll('.row').forEach(x=>{ x.tabIndex=-1; }); r.tabIndex=0; r.focus({preventScroll:true}); HS.revealIn(treeEl.closest('.panel-scroll'),r); };
@@ -152,7 +153,7 @@ treeEl.addEventListener('keydown',e=>{
     const hit=order.find(r=>NODE[r.dataset.id].label.toLowerCase().startsWith(typeBuf)); if(hit) focusRow(hit.dataset.id);
   }
 });
-HS.pickNode=function(id){ const p=$('#panel'); if(p.classList.contains('closed')) $('#bSystems').click(); HS.selectNode(id); HS.onSignalSelect(NODE[id]); const r=treeEl.querySelector(`[data-id="${id}"]`); if(r) r.focus({preventScroll:true}); };
+HS.pickNode=function(id){ const p=$('#panel'); if(p.classList.contains('closed')) $('#bSystems').click(); HS.selectNode(id); HS.onSignalSelect(NODE[id]); const r=treeEl.querySelector(`[data-id="${id}"]`); if(r) r.focus({preventScroll:true}); if(HS.advOn&&HS.NODE2PASS[id]) HS.openPassport(HS.NODE2PASS[id],r); };
 
 /* ---------- search palette ---------- */
 HS.searchEntries=function(){

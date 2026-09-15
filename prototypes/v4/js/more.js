@@ -54,6 +54,8 @@ HS.openMore=function(key,anchorEl){
     const prev=hi>0?HS.orgName(p.hots[hi-1].org):S.trigger.title, r=h.seg&&S.routes[h.seg], sig=r?r.label.split(' · ')[0]:null;
     html+=`<h4>Evidence</h4><div class="claim"><div class="claim-row"><span>${prev}</span><span class="arr" aria-hidden="true">→</span>${sig?`<span class="${r.kind==='nerve'?'n':'m'}">${sig}</span><span class="arr" aria-hidden="true">→</span>`:''}<span>${inf.t}</span></div><div class="claim-eff">${h.one}</div><div class="claim-meta"><span class="ev">Illustrative · not reviewed</span><span>Source attached at scientific review</span></div></div>`;
   } else html+=`<h4>Evidence</h4><p class="sub">Claims for this structure show here when one of its pathways is open.</p>`;
+  const pk=HS.advOn&&h&&h.seg&&HS.passKeyForRoute(h.seg);
+  if(HS.advOn&&h&&h.adv) html+=`<h4>Advanced</h4><p class="lead-p" style="font-size:14px">${h.adv}</p>${pk?`<button class="gobtn" data-pass="${pk}"><span>${HS.PASSPORTS[pk].name} passport</span><small>${HS.PASSPORTS[pk].clsName} · ${HS.PASSPORTS[pk].receptor.split(':')[0].toLowerCase()}</small></button>`:''}`;
   const text=[inf.body,inf.organ,inf.structure,h?h.one:''].join(' ');
   const terms=Object.keys(HS.GLOSSARY).filter(t=>new RegExp('\\b'+esc(t)+'\\b','i').test(text));
   if(terms.length) html+=`<h4>Glossary</h4><dl class="gloss">${terms.map(t=>`<dt>${t}</dt><dd>${HS.GLOSSARY[t]}</dd>`).join('')}</dl>`;
