@@ -40,7 +40,10 @@ HS.updateView=function(){
 };
 /* frame a world point at a zoom ratio relative to the whole-body fit (used by links) */
 HS.setView=function(cx,cy,z){ const W=app.clientWidth,H=app.clientHeight, s=bodyScale()*Math.max(.85,Math.min(18,z)); vb={x:cx-W/2/s,y:cy-H/2/s,w:W/s,h:H/s}; cam.region=null; HS.updateView(); };
-HS.camTo=function(name,dur=650,pad=.12){ cam.region=name; return animateTo(targetVB(HS.REG[name],pad),dur); };
+const HEAD=new Set(['brain','head','pit','clock','night']);
+HS.camTo=function(name,dur=650,pad=.12){ cam.region=name;
+  if(HEAD.has(name)&&dur>0&&!HS.RM()){ const g=document.getElementById('gInset'); if(g){ g.classList.remove('lensfocus'); void g.getBoundingClientRect(); g.classList.add('lensfocus'); clearTimeout(g._lf); g._lf=setTimeout(()=>g.classList.remove('lensfocus'),1200); } }   // the cutaway reads as a lens drawing focus from the head
+  return animateTo(targetVB(HS.REG[name],pad),dur); };
 function animateTo(t,dur){
   cancelAnimationFrame(camRaf); app.classList.remove('busy');
   if(HS.RM()||dur===0){ vb=t; HS.updateView(); return Promise.resolve(); }

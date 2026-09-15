@@ -125,8 +125,9 @@ HS.buildWorld=function(){
   s+=`<g id="gGlass" transform="translate(50 0)" pointer-events="none"><path d="${bp}" fill="url(#frontGlass)" clip-path="url(#bodyClip)"/><path d="${bp}" fill="none" stroke="#BfeaFF" stroke-opacity=".10" stroke-width="1" clip-path="url(#bodyClip)"/></g>`;   // a translucent front-of-body wall: organs read as inside a body, not painted on it
 
   /* brain · sagittal cutaway inset (front of the head faces left) */
-  s+=`<g id="gInset"><path d="M 308 72 L 206 124" stroke="#3E6D79" stroke-dasharray="3 4" fill="none" class="cord"/>
-   <circle cx="112" cy="150" r="96" fill="#07121A" stroke="#23505C" stroke-width="1.2" class="org-shape"/>
+  s+=`<g id="gInset"><path d="M 330 88 L 206 124" stroke="#4E7C88" stroke-width="1.2" stroke-dasharray="3 4" fill="none" class="cord" opacity=".9"/><circle cx="330" cy="88" r="2.6" fill="#5F8E9B"/>
+   <circle id="insetRim" cx="112" cy="150" r="101" fill="none" stroke="#357180" stroke-width=".9" opacity=".55"/>
+   <circle cx="112" cy="150" r="96" fill="#07121A" stroke="#3A6B78" stroke-width="1.4" class="org-shape"/>
    <g clip-path="url(#insetClip)">
      <path d="M 30 152 C 26 104 60 68 112 66 C 162 64 198 96 200 138 C 201 158 194 172 182 178 C 172 182 160 180 150 176 L 134 172 C 126 174 118 180 110 184 C 98 188 82 188 68 184 C 48 178 32 168 30 152 Z" fill="#2B3450" stroke="#46557A" stroke-width=".9" class="cord"/>
      <g fill="none" stroke="#46557A" stroke-width=".8" stroke-linecap="round" opacity=".85"><path d="M 50 120 C 60 104 76 110 84 96"/><path d="M 92 84 C 104 92 116 80 128 86"/><path d="M 140 82 C 152 92 166 88 174 100"/><path d="M 180 112 C 188 124 190 136 186 148"/><path d="M 44 146 C 56 136 70 146 80 136"/><path d="M 150 110 C 160 118 170 116 176 126"/></g>
