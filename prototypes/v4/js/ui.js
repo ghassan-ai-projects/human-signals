@@ -95,6 +95,29 @@ HS.renderSummary=function(){
 };
 HS.syncTriggers=()=>document.querySelectorAll('[data-trigger]').forEach(b=>b.setAttribute('aria-pressed',HS.E.sceneId===b.dataset.trigger&&HS.E.state==='triggered'));
 $('#triggers').addEventListener('click',e=>{ const b=e.target.closest('[data-trigger]'); if(b) HS.clickTrigger(b.dataset.trigger); });
+/* how the three stories connect: an orientation map generated from the cross-scene leads (never a progress board) */
+const CONNPOS={stress:[170,52],meal:[276,194],dark:[64,194]};
+HS.connEdges=function(){ const seen=new Set(),out=[]; Object.entries(HS.scenes).forEach(([sc,S])=>Object.values(S.pathways).forEach(p=>(p.hots||[]).forEach(h=>{ if(h.leads&&HS.scenes[h.leads.scene]&&h.leads.scene!==sc){ const k=sc+'>'+h.leads.scene; if(!seen.has(k)){ seen.add(k); out.push({from:sc,to:h.leads.scene,why:h.leads.why}); } } }))); return out; };
+function closeConn(){ const d=$('#connMap'); if(d){ const r=d._ret; d.remove(); if(r&&document.contains(r)) r.focus(); } }
+HS.closeConnMap=closeConn;
+HS.openConnMap=function(){
+  if($('#connMap')) return;
+  const title=id=>HS.scenes[id].trigger.title;
+  const scenes=HS.TRIGGERS.filter(t=>HS.scenes[t.id]&&CONNPOS[t.id]).map(t=>t.id);
+  const edges=HS.connEdges().filter(e=>CONNPOS[e.from]&&CONNPOS[e.to]);
+  const node=id=>{ const [x,y]=CONNPOS[id]; return `<g class="cnode" data-goscene="${id}" tabindex="0" role="button" aria-label="Open ${title(id)}"><rect x="${x-58}" y="${y-19}" width="116" height="38" rx="12"/><text x="${x}" y="${y+4.5}" text-anchor="middle">${title(id)}</text></g>`; };
+  const arrow=e=>{ const a=CONNPOS[e.from],b=CONNPOS[e.to],dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy)||1,ux=dx/L,uy=dy/L; const ax=a[0]+ux*62,ay=a[1]+uy*24,bx=b[0]-ux*62,by=b[1]-uy*24,ang=Math.atan2(by-ay,bx-ax)*180/Math.PI;
+    return `<g class="cedge"><line x1="${ax.toFixed(1)}" y1="${ay.toFixed(1)}" x2="${bx.toFixed(1)}" y2="${by.toFixed(1)}"/><path d="M-9 -4.5 L0 0 L-9 4.5Z" transform="translate(${bx.toFixed(1)} ${by.toFixed(1)}) rotate(${ang.toFixed(1)})"/></g>`; };
+  const list=edges.map(e=>`<li><b>${title(e.from)} → ${title(e.to)}.</b> ${e.why}</li>`).join('');
+  const d=document.createElement('div'); d.className='keys float'; d.id='connMap'; d.setAttribute('role','dialog'); d.setAttribute('aria-label','How the three stories connect'); d._ret=document.activeElement;
+  d.innerHTML=`<header><b>How these connect</b><button class="x" aria-label="Close">×</button></header><p class="sub" style="margin:0 0 8px">The three stories share one body. Open any one — the arrows show where it hands off to another.</p><svg class="connsvg" viewBox="0 0 340 246" role="img" aria-label="Map of how the scenes connect">${edges.map(arrow).join('')}${scenes.map(node).join('')}</svg><ul class="connlist">${list}</ul>`;
+  HS.app.appendChild(d);
+  d.querySelector('.x').onclick=closeConn;
+  d.addEventListener('click',e=>{ const n=e.target.closest('[data-goscene]'); if(n){ closeConn(); HS.clickTrigger(n.dataset.goscene); } });
+  d.addEventListener('keydown',e=>{ if(e.key==='Escape'){ e.preventDefault(); closeConn(); } else if((e.key==='Enter'||e.key===' ')){ const n=e.target.closest&&e.target.closest('[data-goscene]'); if(n){ e.preventDefault(); closeConn(); HS.clickTrigger(n.dataset.goscene); } } });
+  d.querySelector('.x').focus();
+};
+$('#bConn').addEventListener('click',HS.openConnMap);
 /* hovering a trigger previews the organs it will involve */
 let tpT=0;
 $('#triggers').addEventListener('mouseover',e=>{ const b=e.target.closest('[data-trigger]'), S=b&&HS.scenes[b.dataset.trigger]; clearTimeout(tpT); tpT=setTimeout(()=>{ light.preview=S?new Set([...S.trigger.lights,...S.pathways[S.trigger.first].organs]):null; HS.applyOrgs(); },150); });
