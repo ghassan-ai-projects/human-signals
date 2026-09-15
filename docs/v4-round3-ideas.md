@@ -4,6 +4,8 @@ Date: 15 September 2026
 Builds on: [v4-prototype-goal.md](v4-prototype-goal.md) (phases 0–8, done) · [v4-round2-goal.md](v4-round2-goal.md) (phases 9–15, done) · [v4-prototype-review.md](v4-prototype-review.md) · direction: [relay-design-direction.md](relay-design-direction.md)
 Prototype: [`prototypes/v4/`](../prototypes/v4/)
 
+> **Status (all implemented).** Every idea below was built and committed one per change on `design/v4-prototype`: A1 route grammar (+A2 glass depth, A3 inciting moment, A4 contrast pass), B1 watch-it-all, B2 connections map, B3 say-it-back, B4 closed feedback loop, C1 depth ladder, C2 cutaway lens, D1 signs-on-arrival, D2 sign vocabulary, E1 scalable reading UI, E3 concise narration. Per-organ depth cooling (A2) was deliberately dropped to protect pathway-organ salience; E1 shipped as a measured pass over the reading surfaces, with full-chrome rem left as a follow-up. Layout audit stays 0 collisions across 40 views; no console errors.
+
 This is a design memo, not a phase plan. It proposes the next round of improvements **strictly on visual craft and learning experience** — nothing about porting to `src/`, commissioning art, or the science/anatomy review, which are tracked elsewhere. Everything here rides on the existing placeholder art and honest-draft framing, and respects the hard constraints (no gamification; no numbers/quantity encoded by brightness/speed/size/count; motion carries meaning and has a reduced-motion twin; dark-first desktop pointer + keyboard).
 
 Every idea is grounded in the code that exists. File and function references are to the current build.
