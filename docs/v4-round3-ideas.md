@@ -224,3 +224,20 @@ The constraint is absolute (no points/streaks/badges/milestones). The move is to
 - No rotation / back view (owner decision D5; front-view depth cues in A2/C2 are the cheaper answer).
 - Nothing that encodes amount by brightness, speed, size or count — several ideas (A2 depth cooling, A3 trigger, D1/D2 signs) name this guardrail explicitly because they sit closest to it.
 - No leaderboards, points, streaks, badges or completion rewards, anywhere — including inside the assessment theme, which is built entirely from ungraded self-assessment.
+
+---
+
+## Round 4: where the measurable quality bar actually stands
+
+Date: 15 September 2026 · branch `design/v4-quality-round4` · audit: `scripts/v4-quality-bar.mjs`
+
+Before proposing anything, the §10 quality bar was re-measured in a real browser rather than inferred from the docs. `scripts/v4-quality-bar.mjs` walks all five pathways at 1280, 1440 and 1920 and checks: labels on screen (bar: ≤ 8), label/label, label/hotspot and label/UI overlaps, leader-line crossings, bottom-bar overflow, grayscale survival of route/hotspot/ghost/lit/candidate states, a reduced-motion step for every pathway, and console errors throughout.
+
+**Result: 83/83 checks pass on the current build.** Baseline saved at `coverage/v4/qb-baseline.json`.
+
+Two caveats found while building the audit, both in the *measurement*, not the prototype — recorded so the numbers are not over-trusted:
+
+1. A first pass counted `12 labels` in the dark scene because the probe matched `#labels > *`, which also matches the numbered hotspot buttons. The real figure is **7 labels + 5 hotspots**.
+2. The grayscale check first reported "no dashed distinction" because it read only `#overlay`. The dashed feedback route and the `ghostin` ghosts live in `#world`. Reading both SVGs, the dashed distinction is present (e.g. `route ghostin` at `6px,7px`, feedback at `3.5px,4.5px`).
+
+**What this means for round 4.** The *layout, salience-proxy, grayscale, reduced-motion and console* parts of the bar are already satisfied. The parts of §10 that cannot be measured by a script — whether a first-time learner finds a trigger in 10 s, whether the ghost reads as "not yet revealed" rather than "association", whether the schematic reads as not-a-vessel, and whether negative feedback is explainable in the learner's own words — are the ones still open. Round 4 should therefore target **comprehension and first-run legibility**, not more layout polish, and should add scriptable proxies for those task outcomes where it can.
