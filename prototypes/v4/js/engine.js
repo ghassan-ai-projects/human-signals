@@ -2,7 +2,7 @@
    gated feedback with Try it?, one What if?, and the cell inset. Everything scene-specific comes from HS.scenes[id]. */
 (function(HS){
 const $=HS.$, app=HS.app;
-const E=HS.E={scene:null,sceneId:null,state:'idle',route:null,cur:-1,playing:false,tIdx:0,tryMode:false,picks:new Set(),cellOpen:false,tryCtx:{exposed:false,why:false},whatIf:null,landed:new Set(),gate:true,playingAll:false};
+const E=HS.E={scene:null,sceneId:null,state:'idle',route:null,cur:-1,playing:false,tIdx:0,tryMode:false,picks:new Set(),cellOpen:false,tryCtx:{exposed:false,why:false},whatIf:null,landed:new Set(),gate:true,playingAll:false,reflectOpen:false};
 const visited={}, revealed={};
 const P=HS.pathway=()=>E.scene&&E.route?E.scene.pathways[E.route]:null;
 const key=(r=E.route)=>E.sceneId+':'+r;
@@ -159,7 +159,7 @@ HS.setPlayUI=setPlayUI;
 async function enterPathway(r,autoplay){
   if(HS.RB&&HS.RB.active) HS.closeRebuild(false);
   if(HS.CMP&&HS.CMP.active) HS.closeCompare(false);
-  const S=E.scene; stopPlay(); closeTry(); closeCell(); restoreWhatIf(false);
+  const S=E.scene; stopPlay(); closeTry(); closeCell(); closeReflect(); restoreWhatIf(false);
   E.route=r; E.cur=-1; E.landed=new Set(); E.gate=true; const p=S.pathways[r];   /* signs couple to arrival on the first forward pass */
   HS.setLast(E.sceneId,r); HS.renderContinue();
   if(E.timeRef!==TL()){ buildRibbon(); setTime(0); }
@@ -217,7 +217,27 @@ function afterPlay(){
   if(a.whenHidden&&isRevealed()) return;
   if(a.time!=null) setTime(a.time);
   if(a.tip&&!E.playingAll) HS.tip(a.tip.key,a.tip.text,a.tip.pos);   // no hand-off tip mid "Watch it all"
+  const p=P(); if(p&&p.reflect&&!reflectSeen.has(key())&&!E.playingAll&&(!p.gate||isRevealed())){ reflectSeen.add(key()); setTimeout(openReflect,900); }
 }
+/* Say it back: an optional, ungraded self-explanation after a pathway is understood (no score, no streak) */
+const reflectSeen=new Set();
+function openReflect(){
+  const p=P(); if(!p||!p.reflect||E.reflectOpen||E.tryMode||E.whatIf||E.cellOpen||(HS.RB&&HS.RB.active)||(HS.CMP&&HS.CMP.active)) return;
+  E.reflectOpen=true; const r=p.reflect; HS.closeCards&&HS.closeCards();
+  const box=document.createElement('div'); box.className='try float'; box.id='reflCard'; box.setAttribute('role','dialog'); box.setAttribute('aria-label','Say it back');
+  box.style.right='16px'; box.style.top='96px';
+  box.innerHTML=`<div class="k">Say it back</div><h5>${r.q}</h5><p>Put it in your own words — just for you, nothing is scored.</p>
+   <textarea id="reflText" rows="3" aria-label="Your explanation" placeholder="Type your answer, or just think it through…"></textarea>
+   <div id="reflModel" hidden></div>
+   <div class="acts"><button class="btn t" id="reflClose">Close</button><button class="btn p" id="reflShow">Show how we’d put it</button></div>`;
+  app.appendChild(box);
+  $('#reflShow').onclick=()=>{ const m=$('#reflModel'); m.className='res good'; m.innerHTML='<b>How we’d put it</b>'+r.model; m.hidden=false; $('#reflShow').disabled=true; HS.say('How we’d put it. '+r.model); };
+  $('#reflClose').onclick=()=>closeReflect(true);
+  box.addEventListener('keydown',e=>{ if(e.key==='Escape'){ e.preventDefault(); closeReflect(true); } });
+  $('#reflText').focus(); HS.say('Say it back. '+r.q+' Type an answer if you like, then show how we’d put it.');
+}
+function closeReflect(focus){ if(!E.reflectOpen) return; E.reflectOpen=false; const d=$('#reflCard'); if(d) d.remove(); if(focus&&$('#bRead')) $('#bRead').focus(); }
+HS.openReflect=openReflect; HS.closeReflect=closeReflect;
 /* Watch the whole response: play each route in turn across the shared time ribbon (guided, no table) */
 function setAllUI(on){ const b=$('#bAll'); if(!b) return; b.setAttribute('aria-pressed',on); const l=b.querySelector('.lbl'); if(l) l.textContent=on?'Stop':'Watch it all'; }
 function stopAll(){ if(E.playingAll){ E.playingAll=false; setAllUI(false); } }   // a deliberate user action ends the auto sequence

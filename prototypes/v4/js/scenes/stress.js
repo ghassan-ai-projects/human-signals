@@ -25,7 +25,8 @@ HS.scenes.stress={
     {org:'adr',num:2,dx:-28,dy:24,seg:'nerve',t:1,region:'adr',one:'Adrenal medulla releases adrenaline',adv:'Acetylcholine from sympathetic fibres makes chromaffin cells release adrenaline',lab:{body:'Adrenal glands',organ:'adrenaline',structure:'Medulla · adrenaline'},ldx:-40,ldy:-30},
     {org:'heart',num:3,dx:-38,dy:-18,seg:'adrenaline',t:1,region:'heart',one:'Heart beats faster',adv:'Adrenaline and noradrenaline on β1 receptors: faster, stronger beats',lab:{body:'Heart',organ:'adrenaline',structure:'Heart muscle responds'},ldx:52,ldy:-24},
     {org:'liver',num:4,dx:-10,dy:-34,seg:null,t:1,region:'liver',one:'Liver releases glucose',adv:'Adrenergic receptors switch on glycogen breakdown in liver cells',lab:{body:'Liver',organ:'glucose',structure:'Liver cells release glucose'},ldx:-70,ldy:-4,leads:{scene:'meal',path:'after',why:'Glucose released into the blood is sensed by the pancreas, which releases insulin.'}}],
-   afterPlay:{tip:{key:'slow',text:'That was the fast route, within seconds. Now follow the slow route: choose Slow.',pos:{right:16,bottom:214}}}
+   afterPlay:{tip:{key:'slow',text:'That was the fast route, within seconds. Now follow the slow route: choose Slow.',pos:{right:16,bottom:214}}},
+   reflect:{q:'In a sentence, how does the fast route get the body ready so quickly?',model:'Nerve signals reach the adrenal medulla within seconds; it releases adrenaline into the blood, and the heart, lungs and liver respond, so the body is ready almost at once.'}
   },
   slow:{name:'HPA axis',node:'hpaP',chip:'over minutes, lasting hours',region:'hpa',segDur:1000,minTime:1,orgRegions:{brain:'brain'},
    organs:['hyp','pit','adr','liver'],draw:['crh','acth','cort'],
@@ -38,6 +39,7 @@ HS.scenes.stress={
     {org:'liver',num:4,dx:-10,dy:-34,seg:'cort',t:3,region:'liver',one:'Liver makes glucose available',adv:'Cortisol raises gluconeogenic enzymes through the glucocorticoid receptor',lab:{body:'Liver',organ:'glucose',structure:'Liver cells make glucose'},ldx:-70,ldy:-4,cell:'liverCort',leads:{scene:'meal',path:'after',why:'Glucose made available by cortisol is sensed by the pancreas, which releases insulin.'}}],
    enterTip:{key:'numbers',text:'Numbers show the order. Press ▶ to watch the signal travel, or click any number.',pos:{right:16,bottom:214}},
    afterPlay:{whenHidden:true,time:3,tip:{key:'ghost',text:'Something acts back on the brain. Open Try it? on the dashed line.',pos:{left:340,top:150}}},
+   reflect:{q:'Why does the stress response eventually settle itself?',model:'Cortisol acts back on the pituitary and the hypothalamus to slow its own release — negative feedback — so the response winds down instead of running away.'},
    gate:{
     routes:['f1','f2'],at:['f1',.5],labelRoutes:['f1'],tipKey:'ghost',from:'adr',loopFrom:'acth',
     aria:'Try it: something acts back here',ariaRevealed:'Feedback: cortisol acts back on the pituitary and hypothalamus, revealed',dotAria:'Try it: what acts back?',

@@ -114,6 +114,9 @@ button{font-family:inherit;color:inherit}
 .res.good{background:rgba(67,217,154,.12);color:#BFF3DC}
 .res.warm{background:rgba(240,194,126,.12);color:#F7DDB5}
 .res b{display:block;margin-bottom:2px}
+.try textarea{width:100%;margin-top:10px;background:rgba(255,255,255,.03);border:1px solid var(--float-line);border-radius:10px;color:var(--ink);font:13.5px/19px var(--sans);padding:8px 10px;resize:vertical}
+.try textarea:focus-visible{outline:2px solid var(--primary);outline-offset:1px}
+.try textarea::placeholder{color:var(--ink-3)}
 
 /* cell inset */
 .inset{position:absolute;z-index:24;width:400px;border-radius:18px;padding:12px 12px 10px}

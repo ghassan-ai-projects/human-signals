@@ -21,6 +21,7 @@ HS.scenes.dark={
     {org:'pineal',num:3,dx:10,dy:-30,seg:'clockPineal',t:2,region:'clock',one:'Pineal gland releases melatonin',adv:'Noradrenaline on β1 receptors raises AANAT activity, so melatonin is made',lab:{body:'Pineal gland',organ:'Pineal gland',structure:'Pineal cells make melatonin'},ldx:34,ldy:-62,cell:'pinealMel'},
     {org:'brain',num:4,dx:42,dy:8,seg:'melatonin',t:2,region:'head',one:'Brain and body get ready for sleep',adv:'Melatonin acts on MT1 and MT2 receptors, including in the SCN',lab:{body:'Brain',organ:'melatonin',structure:'Melatonin acts on brain receptors'},ldx:58,ldy:-18,leads:{scene:'stress',path:'slow',why:'Before waking, cortisol rises too, as part of its daily rhythm.'}}],
    afterPlay:{whenHidden:true,tip:{key:'darkGhost',text:'Melatonin also acts back on something. Open Try it? on the dashed line.',pos:{right:16,bottom:214}}},
+   reflect:{q:'As it gets dark, how does the body prepare for sleep?',model:'The eyes sense less light, the body clock signals the pineal gland, and it releases melatonin into the blood, which helps the brain and body get ready for sleep.'},
    gate:{
     routes:['fbMel'],at:['fbMel',.5],labelRoutes:['fbMel'],tipKey:'darkGhost',from:'pineal',blocksEnd:false,loopFrom:'clockPineal',
     aria:'Try it: melatonin acts back somewhere',ariaRevealed:'Melatonin acts back on the body clock, revealed',dotAria:'Try it: where does melatonin act back?',

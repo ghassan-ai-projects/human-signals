@@ -32,6 +32,7 @@ HS.scenes.meal={
     {org:'liver',num:2,dx:-46,dy:-20,seg:'glucagon',t:3,region:'liver',one:'Liver releases stored glucose',adv:'Glucagon raises cAMP: glycogen breakdown and gluconeogenesis',lab:{body:'Liver',organ:'glucose',structure:'Liver cells break down glycogen'},ldx:-86,ldy:-10,cell:'liverGcg',leads:{scene:'stress',path:'slow',why:'During stress, cortisol also helps the liver keep glucose available, more slowly.'}},
     {org:'brain',num:3,dx:40,dy:6,seg:'glucose',t:3,region:'head',one:'Brain keeps its glucose supply',adv:'GLUT1 and GLUT3 carry glucose into brain cells without insulin',lab:{body:'Brain',organ:'glucose',structure:'Brain cells take up glucose'},ldx:56,ldy:-18}],
    afterPlay:{whenHidden:true,tip:{key:'mealGhost',text:'Something turns glucagon down again. Open Try it? on the dashed line.',pos:{right:16,bottom:214}}},
+   reflect:{q:'Between meals, how does the body keep blood glucose from falling too low?',model:'The pancreas releases glucagon; it tells the liver to break down stored glycogen and release glucose into the blood.'},
    gate:{
     routes:['fbGlu'],at:['fbGlu',.5],labelRoutes:['fbGlu'],tipKey:'mealGhost',from:'liver',loopFrom:'glucagon',
     aria:'Try it: something turns glucagon down',ariaRevealed:'Feedback: rising glucose acts back on the pancreas, revealed',dotAria:'Try it: what turns glucagon down?',
@@ -79,6 +80,7 @@ HS.scenes.meal={
     {org:'liver',num:3,dx:-46,dy:-20,seg:'insL',t:3,region:'liver',one:'Liver stores glucose',adv:'Insulin switches on glycogen synthesis in liver cells',lab:{body:'Liver',organ:'stores glucose',structure:'Liver cells store glycogen'},ldx:-86,ldy:-10},
     {org:'muscle',num:4,dx:32,dy:-44,seg:'insM',t:3,region:'muscle',one:'Muscles take up glucose',adv:'Insulin moves GLUT4 transporters to the muscle cell surface',lab:{body:'Muscles',organ:'insulin',structure:'Muscle cells take up glucose'},ldx:40,ldy:-66,cell:'muscleIns'}],
    afterPlay:{whenHidden:true,tip:{key:'fedGhost',text:'Something stops glucose falling too far. Open Try it? on the dashed line.',pos:{right:16,bottom:214}}},
+   reflect:{q:'After a meal, how does the body keep blood glucose from rising too high?',model:'The pancreas releases insulin; it helps the liver and the muscles take glucose out of the blood to use or store.'},
    gate:{
     routes:['fbIns'],at:['fbIns',.5],labelRoutes:['fbIns'],tipKey:'fedGhost',from:'muscle',loopFrom:'insM',
     aria:'Try it: something turns insulin down',ariaRevealed:'Feedback: falling glucose acts back on the pancreas, revealed',dotAria:'Try it: what turns insulin down?',

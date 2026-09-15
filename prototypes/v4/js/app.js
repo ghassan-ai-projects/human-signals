@@ -26,6 +26,7 @@ document.addEventListener('keydown',e=>{
   if(k==='Escape'){
     if($('#keys')){ HS.toggleKeys(); return; }
     if($('#advMenu')){ HS.toggleAdvMenu(false); $('#bAdv').focus(); return; }
+    if(E.reflectOpen){ HS.closeReflect(true); return; }
     if(HS.RB.active){ HS.closeRebuild(true); return; }
     if(HS.CMP.active){ HS.closeCompare(true); return; }
     if($('#cards .card')){ HS.closeCards(); return; }
