@@ -2,7 +2,7 @@
    gated feedback with Try it?, one What if?, and the cell inset. Everything scene-specific comes from HS.scenes[id]. */
 (function(HS){
 const $=HS.$, app=HS.app;
-const E=HS.E={scene:null,sceneId:null,state:'idle',route:null,cur:-1,playing:false,tIdx:0,tryMode:false,picks:new Set(),cellOpen:false,tryCtx:{exposed:false,why:false},whatIf:null};
+const E=HS.E={scene:null,sceneId:null,state:'idle',route:null,cur:-1,playing:false,tIdx:0,tryMode:false,picks:new Set(),cellOpen:false,tryCtx:{exposed:false,why:false},whatIf:null,landed:new Set(),gate:true};
 const visited={}, revealed={};
 const P=HS.pathway=()=>E.scene&&E.route?E.scene.pathways[E.route]:null;
 const key=(r=E.route)=>E.sceneId+':'+r;
@@ -65,6 +65,7 @@ function setTime(i,user){
   if(i===last && E.whatIf){ i=last-1; if(user) HS.toast(p.whatIf.holdToast); }
   if(i===last && p && p.gate && p.gate.blocksEnd!==false && !isRevealed()){ i=last-1; if(user) HS.toast(p.gate.calmBlocked); }
   E.tIdx=i;
+  if(user) E.gate=false;   // a manual ribbon scrub reveals the full felt picture for that time
   const pct=i/last*100; $('#rbFill').style.width=pct+'%'; $('#rbHandle').style.left=pct+'%';
   $('#rbHandle').setAttribute('aria-valuenow',i); $('#rbHandle').setAttribute('aria-valuetext',T[i].w+'. '+HS.strip(T[i].c));
   document.querySelectorAll('.rb-words span').forEach((s,k)=>s.classList.toggle('on',k===i));
@@ -87,7 +88,8 @@ HS.setTime=setTime;
   $('#rbWays').addEventListener('click',e=>{ const b=e.target.closest('[data-t]'); if(b){ stopPlay(); setTime(+b.dataset.t,true); } });
   h.addEventListener('keydown',e=>{ if(e.key==='ArrowRight'||e.key==='ArrowUp'){ e.preventDefault(); stopPlay(); setTime(Math.min(lastT(),E.tIdx+1),true); } if(e.key==='ArrowLeft'||e.key==='ArrowDown'){ e.preventDefault(); stopPlay(); setTime(Math.max(0,E.tIdx-1),true); } });
 })();
-function applySigns(){ if(!E.scene) return; const active=E.state==='triggered'&&!(HS.RB&&HS.RB.active)&&!(HS.CMP&&HS.CMP.active);   /* no sign gives away a Rebuild answer */ E.scene.signs.forEach(sg=>HS.setSign(sg,active&&signOn(sg),E.tIdx)); }
+function applySigns(){ if(!E.scene) return; const active=E.state==='triggered'&&!(HS.RB&&HS.RB.active)&&!(HS.CMP&&HS.CMP.active);   /* no sign gives away a Rebuild answer */ const p=P();
+  E.scene.signs.forEach(sg=>{ const inRoute=sg.org&&p&&p.hots.some(h=>h.org===sg.org); const landed=!(E.gate&&inRoute)||E.landed.has(sg.org); HS.setSign(sg,active&&signOn(sg)&&landed,E.tIdx); }); }
 
 /* ---------- what the overlay shows ---------- */
 HS.getLabels=function(){
@@ -158,7 +160,7 @@ async function enterPathway(r,autoplay){
   if(HS.RB&&HS.RB.active) HS.closeRebuild(false);
   if(HS.CMP&&HS.CMP.active) HS.closeCompare(false);
   const S=E.scene; stopPlay(); closeTry(); closeCell(); restoreWhatIf(false);
-  E.route=r; E.cur=-1; const p=S.pathways[r];
+  E.route=r; E.cur=-1; E.landed=new Set(); E.gate=true; const p=S.pathways[r];   /* signs couple to arrival on the first forward pass */
   HS.setLast(E.sceneId,r); HS.renderContinue();
   if(E.timeRef!==TL()){ buildRibbon(); setTime(0); }
   if(p.minTime&&E.tIdx<p.minTime) setTime(p.minTime);
@@ -182,9 +184,9 @@ function stopPlay(){ if(E.playing){ E.playing=false; HS.cancelTravel(); setPlayU
 HS.stopPlay=stopPlay;
 async function goHot(i,user){
   const p=P(), h=p.hots[i]; if(user){ stopPlay(); closeTry(); }
-  E.cur=i; vis().add(i); renderDots(); HS.saveSoon(); HS.syncHash();
+  E.cur=i; vis().add(i); if(h.org) E.landed.add(h.org); renderDots(); HS.saveSoon(); HS.syncHash();
   const og=$('#o-'+h.org); if(og&&!HS.RM()){ og.classList.remove('arrive'); void og.getBoundingClientRect(); og.classList.add('arrive'); clearTimeout(og._arr); og._arr=setTimeout(()=>og.classList.remove('arrive'),950); }   // the organ answers once as the signal lands
-  if(E.tIdx<h.t) setTime(h.t);
+  if(E.tIdx<h.t) setTime(h.t); else applySigns();   // re-couple this organ's sign even when the time index doesn't advance
   HS.say(`Step ${h.num}: ${h.one}`);
   if(user){ await HS.camTo(h.region,650); if(h.seg) await HS.travel(h.seg,900); }
   HS.renderOverlay(); setPlayUI();
@@ -197,6 +199,7 @@ async function play(){
   if(HS.RM()){ const next=E.cur+1<p.hots.length?E.cur+1:0; if(next===0&&E.cur>=0) vis().clear(); await HS.camTo(p.region,0); goHot(next,false); if(next===p.hots.length-1) afterPlay(); return; }
   E.playing=true; setPlayUI();
   const start=(E.cur>=p.hots.length-1||E.cur<0)?0:E.cur+1;
+  if(start===0){ E.landed=new Set(); E.gate=true; }   // a fresh pass re-couples signs to arrival
   await HS.camTo(p.region,600);
   for(let i=start;i<p.hots.length;i++){
     if(!E.playing) return;
