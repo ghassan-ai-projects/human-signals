@@ -32,6 +32,14 @@ Lives in: [`prototypes/v4/`](../prototypes/v4/) — plain HTML, CSS and JS, no b
 | 7 | **Craft and access** | Tree keyboard model complete (Home/End, type-ahead, Enter select), 150 ms hover preview, mini-map drag-to-pan, double-click zoom, focus never hidden under floating panels, label/leader collision pass at 1280/1440/1920, grayscale check, reduced-motion walk-through of all three scenes | §10 tasks 1–12 can be run on the prototype; no console errors at any of the three sizes |
 | 8 | **Publish and evidence** | Updated artifact, screenshots per scene per zoom level in `docs/design-review-evidence/v4/`, a short review note listing what still needs owner decisions and scientific/anatomy review | Artifact link shared; evidence committed |
 
+## Progress
+
+| Phase | Status | Notes |
+|---|---|---|
+| 0 | Done | Docs, style frames and prototype in the repo |
+| 1 | Done | Engine plays any scene from data; stress scene unchanged |
+| 2 | Done | New silhouette (separated arms, hands, legs), organ form ramps with inner shadow and detail lines, skeleton hints, airway, sympathetic chain beads, sagittal brain cutaway with thalamus, cerebellum, optic nerve, SCN and pineal, pituitary lobes at close-up, lit halos, route draw-on, pulse trail, arrival ripples, trigger ripple, stage atmosphere; off-screen labels no longer pin to the edges |
+
 ## Out of scope (named, so they are not silently dropped)
 
 - Real commissioned anatomy art (§11 Phase 1) — placeholder art keeps improving, but it is not the final illustration.

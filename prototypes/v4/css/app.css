@@ -209,7 +209,7 @@ button{font-family:inherit;color:inherit}
 /* svg world styles */
 .org{transition:opacity .45s var(--ease)}
 .org.dim{opacity:.32}
-.org-shape{stroke:#3C7582;stroke-opacity:.6;stroke-width:1}
+.org-shape{stroke:#4A8593;stroke-opacity:.35;stroke-width:1}
 .org.lit .org-shape{stroke:var(--lit);stroke-opacity:1;stroke-width:1.8}
 .org.hov .org-shape{stroke:#CFEFFF;stroke-opacity:.9;stroke-width:1.6}
 .org.cand .ring{opacity:1}
@@ -252,7 +252,7 @@ button{font-family:inherit;color:inherit}
 
 /* hotspots (HTML overlay) */
 .pupil{transform-box:fill-box;transform-origin:center;transition:transform .8s var(--ease)}
-.pupil.wide{transform:scale(1.9)}
+.pupil.wide{transform:scale(1.65)}
 .hs{position:absolute;left:0;top:0;width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:50%;border:1.5px solid #4A6F7B;background:#0B171C;color:#CFE0E2;font:700 13px var(--sans);display:grid;place-items:center;cursor:pointer;z-index:11;pointer-events:auto;padding:0;transition:background-color .2s,border-color .2s,box-shadow .2s}
 .hs:hover{border-color:var(--ink)}
 .hs.v{border-color:var(--msg)}
@@ -263,5 +263,24 @@ button{font-family:inherit;color:inherit}
 .hs:focus-visible{outline:3px solid #fff;outline-offset:3px}
 .org-shape,.ring,.route,.casing,.cord{vector-effect:non-scaling-stroke}
 .pupil{transform-box:fill-box;transform-origin:center;transition:transform .8s var(--ease)}
-.pupil.wide{transform:scale(1.9)}
+.pupil.wide{transform:scale(1.65)}
 [hidden]{display:none!important}
+
+/* ---------- visual pass: hybrid style D ---------- */
+.app{background:radial-gradient(70% 80% at 56% 40%,#0D212A 0%,#07131A 55%,#03080B 100%)}
+.atmos{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity 1.6s var(--ease);background:radial-gradient(46% 42% at 56% 26%,var(--atm,transparent) 0%,transparent 100%)}
+.atmos.on{opacity:1}
+.detail path,.detail ellipse,.bones path{vector-effect:non-scaling-stroke}
+.halo{opacity:0;transition:opacity .5s var(--ease);pointer-events:none}
+.org.lit .halo{opacity:.32}
+.org.hov .halo{opacity:.18}
+.org.lit .org-shape{stroke-opacity:1}
+.org-body{transition:filter .35s var(--ease)}
+.org.hov .org-body{filter:brightness(1.18)}
+.app.busy .org.hov .org-body{filter:none}
+.hs.cur::before{content:"";position:absolute;inset:-3px;border-radius:50%;border:2px solid var(--msg);opacity:0;animation:hsring 1s var(--ease) 1}
+@keyframes hsring{0%{transform:scale(1);opacity:.9}100%{transform:scale(2.3);opacity:0}}
+.rm .hs.cur::before{animation:none}
+.caption b{font-size:22px;letter-spacing:-.015em}
+.caption span{color:var(--lit)}
+.lab{box-shadow:0 4px 14px rgba(0,0,0,.35)}

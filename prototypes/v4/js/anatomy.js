@@ -1,11 +1,19 @@
-/* Placeholder anatomy: silhouette, organs, brain cutaway, level-of-detail sets and camera regions.
-   World units; organ paths are drawn inside translate(90 0). Content binds to organ keys, never pixels. */
+/* Placeholder anatomy in the hybrid style (D): semi-realistic organ form without texture, one light
+   direction (top-left), on a dark stage. Silhouette, skeleton hints, organs with detail lines, sagittal
+   brain cutaway, level-of-detail sets and camera regions. World units; organ paths sit inside translate(90 0).
+   Content binds to organ keys, never pixels. Requires anatomy review before release. */
 (function(HS){
 const $=HS.$;
 
-const RS=[[342,28,366,60,366,104],[366,146,350,176,330,190],[326,200,326,214,328,226],[350,238,400,240,432,256],[462,270,474,300,476,340],[480,400,484,460,490,520],[494,580,500,640,506,700],['L',510,780],['L',452,780],[450,700,446,640,440,590],[434,540,428,480,426,430],[424,400,422,380,420,364],[416,420,404,480,400,520],[398,560,412,600,420,640],[426,690,424,740,422,780],['L',300,780]];
+/* colour helpers for the form ramp (highlight / base / shadow) */
+const rgb=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
+const mix=(h,t,a)=>{ const A=rgb(h),B=rgb(t); return '#'+A.map((v,i)=>Math.round(v+(B[i]-v)*a).toString(16).padStart(2,'0')).join(''); };
+const lighten=(h,a)=>mix(h,'#FFFFFF',a), darken=(h,a)=>mix(h,'#000000',a);
+
+/* silhouette: right half as cubic segments, mirrored about x=300 */
+const RS=[[328,34,350,54,350,86],[350,114,342,136,328,150],[322,158,320,166,320,174],[320,188,322,200,326,208],[342,220,376,224,406,234],[434,244,448,266,452,298],[458,348,464,408,470,466],[476,518,484,570,490,618],[494,644,496,668,490,686],[482,702,466,702,462,686],[458,666,458,642,456,626],[448,576,440,526,432,480],[426,432,420,380,416,334],[414,322,410,316,404,320],[402,360,398,404,392,442],[386,474,388,504,396,534],[406,570,410,604,408,642],[406,692,402,740,398,780],['L',318,780],[316,748,310,724,300,714]];
 function bodyPath(){
-  let d='M300 28', cur=[300,28]; const segs=[];
+  let d='M300 34', cur=[300,34]; const segs=[];
   RS.forEach(s=>{ if(s[0]==='L'){ segs.push({t:'L',from:cur,to:[s[1],s[2]]}); cur=[s[1],s[2]]; } else { segs.push({t:'C',from:cur,c1:[s[0],s[1]],c2:[s[2],s[3]],to:[s[4],s[5]]}); cur=[s[4],s[5]]; } });
   segs.forEach(g=>{ d+= g.t==='L'?` L${g.to.join(' ')}`:` C${g.c1.join(' ')} ${g.c2.join(' ')} ${g.to.join(' ')}`; });
   const m=p=>[600-p[0],p[1]];
@@ -14,22 +22,46 @@ function bodyPath(){
 }
 
 const ORGS={
- int:{name:'Intestines',fill:'#3A302D',parts:[{d:'M 190 600 C 190 570 330 570 330 600 L 336 690 C 336 722 184 722 184 690 Z',c:[260,645],r:[76,76]}]},
- lungs:{name:'Lungs',fill:'#2B4755',region:'heart',parts:[{d:'M 244 268 C 210 272 190 320 188 380 C 186 420 196 440 214 444 C 236 446 248 430 250 410 L 252 300 C 252 280 250 270 244 268 Z',c:[220,356],r:[38,92]},{d:'M 276 268 C 310 272 330 320 332 380 C 334 420 324 440 306 444 C 290 446 280 436 276 424 L 272 300 C 270 280 270 270 276 268 Z',c:[303,356],r:[38,92]}]},
- heart:{name:'Heart',fill:'#7C3A42',region:'heart',parts:[{d:'M 262 350 C 290 336 318 350 314 384 C 312 410 290 428 270 440 C 254 424 238 404 240 380 C 242 362 250 354 262 350 Z',c:[277,391],r:[46,56]}]},
- liver:{name:'Liver',fill:'#7B4A3E',region:'liver',parts:[{d:'M 172 440 C 200 424 262 426 300 440 C 316 446 312 462 296 472 C 262 494 210 506 184 498 C 168 490 162 456 172 440 Z',c:[240,466],r:[84,46]}]},
- stom:{name:'Stomach',fill:'#664A43',parts:[{d:'M 300 452 C 324 440 348 450 350 476 C 352 506 334 530 306 534 C 290 536 284 524 294 514 C 312 500 316 480 300 468 Z',c:[322,490],r:[36,52]}]},
- panc:{name:'Pancreas',fill:'#86703A',parts:[{d:'M 232 520 C 252 508 290 508 330 496 C 346 492 356 496 354 504 C 350 514 320 520 290 528 C 266 534 240 538 232 530 Z',c:[293,516],r:[68,24]}]},
- kid:{name:'Kidneys',fill:'#5C3E47',parts:[{d:'M 208 524 C 228 524 232 550 230 566 C 228 586 222 598 208 598 C 192 598 186 580 188 560 C 190 540 194 524 208 524 Z',c:[209,561],r:[30,46]},{d:'M 312 530 C 292 530 288 556 290 572 C 292 592 298 604 312 604 C 328 604 334 586 332 566 C 330 546 326 530 312 530 Z',c:[311,567],r:[30,46]}]},
- adr:{name:'Adrenal glands',fill:'#A5763A',region:'adr',parts:[{d:'M 196 530 C 196 514 206 506 214 504 C 222 510 226 522 222 532 C 214 528 204 528 196 530 Z',c:[210,519],r:[20,17]},{d:'M 324 536 C 324 520 314 512 306 510 C 298 516 294 528 298 538 C 306 534 316 534 324 536 Z',c:[310,525],r:[20,17]}]},
- thy:{name:'Thyroid',fill:'#74503F',parts:[{d:'M 246 222 C 254 220 258 232 256 244 C 254 250 244 252 240 244 C 236 234 238 224 246 222 Z',c:[248,236],r:[14,18]},{d:'M 274 222 C 266 220 262 232 264 244 C 266 250 276 252 280 244 C 284 234 282 224 274 222 Z',c:[272,236],r:[14,18]}]},
- brain:{name:'Brain',fill:'#4B4662',region:'head',parts:[{d:'M 214 84 C 214 50 238 36 260 36 C 282 36 306 50 306 84 C 306 100 296 110 282 112 L 238 112 C 224 110 214 100 214 84 Z',c:[260,74],r:[50,42]}]}
+ int:{name:'Intestines',fill:'#4C3C36',
+  parts:[{d:'M 194 582 C 192 558 222 552 260 554 C 298 552 328 558 326 582 C 334 614 336 650 326 680 C 318 700 290 706 260 706 C 230 706 202 700 194 680 C 184 650 186 614 194 582 Z',c:[260,630],r:[68,72]}],
+  detail:'<path d="M 206 680 C 198 640 198 600 208 580 C 226 566 294 566 312 580 C 322 600 322 640 314 680" stroke-width="4" stroke-opacity=".28"/><path d="M 226 602 C 222 590 240 584 248 594 C 254 604 270 604 274 594 C 280 584 298 590 294 604 C 290 616 272 614 266 624 C 260 634 244 632 238 622 C 232 612 230 610 226 602 Z"/><path d="M 222 654 C 218 640 236 634 246 644 C 254 652 268 652 274 644 C 284 634 302 640 298 654 C 294 668 276 668 268 676 C 260 684 244 682 236 674 C 228 666 226 664 222 654 Z"/>'},
+ lungs:{name:'Lungs',fill:'#35596A',region:'heart',
+  parts:[{d:'M 236 262 C 214 266 192 300 186 352 C 180 400 184 432 196 444 C 212 452 236 446 250 436 C 254 400 254 330 250 290 C 248 272 244 262 236 262 Z',c:[220,356],r:[36,92]},{d:'M 284 262 C 306 266 328 300 334 352 C 340 400 336 432 324 444 C 312 452 298 448 290 440 C 296 424 296 414 286 404 C 276 396 272 380 272 360 L 270 290 C 270 272 276 262 284 262 Z',c:[304,356],r:[36,92]}],
+  detail:'<path d="M 190 384 C 212 372 232 342 248 316"/><path d="M 196 342 L 242 348"/><path d="M 334 380 C 312 368 292 342 276 318"/>'},
+ heart:{name:'Heart',fill:'#7E3C46',region:'heart',
+  parts:[{d:'M 258 344 C 282 330 314 340 318 368 C 322 396 304 422 280 440 C 274 444 268 444 262 438 C 248 422 236 400 238 378 C 240 360 246 350 258 344 Z',c:[278,390],r:[44,52]}],
+  detail:'<path d="M 262 346 C 258 326 272 316 286 322 C 294 326 296 334 294 344" stroke-width="3" stroke-opacity=".55"/><path d="M 244 372 C 266 382 296 378 316 364"/><path d="M 288 362 C 284 392 278 414 270 436"/>'},
+ liver:{name:'Liver',fill:'#7E4A3B',region:'liver',
+  parts:[{d:'M 168 432 C 196 414 270 414 318 428 C 336 434 338 446 326 454 C 300 470 250 494 206 504 C 186 508 170 496 166 478 C 162 460 162 442 168 432 Z',c:[240,460],r:[84,44]}],
+  detail:'<path d="M 264 420 C 262 446 256 470 244 496"/><ellipse cx="236" cy="494" rx="8" ry="5" fill="#4E6644" fill-opacity=".8" stroke-opacity=".5"/>'},
+ stom:{name:'Stomach',fill:'#6C4D46',
+  parts:[{d:'M 300 450 C 318 438 350 442 356 472 C 362 504 348 532 318 540 C 300 544 280 540 272 530 C 268 522 276 516 286 518 C 304 522 322 510 326 492 C 330 474 318 462 302 464 Z',c:[326,490],r:[32,48]}],
+  detail:'<path d="M 310 456 C 334 454 346 472 344 496 C 342 516 330 528 310 534"/>'},
+ panc:{name:'Pancreas',fill:'#86724A',
+  parts:[{d:'M 228 526 C 232 514 250 512 270 514 C 296 514 320 504 342 496 C 356 492 364 498 358 508 C 350 518 322 524 296 530 C 272 536 244 542 232 536 C 226 533 226 530 228 526 Z',c:[293,518],r:[68,22]}],
+  detail:'<path d="M 236 528 C 270 526 310 516 350 502"/>'},
+ kid:{name:'Kidneys',fill:'#6A4652',
+  parts:[{d:'M 210 526 C 230 526 236 548 232 562 C 228 570 224 574 226 584 C 228 596 220 604 208 604 C 190 604 184 584 186 562 C 188 540 194 526 210 526 Z',c:[209,565],r:[28,42]},{d:'M 310 532 C 290 532 284 554 288 568 C 292 576 296 580 294 590 C 292 602 300 610 312 610 C 330 610 336 590 334 568 C 332 546 326 532 310 532 Z',c:[311,571],r:[28,42]}],
+  detail:'<path d="M 226 578 C 214 574 204 566 200 552"/><path d="M 294 584 C 306 580 316 572 320 558"/>'},
+ adr:{name:'Adrenal glands',fill:'#B07E3E',region:'adr',
+  parts:[{d:'M 196 530 C 196 514 206 504 216 502 C 226 508 230 522 224 532 C 214 526 204 526 196 530 Z',c:[212,518],r:[20,16]},{d:'M 326 536 C 326 520 316 508 304 506 C 294 512 290 526 296 538 C 306 532 318 532 326 536 Z',c:[310,522],r:[20,16]}]},
+ thy:{name:'Thyroid',fill:'#7E5846',
+  parts:[{d:'M 248 196 C 256 194 258 204 256 216 C 254 222 246 224 242 216 C 238 206 240 198 248 196 Z',c:[249,209],r:[12,16]},{d:'M 272 196 C 264 194 262 204 264 216 C 266 222 274 224 278 216 C 282 206 280 198 272 196 Z',c:[271,209],r:[12,16]}],
+  detail:'<path d="M 255 212 L 265 212" stroke-width="4" stroke-opacity=".6"/>'},
+ brain:{name:'Brain',fill:'#565078',region:'head',
+  parts:[{d:'M 218 72 C 218 48 236 40 260 40 C 284 40 302 48 302 72 C 302 88 294 96 282 98 L 238 98 C 226 96 218 88 218 72 Z',c:[260,69],r:[42,29]}],
+  detail:'<path d="M 260 42 L 260 96"/><path d="M 228 62 C 236 54 244 62 250 54"/><path d="M 292 62 C 284 54 276 62 270 54"/><path d="M 226 82 C 236 76 244 84 252 78"/><path d="M 294 82 C 284 76 276 84 268 78"/>'}
 };
-const ORDER=['int','lungs','heart','liver','stom','panc','kid','adr','thy','brain'];
-const INSET={hyp:{name:'Hypothalamus',c:[101.8,173.8],r:6.8,region:'brain'},pit:{name:'Pituitary',c:[95,197.6],r:6,region:'brain'}};
-const REG={body:{x:0,y:30,w:640,h:750},head:{x:292,y:30,w:120,h:110},brain:{x:14,y:52,w:196,h:196},adr:{x:262,y:492,w:74,h:54},adrClose:{x:281,y:503,w:38,h:32},liver:{x:244,y:418,w:180,h:100},heart:{x:320,y:334,w:94,h:106},hpa:{x:0,y:50,w:460,h:520},fast:{x:150,y:40,w:460,h:560}};
+const ORDER=['int','lungs','heart','kid','stom','panc','liver','adr','thy','brain'];
+const INSET={
+ hyp:{name:'Hypothalamus',c:[102,174],r:6.5,region:'brain'},
+ pit:{name:'Pituitary',c:[95,199],r:6.2,region:'brain'},
+ scn:{name:'Body clock (SCN)',c:[86,171],r:4.2,region:'brain'},
+ pineal:{name:'Pineal gland',c:[141,165],r:4.6,region:'brain'}
+};
+const REG={body:{x:0,y:30,w:640,h:750},head:{x:292,y:30,w:120,h:110},brain:{x:14,y:52,w:196,h:208},pit:{x:62,y:170,w:70,h:56},adr:{x:262,y:492,w:74,h:54},adrClose:{x:281,y:503,w:38,h:32},liver:{x:244,y:418,w:180,h:100},heart:{x:320,y:334,w:94,h:106},hpa:{x:0,y:50,w:460,h:520},fast:{x:150,y:40,w:460,h:560}};
 
-HS.ORGS=ORGS; HS.INSET=INSET; HS.REG=REG; HS.bodyPath=bodyPath;
+HS.ORGS=ORGS; HS.INSET=INSET; HS.REG=REG; HS.bodyPath=bodyPath; HS.darken=darken; HS.lighten=lighten;
 HS.wc=(key,i=0)=> INSET[key]?INSET[key].c : [ORGS[key].parts[i].c[0]+90, ORGS[key].parts[i].c[1]];
 HS.orgName=k=>(ORGS[k]||INSET[k]).name;
 HS.orgKeys=()=>Object.keys(ORGS).concat(Object.keys(INSET));
@@ -37,56 +69,84 @@ HS.baseInfo=k=>{ const n=HS.orgName(k); return {t:n,body:'Not traced in this sce
 
 HS.buildWorld=function(){
   let s=`<defs>
-  <radialGradient id="sil" cx=".5" cy=".38" r=".78"><stop offset="0" stop-color="#13313B"/><stop offset="1" stop-color="#0A1A20"/></radialGradient>
-  <radialGradient id="sheen" cx=".32" cy=".26" r=".9"><stop offset="0" stop-color="#FFFFFF" stop-opacity=".34"/><stop offset=".45" stop-color="#FFFFFF" stop-opacity=".05"/><stop offset="1" stop-color="#000000" stop-opacity=".32"/></radialGradient>
-  <filter id="glow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-  <clipPath id="insetClip"><circle cx="112" cy="150" r="96"/></clipPath>
-  </defs>`;
-  s+=`<g transform="translate(50 0)"><path d="${bodyPath()}" fill="url(#sil)" stroke="#2A5663" stroke-width="1.2" class="org-shape" style="stroke-opacity:.8"/></g>`;
-  let ribs=''; for(let i=0;i<7;i++){ const y=280+i*24, w=64+i*7; ribs+=`<path d="M 260 ${y} C ${260-w*.4} ${y-8} ${260-w} ${y+2} ${260-w-6} ${y+22}"/><path d="M 260 ${y} C ${260+w*.4} ${y-8} ${260+w} ${y+2} ${260+w+6} ${y+22}"/>`; }
-  s+=`<g transform="translate(90 0)" fill="none" stroke="#18333C" stroke-width="2" stroke-linecap="round" opacity=".8">${ribs}<path d="M 176 700 C 200 670 236 664 260 690 C 284 664 320 670 344 700"/></g>`;
-  s+=`<g id="gNerv" transform="translate(90 0)" style="transition:opacity .4s" opacity=".35"><path class="cord" d="M 260 112 L 260 700" stroke="#8C74D6" stroke-width="2.5" stroke-linecap="round" fill="none"/>${[160,220,280,340,400,460,520,580].map(y=>`<path class="cord" d="M 260 ${y} l -14 10 M 260 ${y} l 14 10" stroke="#8C74D6" stroke-width="1.2" fill="none"/>`).join('')}</g>`;
+  <radialGradient id="sil" cx=".5" cy=".34" r=".8"><stop offset="0" stop-color="#16394A"/><stop offset=".6" stop-color="#0E232B"/><stop offset="1" stop-color="#09161B"/></radialGradient>
+  <linearGradient id="rim" x1="0" y1="0" x2=".7" y2="1"><stop offset="0" stop-color="#5A9AAA"/><stop offset=".45" stop-color="#2A5663"/><stop offset="1" stop-color="#14303A"/></linearGradient>
+  <radialGradient id="ambient"><stop offset="0" stop-color="#2F7F93" stop-opacity=".2"/><stop offset="1" stop-color="#2F7F93" stop-opacity="0"/></radialGradient>
+  <radialGradient id="sheen" cx=".32" cy=".24" r=".9"><stop offset="0" stop-color="#FFFFFF" stop-opacity=".22"/><stop offset=".42" stop-color="#FFFFFF" stop-opacity=".04"/><stop offset="1" stop-color="#000000" stop-opacity=".22"/></radialGradient>
+  <radialGradient id="halo"><stop offset="0" stop-color="#8FDCFF" stop-opacity=".5"/><stop offset=".5" stop-color="#8FDCFF" stop-opacity=".14"/><stop offset="1" stop-color="#8FDCFF" stop-opacity="0"/></radialGradient>
+  <clipPath id="insetClip"><circle cx="112" cy="150" r="96"/></clipPath>`;
+  ORDER.forEach(k=>{ const f=ORGS[k].fill; s+=`<linearGradient id="gr-${k}" x1=".2" y1="0" x2=".8" y2="1"><stop offset="0" stop-color="${lighten(f,.22)}"/><stop offset=".5" stop-color="${f}"/><stop offset="1" stop-color="${darken(f,.45)}"/></linearGradient>`; ORGS[k].parts.forEach((p,i)=>{ s+=`<clipPath id="cl-${k}${i}"><path d="${p.d}"/></clipPath>`; }); });
+  s+=`</defs>`;
+  s+=`<ellipse cx="350" cy="400" rx="330" ry="420" fill="url(#ambient)"/>`;
+  s+=`<g transform="translate(50 0)"><path d="${bodyPath()}" fill="url(#sil)" stroke="url(#rim)" stroke-width="1.4" class="org-shape"/></g>`;
+
+  /* skeleton hints: orientation only */
+  let ribs=''; for(let i=0;i<7;i++){ const y=276+i*22, w=56+i*6; ribs+=`<path d="M 260 ${y} C ${260-w*.4} ${y-8} ${260-w} ${y+2} ${260-w-4} ${y+20}"/><path d="M 260 ${y} C ${260+w*.4} ${y-8} ${260+w} ${y+2} ${260+w+4} ${y+20}"/>`; }
+  s+=`<g class="bones" transform="translate(90 0)" fill="none" stroke="#1B3942" stroke-width="2" stroke-linecap="round" opacity=".85">${ribs}
+   <path d="M 258 222 C 236 218 206 222 180 234"/><path d="M 262 222 C 284 218 314 222 340 234"/>
+   <path d="M 260 262 L 260 398" stroke-width="3"/><path d="M 260 190 L 260 660" stroke-dasharray="3 6" stroke-width="3" opacity=".7"/>
+   <path d="M 180 628 C 176 604 196 588 216 600 C 232 612 244 640 260 648 C 276 640 288 612 304 600 C 324 588 344 604 340 628"/><path d="M 222 676 C 240 660 280 660 298 676"/></g>`;
+
+  /* nervous layer */
+  s+=`<g id="gNerv" transform="translate(90 0)" style="transition:opacity .4s" opacity=".35"><path class="cord" d="M 260 100 L 260 660" stroke="#8C74D6" stroke-width="2.5" stroke-linecap="round" fill="none"/>${[180,236,292,348,404,460,516,572].map(y=>`<path class="cord" d="M 260 ${y} C 252 ${y+2} 246 ${y+6} 240 ${y+12} M 260 ${y} C 268 ${y+2} 274 ${y+6} 280 ${y+12}" stroke="#8C74D6" stroke-width="1.2" fill="none"/><circle cx="246" cy="${y+8}" r="2" fill="#8C74D6"/><circle cx="274" cy="${y+8}" r="2" fill="#8C74D6"/>`).join('')}</g>`;
+
   s+=`<g id="gOrg" transform="translate(90 0)">`;
+  s+=`<path d="M 260 176 L 260 282 M 260 282 C 252 290 244 294 236 304 M 260 282 C 268 290 276 294 284 304" fill="none" stroke="#2C4B57" stroke-width="6" stroke-linecap="round"/><path d="M 260 176 L 260 282" fill="none" stroke="#3F6674" stroke-width="1.5" stroke-dasharray="2 3" class="cord"/>`;
   ORDER.forEach(k=>{
     const o=ORGS[k];
-    s+=`<g class="org" data-org="${k}" id="o-${k}"><g class="org-body">`;
-    o.parts.forEach(p=>{ s+=`<path class="org-shape" d="${p.d}" fill="${o.fill}"/><path d="${p.d}" fill="url(#sheen)" pointer-events="none"/>`; });
+    s+=`<g class="org" data-org="${k}" id="o-${k}">`;
+    o.parts.forEach(p=>{ s+=`<ellipse class="halo" cx="${p.c[0]}" cy="${p.c[1]}" rx="${p.r[0]*1.5+14}" ry="${p.r[1]*1.35+14}" fill="url(#halo)"/>`; });
+    s+=`<g class="org-body">`;
+    o.parts.forEach((p,i)=>{ s+=`<path class="org-shape" d="${p.d}" fill="url(#gr-${k})"/><path d="${p.d}" fill="url(#sheen)" pointer-events="none"/><path d="${p.d}" fill="none" stroke="${darken(o.fill,.6)}" stroke-width="3" stroke-opacity=".4" clip-path="url(#cl-${k}${i})" pointer-events="none"/>`; });
+    if(o.detail) s+=`<g class="detail" fill="none" stroke="${darken(o.fill,.55)}" stroke-width="1" stroke-linecap="round" stroke-opacity=".75" pointer-events="none">${o.detail}</g>`;
     s+=`</g>`;
     if(k==='adr'){
       s+=`<g id="adrLod" class="lod" opacity="0" pointer-events="none">`;
-      o.parts.forEach(p=>{ s+=`<path d="${p.d}" fill="#C08C45"/><path d="${p.d}" fill="#6E3C2C" transform="translate(${p.c[0]} ${p.c[1]+2}) scale(.52) translate(${-p.c[0]} ${-p.c[1]})"/><path d="${p.d}" fill="url(#sheen)"/>`; });
+      o.parts.forEach(p=>{ s+=`<path d="${p.d}" fill="#C8944C"/><path d="${p.d}" fill="none" stroke="#E8B872" stroke-opacity=".4" stroke-dasharray="1.5 3" transform="translate(${p.c[0]} ${p.c[1]+1}) scale(.8) translate(${-p.c[0]} ${-p.c[1]})" class="cord"/><path d="${p.d}" fill="#6E3C2C" transform="translate(${p.c[0]} ${p.c[1]+2}) scale(.52) translate(${-p.c[0]} ${-p.c[1]})"/><path d="${p.d}" fill="url(#sheen)"/>`; });
       s+=`</g>`;
     }
     o.parts.forEach(p=>{ s+=`<ellipse class="ring" cx="${p.c[0]}" cy="${p.c[1]}" rx="${p.r[0]+5}" ry="${p.r[1]+5}"/>`; });
     s+=`</g>`;
   });
-  s+=`<circle cx="240" cy="122" r="6" fill="#2A4650"/><circle cx="280" cy="122" r="6" fill="#2A4650"/><circle class="pupil" id="pupR" cx="240" cy="122" r="2.2" fill="#040B0E"/><circle class="pupil" id="pupL" cx="280" cy="122" r="2.2" fill="#040B0E"/>`;
+  s+=`<g id="eyes">${[240,280].map((x,i)=>`<ellipse cx="${x}" cy="108" rx="7.5" ry="4.6" fill="#1C3038" stroke="#3A5E6A" stroke-width=".8"/><circle cx="${x}" cy="108" r="3.4" fill="#3B6573"/><circle class="pupil" id="${i?'pupL':'pupR'}" cx="${x}" cy="108" r="1.9" fill="#030809"/>`).join('')}</g>`;
   s+=`</g>`;
-  s+=`<g id="gInset"><path d="M 304 90 L 206 128" stroke="#3E6D79" stroke-dasharray="3 4" fill="none" class="cord"/>
-   <circle cx="112" cy="150" r="96" fill="#08141A" stroke="#23505C" stroke-width="1.2" class="org-shape"/>
-   <g clip-path="url(#insetClip)"><g transform="translate(112 150) scale(1.7) translate(-196 -70)">
-     <path d="M150 76 C148 44 176 26 204 27 C232 28 248 50 244 76 C242 92 230 98 216 97 C208 102 196 104 186 100 C172 100 156 92 150 76Z" fill="#2A3346" stroke="#3E4C66" stroke-width=".8"/>
-     <g fill="none" stroke="#46557A" stroke-width=".7" stroke-linecap="round" opacity=".8"><path d="M160 60 C168 50 178 56 186 46"/><path d="M190 40 C200 48 210 38 222 44"/><path d="M226 52 C234 60 238 70 236 80"/><path d="M168 78 C178 70 190 78 200 72 C210 78 220 72 228 80"/></g>
-     <ellipse cx="226" cy="101" rx="13" ry="8" fill="#2A3346" stroke="#3E4C66" stroke-width=".8"/>
-     <path d="M207 97 Q210 112 214 128" stroke="#3E4C66" stroke-width="7" fill="none" stroke-linecap="round"/>
-     <path d="M189 88 L187 95" stroke="#5E6C8E" stroke-width="1.2"/>
-     <circle cx="156" cy="86" r="5" fill="#2A4650"/>
-   </g></g>
-   ${Object.entries(INSET).map(([k,o])=>`<g class="org" data-org="${k}" id="o-${k}"><circle class="org-shape" cx="${o.c[0]}" cy="${o.c[1]}" r="${o.r}" fill="#6B5E93"/><circle class="ring" cx="${o.c[0]}" cy="${o.c[1]}" r="${o.r+6}"/></g>`).join('')}
-   <text x="112" y="238" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="8" letter-spacing="1" fill="#4F7680">BRAIN · CUTAWAY VIEW</text></g>`;
+
+  /* brain · sagittal cutaway inset (front of the head faces left) */
+  s+=`<g id="gInset"><path d="M 308 72 L 206 124" stroke="#3E6D79" stroke-dasharray="3 4" fill="none" class="cord"/>
+   <circle cx="112" cy="150" r="96" fill="#07121A" stroke="#23505C" stroke-width="1.2" class="org-shape"/>
+   <g clip-path="url(#insetClip)">
+     <path d="M 30 152 C 26 104 60 68 112 66 C 162 64 198 96 200 138 C 201 158 194 172 182 178 C 172 182 160 180 150 176 L 134 172 C 126 174 118 180 110 184 C 98 188 82 188 68 184 C 48 178 32 168 30 152 Z" fill="#2B3450" stroke="#46557A" stroke-width=".9" class="cord"/>
+     <g fill="none" stroke="#46557A" stroke-width=".8" stroke-linecap="round" opacity=".85"><path d="M 50 120 C 60 104 76 110 84 96"/><path d="M 92 84 C 104 92 116 80 128 86"/><path d="M 140 82 C 152 92 166 88 174 100"/><path d="M 180 112 C 188 124 190 136 186 148"/><path d="M 44 146 C 56 136 70 146 80 136"/><path d="M 150 110 C 160 118 170 116 176 126"/></g>
+     <path d="M 66 146 C 76 118 146 110 170 140 C 162 138 150 128 120 128 C 96 128 80 134 74 150 Z" fill="#45527A"/>
+     <ellipse cx="118" cy="158" rx="15" ry="10" fill="#38445F"/>
+     <path d="M 146 184 C 162 172 196 176 198 198 C 200 216 182 224 164 220 C 150 216 142 200 146 184 Z" fill="#2F3A52" stroke="#46557A" stroke-width=".8"/>
+     <g fill="none" stroke="#46557A" stroke-width=".7" opacity=".8"><path d="M 154 196 C 170 190 186 194 194 204"/><path d="M 152 207 C 168 203 182 207 190 215"/></g>
+     <path d="M 132 176 C 140 194 146 216 148 250 L 128 250 C 128 222 124 200 118 184 Z" fill="#333E57"/>
+     <ellipse cx="30" cy="180" rx="9" ry="7" fill="#1C3038" stroke="#3A5E6A" stroke-width=".8"/><circle cx="24" cy="180" r="2.6" fill="#3B6573"/>
+     <path d="M 39 180 L 84 182" stroke="#4E6A8C" stroke-width="2.4" stroke-linecap="round" fill="none"/><ellipse cx="84" cy="182" rx="4" ry="2.2" fill="#5A7394"/>
+     <path d="M 100 180 C 98 186 96 190 95 193" stroke="#6D7BA0" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+   </g>
+   ${Object.entries(INSET).map(([k,o])=>`<g class="org" data-org="${k}" id="o-${k}"><circle class="halo" cx="${o.c[0]}" cy="${o.c[1]}" r="${o.r*2.8}" fill="url(#halo)"/><circle class="org-shape" cx="${o.c[0]}" cy="${o.c[1]}" r="${o.r}" fill="${k==='pineal'||k==='scn'?'#5E5A8A':'#7263A0'}"/><circle cx="${o.c[0]-o.r*.3}" cy="${o.c[1]-o.r*.35}" r="${o.r*.45}" fill="#FFFFFF" opacity=".16" pointer-events="none"/><circle class="ring" cx="${o.c[0]}" cy="${o.c[1]}" r="${o.r+5}"/></g>`).join('')}
+   <g id="pitLod" class="lod" opacity="0" pointer-events="none"><ellipse cx="92.6" cy="199.6" rx="4.4" ry="5" fill="#9A8BC8"/><ellipse cx="99.7" cy="198.4" rx="3" ry="4.1" fill="#4E4675"/><path d="M 96.8 194.6 L 96.6 204" stroke="#0B171C" stroke-width=".6"/></g>
+   <text x="112" y="262" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="8" letter-spacing="1" fill="#4F7680">BRAIN · CUTAWAY VIEW</text></g>`;
   s+=`<g id="gSigns"></g><g id="gRoutes"></g>`;
   $('#world').innerHTML=s;
   $('#miniSvg').innerHTML=`<g transform="translate(50 0)"><path d="${bodyPath()}" fill="#12303A" stroke="#2A5663" stroke-width="3"/></g><circle cx="112" cy="150" r="96" fill="none" stroke="#23505C" stroke-width="4"/><rect id="mv" fill="rgba(141,176,255,.12)" stroke="#8DB0FF" stroke-width="6" rx="10"/>`;
 };
 
 /* level of detail: cross-fade detail sets with zoom, and name structures when framed */
-HS.updateLod=function(z){ const a=$('#adrLod'); if(a) a.setAttribute('opacity',Math.max(0,Math.min(1,(z-2.8)/1.8)).toFixed(2)); };
+const fade=(z,a,b)=>Math.max(0,Math.min(1,(z-a)/(b-a))).toFixed(2);
+HS.updateLod=function(z){ const a=$('#adrLod'), p=$('#pitLod'); if(a) a.setAttribute('opacity',fade(z,2.8,4.6)); if(p) p.setAttribute('opacity',fade(z,4.4,6.8)); };
+const near=(c,x,y,d)=>Math.abs(c[0]-x)<d&&Math.abs(c[1]-y)<d;
 HS.lodLabels=function(L){
   if(L!=='structure') return [];
   const c=HS.viewCenter();
-  if(Math.abs(c[0]-300)<60 && Math.abs(c[1]-518)<60) return [
+  if(near(c,300,518,60)) return [
     {key:'cortex',org:'adr',text:'Cortex · makes cortisol',anchor:[290,510],dx:-30,dy:-26,info:'adr'},
     {key:'medulla',text:'Medulla · makes adrenaline',anchor:[300,521],dx:34,dy:26,info:'adr'}];
+  if(near(c,96,199,26)) return [
+    {key:'antlobe',org:'pit',text:'Anterior lobe · ACTH',anchor:[91.5,202],dx:-26,dy:22,info:'pit'},
+    {key:'postlobe',text:'Posterior lobe',anchor:[100.5,196],dx:24,dy:-20,info:'pit'}];
   return [];
 };
 })(window.HS);

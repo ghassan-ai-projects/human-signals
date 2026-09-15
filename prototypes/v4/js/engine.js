@@ -23,6 +23,8 @@ function trigger(id){
   const S=E.scene; E.state='triggered'; HS.syncTriggers(); HS.clearTip('start');
   const cap=$('#caption'); cap.innerHTML=`<b>${S.trigger.title}</b><span>${S.trigger.caption}</span>`; cap.classList.remove('fade'); void cap.offsetWidth; cap.classList.add('fade');
   HS.light.lit=new Set(S.trigger.lights); HS.applyOrgs(); HS.say(`${S.trigger.title}. ${S.trigger.caption}.`);
+  HS.setAtmos(S.trigger.atmosphere);
+  const at=HS.wc(S.trigger.lights[0]); HS.ripple(at,'#8FDCFF',{dur:1500,r0:18,r1:120,w:1.5}); setTimeout(()=>HS.ripple(at,'#8FDCFF',{dur:1500,r0:18,r1:120,w:1}),260);
 }
 HS.clickTrigger=async function(id){
   if(!HS.scenes[id]){ HS.toast('That trigger uses the same scene template. It is not built in this concept.'); return; }
@@ -36,7 +38,7 @@ function leave(cam){
   $('#bottom').classList.add('hidden'); $('#caption').innerHTML='';
   Object.keys(HS.rstate).forEach(id=>HS.setRoute(id,'hide'));
   HS.light.lit=new Set(); HS.light.dim=null; HS.applyOrgs();
-  setTime(0); HS.setLayer('nervous',false); HS.closeRead(false);
+  setTime(0); HS.setLayer('nervous',false); HS.closeRead(false); HS.setAtmos(null);
   if(cam) HS.camTo('body',700);
 }
 HS.leave=()=>leave(true);
@@ -143,8 +145,9 @@ async function enterPathway(r,autoplay){
   document.querySelectorAll('#seg [data-route]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.route===r));
   $('#bottom').classList.remove('hidden');
   HS.setLayer('nervous',p.layer==='nervous');
+  const was={...HS.rstate};
   Object.keys(S.routes).forEach(id=>HS.setRoute(id,'hide'));
-  Object.entries(S.pathways).forEach(([k,q])=>q.draw.forEach(id=>HS.setRoute(id,k===r?'on':'faint')));
+  Object.entries(S.pathways).forEach(([k,q])=>q.draw.forEach(id=>{ if(k===r){ HS.rstate[id]=was[id]; HS.setRoute(id,'on',{draw:true}); } else HS.setRoute(id,'faint'); }));
   if(p.gate) p.gate.routes.forEach(id=>HS.setRoute(id,isRevealed()?'on':'ghost'));
   HS.light.dim=new Set(p.organs); HS.light.lit=new Set(p.organs); HS.applyOrgs();
   HS.selectNode(p.node); renderDots(); setPlayUI(); HS.renderOverlay();
@@ -224,8 +227,9 @@ async function checkTry(show){
   $('#tryCard .acts').innerHTML=`<span></span><button class="btn p" id="tryCalm">${g.calmButton}</button>`;
   $('#tryCalm').onclick=()=>{ closeTry(); setTime(lastT(),true); HS.camTo('body',700); }; $('#tryCalm').focus();
   HS.say(fb.head+' '+fb.txt);
-  revealed[key()]=true; g.routes.forEach(id=>HS.setRoute(id,'on')); renderDots(); HS.renderOverlay();
-  for(const id of g.routes) await HS.travel(id,1100);
+  revealed[key()]=true; g.routes.forEach(id=>HS.setRoute(id,'on',{draw:true})); renderDots(); HS.renderOverlay();
+  await HS.sleep(HS.RM()?0:650);
+  for(const id of g.routes){ if(!isRevealed()||E.whatIf) break; await HS.travel(id,1100); }
 }
 function closeTry(){
   if(!E.tryMode) return; E.tryMode=false; const c=$('#tryCard'); if(c) c.remove();
@@ -284,7 +288,7 @@ async function runWhatIf(o){
 function restoreWhatIf(focus){
   if(!E.whatIf) return; const p=P(); E.whatIf=null; $('#thought').hidden=true;
   const c=$('#wiCard'); if(c) c.remove();
-  if(p&&p.gate&&isRevealed()) p.gate.routes.forEach(id=>HS.setRoute(id,'on'));
+  if(p&&p.gate&&isRevealed()) p.gate.routes.forEach(id=>HS.setRoute(id,'on',{draw:true}));
   HS.renderOverlay(); if(focus){ $('#bWhat').focus(); HS.say('Restored the normal pathway.'); }
 }
 HS.openWhatIf=openWhatIf; HS.restoreWhatIf=restoreWhatIf;

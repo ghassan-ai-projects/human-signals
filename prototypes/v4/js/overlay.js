@@ -15,12 +15,42 @@ HS.buildRoutes=function(routes){
   Object.keys(routes).forEach(id=>{ pathEl[id]=document.getElementById('r-'+id); rstate[id]='hide'; });
 };
 HS.routeDef=id=>ROUTES[id];
-HS.setRoute=function(id,st){
-  rstate[id]=st; const p=pathEl[id], c=document.getElementById('c-'+id);
+HS.setRoute=function(id,st,opt){
+  const was=rstate[id]; rstate[id]=st; const p=pathEl[id], c=document.getElementById('c-'+id);
+  endDraw(id);
   p.setAttribute('opacity',{hide:0,faint:.24,ghost:.62,on:1}[st]);
   c.setAttribute('opacity',{hide:0,faint:.2,ghost:.45,on:.95}[st]);
   if(st==='ghost') p.setAttribute('stroke-dasharray','6 7'); else p.removeAttribute('stroke-dasharray');
+  if(opt&&opt.draw&&st==='on'&&was!=='on') drawOn(id);
 };
+/* draw-on: the route grows from source to target once (600 ms). Strokes are non-scaling, so while
+   drawing we switch to user units and keep the on-screen width constant frame by frame. */
+const drawing={};
+function endDraw(id){
+  if(!drawing[id]) return; delete drawing[id];
+  [pathEl[id],document.getElementById('c-'+id)].forEach(el=>{ el.style.vectorEffect=''; el.style.strokeDasharray=''; el.style.strokeDashoffset=''; el.style.strokeWidth=''; });
+}
+function drawOn(id,dur=650){
+  if(HS.RM()) return;
+  const p=pathEl[id], c=document.getElementById('c-'+id), L=p.getTotalLength(), t0=performance.now(), tok={};
+  drawing[id]=tok;
+  const step=now=>{
+    if(drawing[id]!==tok) return;
+    const k=Math.min(1,(now-t0)/dur), e=1-Math.pow(1-k,3), s=HS.scale();
+    [p,c].forEach(el=>{ el.style.vectorEffect='none'; el.style.strokeDasharray=`${L} ${L}`; el.style.strokeDashoffset=(L*(1-e)).toFixed(2); });
+    p.style.strokeWidth=(2.6/s).toFixed(3); c.style.strokeWidth=(8/s).toFixed(3);
+    if(k<1) requestAnimationFrame(step); else { endDraw(id); HS.renderOverlay(); }
+  };
+  requestAnimationFrame(step);
+}
+
+/* one-shot effects: arrival ripples, the "brain registers it" moment */
+const fx=[]; let fxRaf=0;
+function fxLoop(){ fxRaf=0; HS.renderOverlay(); if(fx.length) fxRaf=requestAnimationFrame(fxLoop); }
+HS.ripple=function(p,color,o={}){ if(HS.RM()) return; fx.push({p,c:color,t0:performance.now(),dur:o.dur||850,r0:o.r0||8,r1:o.r1||36,w:o.w||2}); if(!fxRaf) fxRaf=requestAnimationFrame(fxLoop); };
+
+/* stage atmosphere: a quiet tint behind the body per trigger; never encodes amount */
+HS.setAtmos=function(color){ const a=$('#atmos'); if(color) a.style.setProperty('--atm',color); a.classList.toggle('on',!!color); };
 HS.ptOn=function(id,t){ const el=pathEl[id]; const L=el.getTotalLength(); const p=el.getPointAtLength(L*t); return [p.x,p.y]; };
 const pulse=HS.pulse={on:false,route:null,t:0}; let travelTok=0;
 HS.cancelTravel=()=>{ travelTok++; };
@@ -31,7 +61,7 @@ HS.travel=function(id,dur=1100){
     const f=now=>{
       if(tok!==travelTok){ pulse.on=false; HS.renderOverlay(); res(false); return; }
       const k=Math.min(1,(now-t0)/dur); pulse.t=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2; HS.renderOverlay();
-      if(k<1) requestAnimationFrame(f); else { pulse.on=false; HS.renderOverlay(); res(true); }
+      if(k<1) requestAnimationFrame(f); else { pulse.on=false; HS.ripple(HS.ptOn(id,1),COL[ROUTES[id].kind]); HS.renderOverlay(); res(true); }
     };
     requestAnimationFrame(f);
   });
@@ -68,13 +98,19 @@ HS.renderOverlay=function(){
   overlay.setAttribute('viewBox',`0 0 ${W} ${H}`);
   let svg='';
   Object.entries(ROUTES).forEach(([id,r])=>{
-    const st=rstate[id]; if(st==='hide'||st==='ghost') return;
+    const st=rstate[id]; if(st==='hide'||st==='ghost'||drawing[id]) return;
     const el=pathEl[id], L=el.getTotalLength(), p=el.getPointAtLength(L), q=el.getPointAtLength(Math.max(0,L-5));
     const [x1,y1]=project(q.x,q.y), [x2,y2]=project(p.x,p.y), a=Math.atan2(y2-y1,x2-x1)*180/Math.PI;
     svg+=endGlyph(r.end||(r.kind==='fb'?'bar':'arrow'),x2,y2,a,st==='faint'?.3:1,COL[r.kind]);
   });
   HS.getMarks().forEach(([id,t])=>{ const [wx,wy]=HS.ptOn(id,t); const [x,y]=project(wx,wy); svg+=`<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)})"><circle r="10" fill="#0B171C" stroke="#FFB547" stroke-width="1.5"/><path d="M-4.5 -4.5 L4.5 4.5 M4.5 -4.5 L-4.5 4.5" stroke="#FFB547" stroke-width="2" stroke-linecap="round"/></g>`; });
-  if(pulse.on){ const [wx,wy]=HS.ptOn(pulse.route,pulse.t); const [x,y]=project(wx,wy); const c=COL[ROUTES[pulse.route].kind]; svg+=`<circle cx="${x}" cy="${y}" r="17" fill="${c}" opacity=".16"/><circle cx="${x}" cy="${y}" r="8" fill="${c}" opacity=".5"/><circle cx="${x}" cy="${y}" r="3.6" fill="#fff"/>`; }
+  if(pulse.on){
+    const c=COL[ROUTES[pulse.route].kind], len=pathEl[pulse.route].getTotalLength(), gap=Math.min(.03,9/len);
+    for(let j=6;j>=1;j--){ const t=pulse.t-j*gap; if(t<=0) continue; const [tx,ty]=project(...HS.ptOn(pulse.route,t)); svg+=`<circle cx="${tx.toFixed(1)}" cy="${ty.toFixed(1)}" r="${(3.4*(1-j/8)+.8).toFixed(2)}" fill="${c}" opacity="${(.55*(1-j/7)).toFixed(2)}"/>`; }
+    const [x,y]=project(...HS.ptOn(pulse.route,pulse.t)); svg+=`<circle cx="${x}" cy="${y}" r="17" fill="${c}" opacity=".16"/><circle cx="${x}" cy="${y}" r="8" fill="${c}" opacity=".5"/><circle cx="${x}" cy="${y}" r="3.6" fill="#fff"/>`;
+  }
+  const now=performance.now();
+  for(let i=fx.length-1;i>=0;i--){ const f=fx[i], k=(now-f.t0)/f.dur; if(k>=1){ fx.splice(i,1); continue; } const e=1-Math.pow(1-k,2), [x,y]=project(f.p[0],f.p[1]); svg+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(f.r0+(f.r1-f.r0)*e).toFixed(1)}" fill="none" stroke="${f.c}" stroke-width="${f.w}" opacity="${((1-k)*.75).toFixed(2)}"/>`; }
 
   const items=HS.getLabels().slice();
   if(HS.ov.showAll){ HS.orgKeys().forEach(k=>{ if(!items.some(i=>i.org===k)) items.push({key:'all-'+k,org:k,text:HS.orgName(k),anchor:HS.wc(k),dx:34,dy:-20,info:k}); }); }
@@ -83,6 +119,7 @@ HS.renderOverlay=function(){
   const seen=new Set(), placed=[], hots=HS.getHotspots();
   hots.forEach(h=>{ const [x,y]=project(h.anchor[0],h.anchor[1]); placed.push({x:x+(h.dx||0)-17,y:y+(h.dy||0)-17,w:34,h:34}); });
   items.forEach(it=>{
+    const [px,py]=project(it.anchor[0],it.anchor[1]); if(px<-20||py<40||px>W+20||py>H+20) return;
     seen.add(it.key); let el=labEls.get(it.key);
     if(!el){ el=document.createElement('div'); labelsEl.appendChild(el); labEls.set(it.key,el); }
     const html=`<span>${it.text}</span>${it.cell?'<button class="cell" data-cell="1">Cell ›</button>':''}${it.info?`<button class="i" aria-label="About ${it.text}">i</button>`:''}`;

@@ -2,7 +2,7 @@
    Illustrative textbook-level content for design; requires scientific review before release. */
 HS.scenes.stress={
  id:'stress',
- trigger:{title:'Something stressful happens',sub:'Watch the fast and slow response',caption:'The brain registers it',lights:['brain','hyp'],first:'fast',autoplay:true},
+ trigger:{title:'Something stressful happens',sub:'Watch the fast and slow response',caption:'The brain registers it',lights:['brain','hyp'],first:'fast',autoplay:true,atmosphere:'rgba(240,138,102,.10)'},
  toggle:{label:'Route speed',options:[['fast','Fast'],['slow','Slow']]},
 
  routes:{
@@ -74,9 +74,9 @@ HS.scenes.stress={
 
  signs:[
   {id:'heart',type:'ripple',org:'heart',color:'#FF8F8F',on:[1,2,3],calmAt:[3],label:{org:'heart',text:t=>t===3?'Heart settling':'Heart beats faster',dx:56,dy:-30,info:'heart'}},
-  {id:'pupils',type:'pupils',on:[1,2],label:{text:'Pupils widen',anchor:[350,122],dx:52,dy:-6}},
+  {id:'pupils',type:'pupils',on:[1,2],label:{text:'Pupils widen',anchor:[370,108],dx:40,dy:-6}},
   {id:'breath',type:'breathe',org:'lungs',on:[1,2],label:{org:'lungs',text:'Breathing quickens',anchor:[396,300],dx:74,dy:-10,info:'lungs'}},
-  {id:'glucose',type:'glyphs',org:'liver',offset:[-20,16],drift:[-46,26],on:[1,2,3],label:{org:'liver',text:'Liver releases glucose',anchor:[300,480],dx:-90,dy:30,info:'liver'}},
+  {id:'glucose',type:'glyphs',org:'liver',offset:[-20,16],drift:[-46,26],on:[1,2,3],label:{org:'liver',text:'Liver releases glucose',anchor:[280,448],dx:-96,dy:-10,info:'liver'}},
   {id:'calm',type:'none',on:[4],label:{org:'heart',always:true,text:'Signs settle',dx:56,dy:-30}}
  ],
 
