@@ -8,9 +8,15 @@ HS.carrierOf=id=>{ const r=ROUTES[id]; if(!r) return 'blood';
   if(r.kind==='nerve') return 'nerve';
   if(r.kind==='fb'||r.kind==='mod') return 'feedback';
   return ((r.label||'')+'').toLowerCase().includes('portal')?'portal':'blood'; };
-const TEXTURE={blood:'',nerve:'1.5 6.5',portal:'3.5 4.5',feedback:'7 7'};   // beads / short hop / dashes; blood is smooth
+/* FIXED CONSTANTS, never tied to quantity: bead spacing and dash length encode WHICH CARRIER,
+   never how much. §5.4 forbids encoding amount by brightness, speed, size or count, so nothing
+   here may be made proportional to a distance, a strength or a duration. */
+const TEXTURE={blood:'',nerve:'1.5 6.5',portal:'3.5 4.5',feedback:'7 7'};   // beads / hop / dashes; blood is smooth
 HS.routeTexture=id=>TEXTURE[HS.carrierOf(id)]||'';
-HS.CARRIERS=[['blood','Blood-borne message'],['nerve','Nerve or light signal'],['portal','Portal — a short hop to the next gland'],['feedback','Feedback — acts back']];
+/* Wording avoids comparatives and magnitude words on purpose: "a short hop" reads as an
+   amount, so the portal is described by what it does instead (carried a short way in portal
+   blood, straight to the next gland — HOW's own line, reused rather than re-worded). */
+HS.CARRIERS=[['blood','Blood-borne message'],['nerve','Nerve or light signal'],['portal','Portal — straight to the next gland'],['feedback','Feedback — acts back']];
 HS.grammarLegend=function(){
   const present=new Set(Object.keys(ROUTES).map(id=>HS.carrierOf(id)));
   const colFor={blood:COL.msg,nerve:COL.nerve,portal:COL.msg,feedback:COL.fb};

@@ -51,6 +51,18 @@ HS.tip=function(key,text,pos){
   if(!HS.tipsOn||tipsSeen.has(key)) return; tipsSeen.add(key);
   renderTip(key,text,pos);
 };
+/* A tip that teaches by SHOWING: same one-shot/dismissible/Settings-switchable contract as
+   HS.tip, but with the legend's line samples rendered inside it. Used once, to teach the route
+   grammar on the body, where the textures actually are. */
+HS.tipRich=function(key,text,html,pos){
+  HS._curTip={key,text,pos};
+  if(!HS.tipsOn||tipsSeen.has(key)) return; tipsSeen.add(key);
+  tipsBox.innerHTML='';
+  const d=document.createElement('div'); d.className='tip float tiprich'; d.dataset.key=key;
+  Object.entries(pos||{right:16,bottom:214}).forEach(([k,v])=>d.style[k]=v+'px');
+  d.innerHTML=`<span>${text}</span>${html}<button aria-label="Dismiss tip">×</button>`;
+  d.querySelector('button').onclick=()=>d.remove(); tipsBox.appendChild(d);
+};
 HS.clearTip=key=>{ const d=tipsBox.querySelector(`[data-key="${key}"]`); if(d) d.remove(); };
 /* hints control: one switch for all the little bulb tips */
 HS.setTips=function(on,announce){

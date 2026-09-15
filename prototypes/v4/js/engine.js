@@ -194,8 +194,21 @@ async function enterPathway(r,autoplay){
   /* The unrevealed line's one-time instruction. The always-on label on the body stays short
      ("Not revealed yet"); this is where the learner is told what to DO about it, through the
      existing one-shot, dismissible, Settings-switchable tip channel rather than a second
-     permanent label. Shown only while the gate is still unrevealed. */
-  if(p.gate&&p.gate.unrevealed&&!isRevealed(r)) HS.tip('ghosthow_'+E.sceneId+'_'+r,p.gate.unrevealed,{right:16,bottom:214});
+     permanent label. Shown only while the gate is still unrevealed.
+     Takes priority over the grammar tip below: it is specific to what is on screen now. */
+  const ghostTip=p.gate&&p.gate.unrevealed&&!isRevealed(r);
+  if(ghostTip) HS.tip('ghosthow_'+E.sceneId+'_'+r,p.gate.unrevealed,{right:16,bottom:214});
+  /* Teach the line grammar ONCE, on the first pathway the learner opens, using the existing
+     one-shot tip channel (dismissible, remembered, Settings-switchable) rather than a new
+     per-session latch. The textures are on the body at all times and were explained only at
+     the bottom of Read the route; §10 task 6 asks the learner to tell a nerve from a blood
+     route, so the key to that distinction has to arrive on the body at least once.
+     It teaches by SHOWING: the same legend (line samples + end glyphs) used in Read.
+     Tips replace one another, so it defers to the unrevealed-line tip: that one names what is
+     on screen right now, and this one still lands on the next pathway that has no gate tip. */
+  if(HS.tipRich&&!HS._grammarShown&&!ghostTip){ HS._grammarShown=true;
+    HS.tipRich('linegrammar','The line styles tell you how a message travels.',HS.grammarLegend());
+  }
   if(autoplay&&E.route===r&&!(HS.RB&&HS.RB.active)) play();   // a stale autoplay never fires into another pathway or a challenge
 }
 HS.enterPathway=enterPathway;
