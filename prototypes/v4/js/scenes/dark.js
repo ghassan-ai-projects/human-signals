@@ -22,7 +22,7 @@ HS.scenes.dark={
     {org:'brain',num:4,dx:42,dy:8,seg:'melatonin',t:2,region:'head',one:'Brain and body get ready for sleep',adv:'Melatonin acts on MT1 and MT2 receptors, including in the SCN',lab:{body:'Brain',organ:'melatonin',structure:'Melatonin acts on brain receptors'},ldx:58,ldy:-18,leads:{scene:'stress',path:'slow',why:'Before waking, cortisol rises too, as part of its daily rhythm.'}}],
    afterPlay:{whenHidden:true,tip:{key:'darkGhost',text:'Melatonin also acts back on something. Open Try it? on the dashed line.',pos:{right:16,bottom:214}}},
    gate:{
-    routes:['fbMel'],at:['fbMel',.5],labelRoutes:['fbMel'],tipKey:'darkGhost',from:'pineal',blocksEnd:false,
+    routes:['fbMel'],at:['fbMel',.5],labelRoutes:['fbMel'],tipKey:'darkGhost',from:'pineal',blocksEnd:false,loopFrom:'clockPineal',
     aria:'Try it: melatonin acts back somewhere',ariaRevealed:'Melatonin acts back on the body clock, revealed',dotAria:'Try it: where does melatonin act back?',
     calmButton:'Watch the morning come',
     afterTip:{key:'darkWhatIf',text:'Try What if? in the pathway bar: what if the lights stay on?',pos:{right:16,bottom:214}},

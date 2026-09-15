@@ -39,7 +39,7 @@ HS.scenes.stress={
    enterTip:{key:'numbers',text:'Numbers show the order. Press ▶ to watch the signal travel, or click any number.',pos:{right:16,bottom:214}},
    afterPlay:{whenHidden:true,time:3,tip:{key:'ghost',text:'Something acts back on the brain. Open Try it? on the dashed line.',pos:{left:340,top:150}}},
    gate:{
-    routes:['f1','f2'],at:['f1',.5],labelRoutes:['f1'],tipKey:'ghost',from:'adr',
+    routes:['f1','f2'],at:['f1',.5],labelRoutes:['f1'],tipKey:'ghost',from:'adr',loopFrom:'acth',
     aria:'Try it: something acts back here',ariaRevealed:'Feedback: cortisol acts back on the pituitary and hypothalamus, revealed',dotAria:'Try it: what acts back?',
     calmBlocked:'The body can’t calm down until something acts back. Open Try it? on the dashed line.',
     calmButton:'Watch the body calm down',

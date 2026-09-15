@@ -260,6 +260,7 @@ async function checkTry(show){
   if(!show) HS.recordAttempt({scene:E.sceneId,path:E.route,type:E.tryCtx.exposed?'practice':E.tryCtx.why?'assisted':'unassisted',correct:all&&!wrong});
   revealed[key()]=true; g.routes.forEach(id=>HS.setRoute(id,'on',{draw:true})); renderDots(); HS.renderOverlay(); HS.saveSoon(); HS.syncHash();
   await HS.sleep(HS.RM()?0:650);
+  if(g.loopFrom&&E.scene.routes[g.loopFrom]&&isRevealed()&&!E.whatIf) await HS.travel(g.loopFrom,850);   // the output runs downstream, then continues back up the feedback line as one closed circuit
   for(const id of g.routes){ if(!isRevealed()||E.whatIf) break; await HS.travel(id,1100); }
 }
 function closeTry(){

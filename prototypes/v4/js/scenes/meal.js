@@ -33,7 +33,7 @@ HS.scenes.meal={
     {org:'brain',num:3,dx:40,dy:6,seg:'glucose',t:3,region:'head',one:'Brain keeps its glucose supply',adv:'GLUT1 and GLUT3 carry glucose into brain cells without insulin',lab:{body:'Brain',organ:'glucose',structure:'Brain cells take up glucose'},ldx:56,ldy:-18}],
    afterPlay:{whenHidden:true,tip:{key:'mealGhost',text:'Something turns glucagon down again. Open Try it? on the dashed line.',pos:{right:16,bottom:214}}},
    gate:{
-    routes:['fbGlu'],at:['fbGlu',.5],labelRoutes:['fbGlu'],tipKey:'mealGhost',from:'liver',
+    routes:['fbGlu'],at:['fbGlu',.5],labelRoutes:['fbGlu'],tipKey:'mealGhost',from:'liver',loopFrom:'glucagon',
     aria:'Try it: something turns glucagon down',ariaRevealed:'Feedback: rising glucose acts back on the pancreas, revealed',dotAria:'Try it: what turns glucagon down?',
     calmBlocked:'Glucose can’t settle until something turns glucagon down. Open Try it? on the dashed line.',
     calmButton:'Watch glucose settle',
@@ -80,7 +80,7 @@ HS.scenes.meal={
     {org:'muscle',num:4,dx:32,dy:-44,seg:'insM',t:3,region:'muscle',one:'Muscles take up glucose',adv:'Insulin moves GLUT4 transporters to the muscle cell surface',lab:{body:'Muscles',organ:'insulin',structure:'Muscle cells take up glucose'},ldx:40,ldy:-66,cell:'muscleIns'}],
    afterPlay:{whenHidden:true,tip:{key:'fedGhost',text:'Something stops glucose falling too far. Open Try it? on the dashed line.',pos:{right:16,bottom:214}}},
    gate:{
-    routes:['fbIns'],at:['fbIns',.5],labelRoutes:['fbIns'],tipKey:'fedGhost',from:'muscle',
+    routes:['fbIns'],at:['fbIns',.5],labelRoutes:['fbIns'],tipKey:'fedGhost',from:'muscle',loopFrom:'insM',
     aria:'Try it: something turns insulin down',ariaRevealed:'Feedback: falling glucose acts back on the pancreas, revealed',dotAria:'Try it: what turns insulin down?',
     calmBlocked:'Glucose can’t settle until something turns insulin down. Open Try it? on the dashed line.',
     calmButton:'Watch glucose settle',
