@@ -33,7 +33,7 @@ Lives in: [`prototypes/v4/`](../prototypes/v4/)
 | Phase | Status | Notes |
 |---|---|---|
 | 9 | Done | Labels and hotspots enter softly; hotspot hover/focus previews the step and lights the route into it; routes have wide hit areas: hover lights them and names the signal, click opens a signal card, the dashed ghost says "Something acts back here · Try it?" and opens it; trigger and search-result hover preview organs; the organ a signal lands on brightens once; route opacity cross-fades; the ribbon glides and accepts clicks anywhere; the current step is filled in the pathway bar; the body settles in on first load. Layout: at ≤1400 px the time chip and "Read the route" text fold away and zoom controls sit above the mini-map; at ≤1180 px the pathway name and Play text fold into icons, toggles use short words and the caption drops below the toolbar. Checked by script: no bottom-bar collisions or overflow in all five pathways at 1024, 1280, 1440 and 1920 |
-| 10 | — | |
+| 10 | Done | Heart gains its great vessels (aortic arch, pulmonary trunk, superior vena cava) that scale with zoom; lungs a faint bronchial tree; the silhouette a soft inner rim light from the top-left. Active routes carry a quiet static glow that waits until draw-on finishes; a ghost feedback line breathes once when it first appears so the eye finds it. All static or one-shot, none of it encodes amount, and reduced motion skips the breath |
 | 11 | — | |
 | 12 | — | |
 | 13 | — | |

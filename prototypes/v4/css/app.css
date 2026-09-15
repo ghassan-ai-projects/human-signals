@@ -373,3 +373,9 @@ button{font-family:inherit;color:inherit}
   .caption b{font-size:18px}
   .thought{top:124px}
 }
+/* ---------- round 2 · illustration craft ---------- */
+.rglow{fill:none;stroke-linecap:round;vector-effect:non-scaling-stroke;transition:opacity .6s var(--ease);pointer-events:none}
+.route.ghostin{animation:ghostin 1.6s var(--ease) 1}
+@keyframes ghostin{0%{opacity:.1}45%{opacity:.95}100%{opacity:.62}}
+.detail path.sc{vector-effect:none}
+.rm .route.ghostin{animation:none}

@@ -11,7 +11,7 @@ const rstate=HS.rstate={}, pathEl={};
 HS.buildRoutes=function(routes){
   travelTok++; pulse.on=false; fx.length=0; Object.keys(drawing).forEach(k=>delete drawing[k]);   // nothing from the previous scene keeps animating
   ROUTES=routes; Object.keys(rstate).forEach(k=>delete rstate[k]); Object.keys(pathEl).forEach(k=>delete pathEl[k]);
-  let s=''; Object.entries(routes).forEach(([id,r])=>{ s+=`<path class="casing" id="c-${id}" d="${r.d}" stroke="#061015" stroke-width="8" fill="none" style="opacity:0"/><path class="route" id="r-${id}" d="${r.d}" stroke="${COL[r.kind]}" stroke-width="2.6" style="opacity:0"/>`; });
+  let s=''; Object.entries(routes).forEach(([id,r])=>{ s+=`<path class="rglow" id="g-${id}" d="${r.d}" stroke="${COL[r.kind]}" stroke-width="15" style="opacity:0"/><path class="casing" id="c-${id}" d="${r.d}" stroke="#061015" stroke-width="8" fill="none" style="opacity:0"/><path class="route" id="r-${id}" d="${r.d}" stroke="${COL[r.kind]}" stroke-width="2.6" style="opacity:0"/>`; });
   s+=Object.entries(routes).map(([id,r])=>`<path class="rhit" data-route="${id}" data-st="hide" d="${r.d}"/>`).join('');   // wide invisible hit areas, on top
   $('#gRoutes').innerHTML=s; HS.ov.hoverRoute=null;
   Object.keys(routes).forEach(id=>{ pathEl[id]=document.getElementById('r-'+id); rstate[id]='hide'; });
@@ -23,6 +23,8 @@ HS.setRoute=function(id,st,opt){
   p.style.opacity={hide:0,faint:.24,ghost:.62,on:1}[st];   // style, not attribute, so the 400 ms cross-fade applies
   c.style.opacity={hide:0,faint:.2,ghost:.45,on:.95}[st];
   const hit=document.querySelector(`#gRoutes .rhit[data-route="${id}"]`); if(hit) hit.dataset.st=st;
+  const gl=document.getElementById('g-'+id); if(gl) gl.style.opacity=st==='on'?.14:0;   // active routes carry a quiet static glow
+  if(st==='ghost'&&was!=='ghost'&&!HS.RM()){ p.classList.remove('ghostin'); void p.getBoundingClientRect(); p.classList.add('ghostin'); setTimeout(()=>p.classList.remove('ghostin'),1700); }   // a new ghost breathes once so the eye finds it
   if(st==='ghost') p.setAttribute('stroke-dasharray','6 7'); else p.removeAttribute('stroke-dasharray');
   if(opt&&opt.draw&&st==='on'&&was!=='on') drawOn(id);
 };
@@ -31,12 +33,13 @@ HS.setRoute=function(id,st,opt){
 const drawing={};
 function endDraw(id){
   if(!drawing[id]) return; delete drawing[id];
+  const gl=document.getElementById('g-'+id); if(gl) gl.style.opacity=rstate[id]==='on'?.14:0;
   [pathEl[id],document.getElementById('c-'+id)].forEach(el=>{ el.style.vectorEffect=''; el.style.strokeDasharray=''; el.style.strokeDashoffset=''; el.style.strokeWidth=''; });
 }
 function drawOn(id,dur=650){
   if(HS.RM()) return;
   const p=pathEl[id], c=document.getElementById('c-'+id), L=p.getTotalLength(), t0=performance.now(), tok={};
-  drawing[id]=tok;
+  drawing[id]=tok; const gl=document.getElementById('g-'+id); if(gl) gl.style.opacity=0;
   const step=now=>{
     if(drawing[id]!==tok) return;
     const k=Math.min(1,(now-t0)/dur), e=1-Math.pow(1-k,3), s=HS.scale();

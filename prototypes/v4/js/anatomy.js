@@ -30,10 +30,10 @@ const ORGS={
   detail:'<path d="M 206 680 C 198 640 198 600 208 580 C 226 566 294 566 312 580 C 322 600 322 640 314 680" stroke-width="4" stroke-opacity=".28"/><path d="M 226 602 C 222 590 240 584 248 594 C 254 604 270 604 274 594 C 280 584 298 590 294 604 C 290 616 272 614 266 624 C 260 634 244 632 238 622 C 232 612 230 610 226 602 Z"/><path d="M 222 654 C 218 640 236 634 246 644 C 254 652 268 652 274 644 C 284 634 302 640 298 654 C 294 668 276 668 268 676 C 260 684 244 682 236 674 C 228 666 226 664 222 654 Z"/>'},
  lungs:{name:'Lungs',fill:'#35596A',region:'heart',
   parts:[{d:'M 236 262 C 214 266 192 300 186 352 C 180 400 184 432 196 444 C 212 452 236 446 250 436 C 254 400 254 330 250 290 C 248 272 244 262 236 262 Z',c:[220,356],r:[36,92]},{d:'M 284 262 C 306 266 328 300 334 352 C 340 400 336 432 324 444 C 312 452 298 448 290 440 C 296 424 296 414 286 404 C 276 396 272 380 272 360 L 270 290 C 270 272 276 262 284 262 Z',c:[304,356],r:[36,92]}],
-  detail:'<path d="M 190 384 C 212 372 232 342 248 316"/><path d="M 196 342 L 242 348"/><path d="M 334 380 C 312 368 292 342 276 318"/>'},
+  detail:'<path d="M 190 384 C 212 372 232 342 248 316"/><path d="M 196 342 L 242 348"/><path d="M 334 380 C 312 368 292 342 276 318"/><g stroke="#86AEBE" stroke-opacity=".42" stroke-width="1.2"><path d="M 238 304 C 228 322 216 338 206 360"/><path d="M 226 324 C 230 344 232 362 234 384"/><path d="M 214 342 C 206 352 198 360 194 372"/><path d="M 282 304 C 292 322 304 338 314 360"/><path d="M 294 324 C 290 344 288 362 286 384"/><path d="M 306 342 C 314 352 322 360 326 372"/></g>'},
  heart:{name:'Heart',fill:'#7E3C46',region:'heart',
   parts:[{d:'M 258 344 C 282 330 314 340 318 368 C 322 396 304 422 280 440 C 274 444 268 444 262 438 C 248 422 236 400 238 378 C 240 360 246 350 258 344 Z',c:[278,390],r:[44,52]}],
-  detail:'<path d="M 262 346 C 258 326 272 316 286 322 C 294 326 296 334 294 344" stroke-width="3" stroke-opacity=".55"/><path d="M 244 372 C 266 382 296 378 316 364"/><path d="M 288 362 C 284 392 278 414 270 436"/>'},
+  detail:'<path class="sc" d="M 250 354 L 249 316" stroke="#4A5A86" stroke-width="7" stroke-linecap="round" stroke-opacity=".95"/><path class="sc" d="M 283 350 C 285 334 296 326 308 330" stroke="#55679A" stroke-width="7" stroke-linecap="round" stroke-opacity=".95"/><path class="sc" d="M 266 348 C 258 320 274 300 294 306 C 304 309 308 318 306 330" stroke="#9C4C58" stroke-width="7.5" stroke-linecap="round" stroke-opacity=".98"/><path class="sc" d="M 266 345 C 260 322 274 307 292 311" stroke="#C98A94" stroke-width="1.6" stroke-linecap="round" stroke-opacity=".6"/><path d="M 244 372 C 266 382 296 378 316 364"/><path d="M 288 362 C 284 392 278 414 270 436"/>'},
  liver:{name:'Liver',fill:'#7E4A3B',region:'liver',
   parts:[{d:'M 168 432 C 196 414 270 414 318 428 C 336 434 338 446 326 454 C 300 470 250 494 206 504 C 186 508 170 496 166 478 C 162 460 162 442 168 432 Z',c:[240,460],r:[84,44]}],
   detail:'<path d="M 264 420 C 262 446 256 470 244 496"/><ellipse cx="236" cy="494" rx="8" ry="5" fill="#4E6644" fill-opacity=".8" stroke-opacity=".5"/>'},
@@ -85,7 +85,8 @@ HS.buildWorld=function(){
   ORDER.forEach(k=>{ const f=ORGS[k].fill; s+=`<linearGradient id="gr-${k}" x1=".2" y1="0" x2=".8" y2="1"><stop offset="0" stop-color="${lighten(f,.22)}"/><stop offset=".5" stop-color="${f}"/><stop offset="1" stop-color="${darken(f,.45)}"/></linearGradient>`; ORGS[k].parts.forEach((p,i)=>{ s+=`<clipPath id="cl-${k}${i}"><path d="${p.d}"/></clipPath>`; }); });
   s+=`</defs>`;
   s+=`<ellipse cx="350" cy="400" rx="330" ry="420" fill="url(#ambient)"/>`;
-  s+=`<g transform="translate(50 0)"><path d="${bodyPath()}" fill="url(#sil)" stroke="url(#rim)" stroke-width="1.4" class="org-shape"/></g>`;
+  const bp=bodyPath();   // silhouette with a soft inner rim light from the top-left
+  s+=`<g transform="translate(50 0)"><clipPath id="bodyClip"><path d="${bp}"/></clipPath><path d="${bp}" fill="url(#sil)" stroke="url(#rim)" stroke-width="1.4" class="org-shape"/><path d="${bp}" fill="none" stroke="url(#rim)" stroke-width="16" opacity=".16" clip-path="url(#bodyClip)" pointer-events="none"/></g>`;
 
   /* skeleton hints: orientation only */
   let ribs=''; for(let i=0;i<7;i++){ const y=276+i*22, w=56+i*6; ribs+=`<path d="M 260 ${y} C ${260-w*.4} ${y-8} ${260-w} ${y+2} ${260-w-4} ${y+20}"/><path d="M 260 ${y} C ${260+w*.4} ${y-8} ${260+w} ${y+2} ${260+w+4} ${y+20}"/>`; }
