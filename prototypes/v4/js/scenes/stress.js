@@ -2,7 +2,7 @@
    Illustrative textbook-level content for design; requires scientific review before release. */
 HS.scenes.stress={
  id:'stress',
- trigger:{title:'Something stressful happens',sub:'Watch the fast and slow response',caption:'The brain registers it',lights:['brain','hyp'],first:'fast',autoplay:true,atmosphere:'rgba(240,138,102,.10)'},
+ trigger:{title:'Something stressful happens',sub:'Watch the fast and slow response',caption:'The brain registers it',lights:['brain','hyp'],first:'fast',autoplay:true,atmosphere:'rgba(240,138,102,.10)',incite:{color:'#F3936F',from:[46,-104]}},
  toggle:{label:'Route speed',options:[['fast','Fast'],['slow','Slow']]},
 
  routes:{

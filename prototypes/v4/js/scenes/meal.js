@@ -2,7 +2,7 @@
    Illustrative textbook-level content for design; requires scientific review before release. */
 HS.scenes.meal={
  id:'meal',
- trigger:{title:'You skip a meal',sub:'Watch the body keep glucose steady',caption:'Glucose in the blood starts to fall',lights:['panc'],first:'between',autoplay:true,atmosphere:'rgba(240,194,126,.10)'},
+ trigger:{title:'You skip a meal',sub:'Watch the body keep glucose steady',caption:'Glucose in the blood starts to fall',lights:['panc'],first:'between',autoplay:true,atmosphere:'rgba(240,194,126,.10)',incite:{color:'#F0C27E',from:[64,92]}},
  toggle:{label:'Meal timing',options:[['between','Between meals','Between'],['after','After a meal','After']]},
 
  routes:{

@@ -30,7 +30,12 @@ function trigger(id){
   const cap=$('#caption'); cap.innerHTML=`<b>${S.trigger.title}</b><span>${S.trigger.caption}</span>`; cap.classList.remove('fade'); void cap.offsetWidth; cap.classList.add('fade');
   HS.light.lit=new Set(S.trigger.lights); HS.applyOrgs(); HS.say(`${S.trigger.title}. ${S.trigger.caption}.`);
   HS.setAtmos(S.trigger.atmosphere);
-  if(!HS.RM()){ const at=HS.wc(S.trigger.lights[0]); HS.ripple(at,'#8FDCFF',{dur:1500,r0:18,r1:120,w:1.5}); setTimeout(()=>{ if(!HS.RM()&&E.sceneId===S.id) HS.ripple(at,'#8FDCFF',{dur:1500,r0:18,r1:120,w:1}); },260); }
+  const blue=()=>{ if(HS.RM()||E.sceneId!==S.id) return; const at=HS.wc(S.trigger.lights[0]); HS.ripple(at,'#8FDCFF',{dur:1500,r0:18,r1:120,w:1.5}); setTimeout(()=>{ if(!HS.RM()&&E.sceneId===S.id) HS.ripple(at,'#8FDCFF',{dur:1500,r0:18,r1:120,w:1}); },260); };
+  const inc=S.trigger.incite;   // the inciting event enters at the body's edge and is noticed where it lands
+  if(inc&&!HS.RM()){ const o=HS.wc(S.trigger.lights[0]), start=[o[0]+inc.from[0],o[1]+inc.from[1]];
+    [0,.5,1].forEach((t,i)=>setTimeout(()=>{ if(E.sceneId!==S.id) return; const p=[start[0]+(o[0]-start[0])*t,start[1]+(o[1]-start[1])*t]; HS.ripple(p,inc.color,{dur:850,r0:8,r1:i===2?52:24,w:1.7}); }, i*160));
+    setTimeout(blue,430);
+  } else blue();
 }
 HS.clickTrigger=async function(id){
   if(!HS.scenes[id]){ HS.toast('That trigger uses the same scene template. It is not built in this concept.'); return; }
