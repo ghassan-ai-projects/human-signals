@@ -11,12 +11,14 @@ const rstate=HS.rstate={}, pathEl={};
 HS.buildRoutes=function(routes){
   travelTok++; pulse.on=false; fx.length=0; Object.keys(drawing).forEach(k=>delete drawing[k]);   // nothing from the previous scene keeps animating
   ROUTES=routes; Object.keys(rstate).forEach(k=>delete rstate[k]); Object.keys(pathEl).forEach(k=>delete pathEl[k]);
-  let s=''; Object.entries(routes).forEach(([id,r])=>{ s+=`<path class="rglow" id="g-${id}" d="${r.d}" stroke="${COL[r.kind]}" stroke-width="15" style="opacity:0"/><path class="casing" id="c-${id}" d="${r.d}" stroke="#061015" stroke-width="8" fill="none" style="opacity:0"/><path class="route" id="r-${id}" d="${r.d}" stroke="${COL[r.kind]}" stroke-width="2.6" style="opacity:0"/>`; });
+  let s=''; Object.entries(routes).forEach(([id,r])=>{ s+=`<path class="rglow" id="g-${id}" d="${r.d}" stroke="${COL[r.kind]}" stroke-width="15" style="opacity:0"/><path class="casing" id="c-${id}" d="${r.d}" stroke="#061015" stroke-width="8" fill="none" style="opacity:0"/><path class="route" id="r-${id}" d="${r.d}" stroke="${COL[r.kind]}" stroke-width="2.6" style="opacity:0"/><path class="rcore" id="k-${id}" d="${r.d}" style="opacity:0"/>`; });
   s+=Object.entries(routes).map(([id,r])=>`<path class="rhit" data-route="${id}" data-st="hide" d="${r.d}"/>`).join('');   // wide invisible hit areas, on top
   $('#gRoutes').innerHTML=s; HS.ov.hoverRoute=null;
   Object.keys(routes).forEach(id=>{ pathEl[id]=document.getElementById('r-'+id); rstate[id]='hide'; });
 };
 HS.routeDef=id=>ROUTES[id];
+/* hollow style (Compare route B): a wider line with a dark core, readable without colour */
+HS.setHollow=(id,on)=>{ const p=pathEl[id], k=document.getElementById('k-'+id); if(!p||!k) return; p.classList.toggle('hollow',on); k.style.opacity=on&&rstate[id]==='on'?1:0; };
 HS.setRoute=function(id,st,opt){
   const was=rstate[id]; rstate[id]=st; const p=pathEl[id], c=document.getElementById('c-'+id);
   endDraw(id);
@@ -60,7 +62,7 @@ HS.setAtmos=function(color){ const a=$('#atmos'); if(color) a.style.setProperty(
 HS.setNight=v=>{ $('#night').style.opacity=v||0; };
 HS.ptOn=function(id,t){ const el=pathEl[id]; const L=el.getTotalLength(); const p=el.getPointAtLength(L*t); return [p.x,p.y]; };
 const pulse=HS.pulse={on:false,route:null,t:0}; let travelTok=0;
-HS.cancelTravel=()=>{ travelTok++; };
+HS.cancelTravel=()=>{ travelTok++; if(pulse.on){ pulse.on=false; HS.renderOverlay(); } };   // stop at once, not on the next frame
 HS.travel=function(id,dur=1100){
   return new Promise(res=>{
     if(HS.RM()||!ROUTES[id]){ res(true); return; }
@@ -135,7 +137,7 @@ HS.renderOverlay=function(){
   const seen=new Set(), placed=[], hots=HS.getHotspots();
   const bt=$('#bottom'), bR=bt.classList.contains('hidden')?null:bt.getBoundingClientRect(), maxY=(bR?bR.top:H)-8;   // labels stay above the pathway bar and ribbon
   const ctl=['.zoomer','#mini','#lvlChip'].map(s=>$(s).getBoundingClientRect()), ctrlL=Math.min(...ctl.map(r=>r.left)), ctrlT=Math.min(...ctl.map(r=>r.top));
-  const shEl=$('#sheet'), cardEl=$('#tryCard')||$('#wiCard')||$('#rbCard')||(shEl.classList.contains('closed')?null:shEl);   // labels also stay clear of an open side sheet
+  const shEl=$('#sheet'), cardEl=$('#tryCard')||$('#wiCard')||$('#rbCard')||$('#cmpCard')||(shEl.classList.contains('closed')?null:shEl);   // labels also stay clear of an open side sheet
   const pn=$('#panel'), panelR=pn.classList.contains('closed')?0:pn.offsetLeft+pn.offsetWidth+8, panelB=pn.offsetTop+pn.offsetHeight;   // labels never sit under the open panel
   hots.forEach(h=>{ const [x,y]=project(h.anchor[0],h.anchor[1]); placed.push({x:x+(h.dx||0)-17,y:y+(h.dy||0)-17,w:34,h:34}); });
   items.forEach(it=>{

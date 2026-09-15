@@ -18,6 +18,7 @@ HS.scenes.meal={
  pathways:{
   between:{name:'Between meals',node:'betweenP',chip:'over hours',region:'meal',segDur:1000,
    organs:['panc','liver','brain'],draw:['glucagon','glucose'],
+   compare:{first:'Glucagon',carried:'The blood, reaching the liver first',reaches:'Liver',time:'Over hours, between meals',notice:'Hunger builds',off:'Rising glucose turns glucagon down',effect:'Glucose raised back up',lane:[2,3]},
    rebuild:{chain:['panc','liver','brain'],links:['glucagon','glucose'],distractors:['kid','thy'],extra:['insulin','cortisol']},
    time:[
     {w:'after eating',c:'<b>After eating:</b> glucose from your last meal is in the blood.'},
@@ -63,6 +64,7 @@ HS.scenes.meal={
   },
   after:{name:'After a meal',node:'afterP',chip:'within minutes, over hours',region:'fed',segDur:900,
    organs:['int','panc','liver','muscle'],draw:['absorb','insL','insM'],
+   compare:{first:'Insulin',carried:'The blood, reaching the liver first',reaches:'Liver, muscles and fat tissue',time:'Within minutes of eating, over hours',notice:'You feel full',off:'Falling glucose turns insulin down',effect:'Glucose brought back down',lane:[2,3]},
    rebuild:{chain:['int','panc','muscle'],alt:{2:['liver']},links:['glucose','insulin'],distractors:['adr','kid'],extra:['glucagon','cortisol']},
    time:[
     {w:'you eat',c:'<b>You eat:</b> food is digested in the stomach and intestines.'},

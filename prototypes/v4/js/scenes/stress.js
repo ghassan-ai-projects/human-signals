@@ -18,6 +18,7 @@ HS.scenes.stress={
  pathways:{
   fast:{name:'Fast route',node:'fastP',chip:'within seconds',region:'fast',layer:'nervous',segDur:800,
    organs:['brain','adr','heart','lungs','liver'],draw:['nerve','adrenaline'],
+   compare:{first:'Nerve signals, then adrenaline',carried:'Nerves, then the blood',reaches:'Adrenal medulla, heart, lungs and liver',time:'Within seconds',notice:'Heart pounds, pupils widen, breathing quickens',off:'Adrenaline is cleared within minutes',effect:'A quick burst of readiness',lane:[1]},
    rebuild:{chain:['brain','adr','heart'],links:['nerve signals','adrenaline'],distractors:['thy','panc'],extra:['cortisol','insulin']},
    hots:[
     {org:'brain',num:1,dx:-32,dy:4,seg:null,t:1,region:'head',one:'Brain sends nerve signals',adv:'Hypothalamus and brainstem drive sympathetic nerves through the spinal cord',lab:{body:'Brain',organ:'nerve signals',structure:'Hypothalamus starts the nerve alarm'},ldx:34,ldy:-14},
@@ -28,6 +29,7 @@ HS.scenes.stress={
   },
   slow:{name:'HPA axis',node:'hpaP',chip:'over minutes, lasting hours',region:'hpa',segDur:1000,minTime:1,orgRegions:{brain:'brain'},
    organs:['hyp','pit','adr','liver'],draw:['crh','acth','cort'],
+   compare:{first:'CRH, then ACTH, then cortisol',carried:'Portal blood, then the blood',reaches:'Pituitary, adrenal cortex, liver and many tissues',time:'Over minutes, lasting hours',notice:'Little you can feel directly',off:'Cortisol brakes its own release',effect:'Energy kept available for longer',lane:[2,3]},
    rebuild:{chain:['hyp','pit','adr','liver'],links:['CRH','ACTH','cortisol'],distractors:['thy','kid'],extra:['adrenaline','glucagon']},
    hots:[
     {org:'hyp',num:1,dx:-28,dy:-14,seg:null,t:2,region:'brain',one:'Hypothalamus releases CRH',adv:'Paraventricular nucleus neurons release CRH into portal blood',lab:{body:'Hypothalamus',organ:'CRH',structure:'Releases CRH into portal blood'},ldx:34,ldy:-18,leads:{scene:'dark',path:'night',why:'The body clock next door also shapes cortisol’s daily rhythm.'}},
