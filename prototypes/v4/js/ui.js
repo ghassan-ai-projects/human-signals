@@ -248,6 +248,7 @@ document.querySelectorAll('.toggle[role="switch"]').forEach(t=>t.addEventListene
   if(t.id==='tMotion'){ HS.userRM=on; HS.applyRM(); HS.stopPlay(); HS.setPlayUI(); }
   else if(t.id==='tLabels'){ HS.ov.showAll=on; HS.renderOverlay(); }
   else if(t.id==='tTips'){ HS.setTips(on); }
+  else if(t.id==='tConcise'){ HS.setConcise(on,true); }
   else if(t.dataset.layer) applyLayer(t.dataset.layer,on,true);
 }));
 })(window.HS);

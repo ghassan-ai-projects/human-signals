@@ -4,9 +4,10 @@
 (function(HS){
 const $=HS.$, app=HS.app;
 const PREF='hs-v4-prefs';   // a preference, kept apart from progress so Erase progress leaves it alone
-let prefs={advanced:false};
+let prefs={advanced:false,concise:false};
 try{ const raw=localStorage.getItem(PREF); if(raw) prefs=Object.assign(prefs,JSON.parse(raw)); }catch(e){}
-HS.advOn=!!prefs.advanced;
+HS.advOn=!!prefs.advanced; HS.conciseSay=!!prefs.concise;
+HS.setConcise=function(on,announce){ HS.conciseSay=!!on; prefs.concise=HS.conciseSay; try{ localStorage.setItem(PREF,JSON.stringify(prefs)); }catch(e){} const t=$('#tConcise'); if(t) t.setAttribute('aria-checked',HS.conciseSay); if(announce) HS.say(HS.conciseSay?'Concise narration on. Announcements are trimmed to the essentials.':'Full narration on.'); };
 
 const CLS=HS.CLS={peptide:{name:'Peptide',col:'#7CCBFF'},steroid:{name:'Steroid',col:'#F0C27E'},amine:{name:'Amine',col:'#9BEFC9'},fuel:{name:'Fuel',col:'#F7D88A'},nerve:{name:'Nerve signal',col:'#C4A8FF'}};
 const RK={surface:'On the surface',inside:'Inside the cell',transporter:'Transporter',synapse:'At a synapse'};
@@ -137,4 +138,5 @@ document.addEventListener('click',e=>{
 $('#bAdv').addEventListener('click',()=>HS.toggleAdvMenu());
 $('#tAdv').addEventListener('click',()=>HS.setAdvanced($('#tAdv').getAttribute('aria-checked')==='true',true));
 app.classList.toggle('adv',HS.advOn); $('#bAdv').setAttribute('aria-pressed',HS.advOn); $('#tAdv').setAttribute('aria-checked',HS.advOn);
+if($('#tConcise')) $('#tConcise').setAttribute('aria-checked',HS.conciseSay);
 })(window.HS);

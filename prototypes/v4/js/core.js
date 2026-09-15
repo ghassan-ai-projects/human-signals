@@ -11,7 +11,7 @@ HS.userRM=false;
 HS.RM=()=>HS.userRM||mq.matches||!!HS.instant;   // instant: restoring a link applies state without animation
 HS.applyRM=()=>app.classList.toggle('rm',HS.RM());
 HS.applyRM(); if(mq.addEventListener) mq.addEventListener('change',HS.applyRM);
-HS.say=t=>{ live.textContent=''; setTimeout(()=>{ live.textContent=t; },40); };
+HS.say=t=>{ if(t&&HS.conciseSay){ const s=String(t).replace(/\s+/g,' ').trim(), m=s.match(/^.*?[.!?](?=\s|$)/); t=m?m[0]:s; } live.textContent=''; setTimeout(()=>{ live.textContent=t; },40); };
 HS.sleep=ms=>new Promise(r=>setTimeout(r,ms));
 HS.strip=h=>h.replace(/<[^>]+>/g,'');
 })(window.HS);
