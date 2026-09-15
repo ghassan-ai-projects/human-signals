@@ -360,7 +360,8 @@ button{font-family:inherit;color:inherit}
 @keyframes orgin{from{opacity:0;translate:0 8px}}
 .rm .lab,.rm .hs,.rm .org.arrive .halo,.rm.intro #world,.rm.intro .org{animation:none}
 .ribbon{width:min(720px,calc(100vw - 300px))}
-@media (max-width:1400px){ .pbar .chip:not(.done){display:none} #bRead .lbl{display:none} }
+@media (max-width:1500px){ .pbar .chip:not(.done){display:none} }
+@media (max-width:1400px){ #bRead .lbl{display:none} }
 @media (max-width:1180px){ .pbar .nm{display:none} #playTxt{display:none} .playbtn{padding:0 13px} .seg .lg{display:none} .seg .sm{display:inline} }
 @media (max-width:1400px){
   .zoomer{right:16px;bottom:174px;flex-direction:row}
@@ -368,7 +369,7 @@ button{font-family:inherit;color:inherit}
   .lvl-chip{bottom:220px}
   #tips .tip[style*="bottom"]{margin-bottom:50px}
 }
-@media (max-width:1180px){
+@media (max-width:1400px){
   .caption{top:70px}
   .caption b{font-size:18px}
   .thought{top:124px}

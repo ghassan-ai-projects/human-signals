@@ -31,8 +31,21 @@ Common to every scene: trigger moment, ▶ Play (Next step under reduced motion)
 | 13–15 | Dark: brain cutaway · whole body at night · What if? lights on | `13`–`15` |
 | 16–18 | More sheet · Read the route diagram · keyboard sheet | `16`–`18` |
 | 19–21 | HPA axis at 1280 · After a meal at 1920 · grayscale check | `19`–`21` |
+| 22–26 | Advanced: organ labels with molecule class · a signal passport · Rebuild the route · Compare routes (1280) · cell stepper mid-step with named molecules | `22`–`26` |
 
 Scripted checks run during Phase 7 (no screenshots needed to repeat them): no label, hotspot or panel overlaps and at most 8 labels in all five pathways at 1280, 1440 and 1920; reduced-motion walk-through of all five pathways; tree keyboard model; focus nudge out from under panels; no console errors.
+
+Round-2 scripted check (Phase 15): 0 bottom-bar collisions or overflow and no label overlaps across all five pathways at 1024, 1280, 1440 and 1920 **with Advanced both off and on** (40 views); reduced-motion cell stepper steps by keyboard; no console errors. Two layout bugs it caught were fixed in the same pass — at 1280 the top caption slid under the toolbar, and the wide *After a meal* pathway bar touched the zoom control at 1440.
+
+## The Advanced flow (round 2, optional, off by default)
+
+An **Advanced** switch (pathway bar menu, settings, key A) is stored apart from progress and erasable. Guided flow is byte-for-byte unchanged with it off. With it on:
+
+- **Organ and structure one-liners** gain a named layer (e.g. corticotrophs cut ACTH from POMC), and **route labels name the molecule class and carrier** ("cortisol · steroid · blood").
+- **Signal passports** for all 12 signals: made from, made in, travels, receptor location (with a surface/inside/transporter/synapse figure), how fast it acts, how it is switched off — plus a per-scene passport table that makes peptide vs steroid vs amine visible. Opened from a route, the tree, search or the More sheet.
+- **Rebuild the route**: routes and numbers hide, the learner taps organs in causal order (with two distractors) and names the signal on each link; Check gives one specific correction at a time, then the true route draws on.
+- **Compare routes** (stress, meal): both pathways on one body — A solid, B a hollow line that survives grayscale — with a shared words-only ribbon and a side-by-side table (first signal, carried by, reaches, timescale, what you'd notice, switched off by, overall).
+- **Cell insets are steppers**: click a step or walk with Next/Previous or arrow keys; the active step lights and a spotlight glides to the part it is about; the signal molecule travels on step 1 and rests bound; Advanced adds the named molecules per step.
 
 ## Where the prototype went beyond the direction (confirm or reject)
 
@@ -65,6 +78,7 @@ Every label, ⓘ text, sign, Try it? correction, What if? outcome and cell step 
 - **Meal:** "rising glucose acts back on the pancreas" simplifies alpha-cell regulation (glucose and local insulin); "glucagon stays high" when the liver can't respond; ghrelin as the stomach's hunger signal; muscles and fat as the insulin targets named.
 - **Dark:** melanopsin cells as a separate light-sensing system; the SCN → spinal cord → neck → pineal nerve route; melatonin *modulating* the SCN; "body temperature at its lowest" in the early morning; pupils widening is a light reflex, not melatonin.
 - **Leads-to links:** cortisol's morning rise; the SCN shaping cortisol's daily rhythm; glucose released under stress prompting insulin.
+- **Advanced (all new, undergraduate-physiology level, marked "Advanced · illustrative draft"):** every passport field for the 12 signals (source, synthesis site, transport, receptor location, timescale in words, clearance); the molecule-class and carrier on each route label; the named cell mechanisms — GR/GREs and PEPCK for cortisol; Gs/adenylyl cyclase/cAMP/PKA, glycogen phosphorylase, glucose-6-phosphatase and GLUT2 for glucagon; the insulin-receptor tyrosine kinase, IRS/PI3K/Akt and GLUT4 for insulin; β1/cAMP/PKA, α1, AANAT and HIOMT (ASMT) for melatonin; the organ/structure one-liners (e.g. corticotrophs, superior cervical ganglion). None of it is anatomy-placed; it rides on the same placeholder art.
 
 ## Anatomy review list
 
