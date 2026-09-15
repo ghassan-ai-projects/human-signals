@@ -421,6 +421,14 @@ button{font-family:inherit;color:inherit}
 /* compare routes */
 .rcore{fill:none;stroke:#0B171C;stroke-width:1.3px;stroke-linecap:round;vector-effect:non-scaling-stroke;pointer-events:none;transition:opacity .4s var(--ease)}
 .route.hollow{stroke-width:4.6px}
+/* route grammar legend (Read the route) */
+.grammar{margin-top:6px;padding:10px 12px;border:1px solid var(--float-line);border-radius:12px;background:rgba(255,255,255,.02)}
+.grammar .gleg{list-style:none;margin:6px 0 0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:4px 14px}
+.grammar .gleg li{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-2)}
+.grammar .gleg li svg{flex:none}
+.grammar .gleg+.gleg{margin-top:8px}
+.card .carr{display:flex;align-items:center;gap:8px;margin:6px 0 2px;font-size:11.5px;color:var(--ink-3)}
+.card .carr svg{flex:none}
 .cmplegend{position:absolute;top:80px;left:50%;transform:translateX(-50%);z-index:21;display:flex;gap:16px;padding:6px 14px;border-radius:999px;font-size:12.5px;font-weight:600;white-space:nowrap}
 .cmplegend .lg{display:inline-flex;align-items:center;gap:8px}
 .cmplegend i,.cmptable i{display:inline-block;width:24px;height:4px;border-radius:2px;background:var(--msg)}

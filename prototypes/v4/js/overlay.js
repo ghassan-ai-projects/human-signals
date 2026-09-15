@@ -3,6 +3,25 @@
 (function(HS){
 const $=HS.$, app=HS.app, overlay=$('#overlay'), labelsEl=$('#labels');
 const COL=HS.COL={msg:'#7CCBFF',nerve:'#C4A8FF',fb:'#FFB547',mod:'#FFB547'};
+/* route grammar: the carrier is legible as a line TEXTURE, not by hue alone (grayscale + colour-blind) */
+HS.carrierOf=id=>{ const r=ROUTES[id]; if(!r) return 'blood';
+  if(r.kind==='nerve') return 'nerve';
+  if(r.kind==='fb'||r.kind==='mod') return 'feedback';
+  return ((r.label||'')+'').toLowerCase().includes('portal')?'portal':'blood'; };
+const TEXTURE={blood:'',nerve:'1.5 6.5',portal:'3.5 4.5',feedback:'7 7'};   // beads / short hop / dashes; blood is smooth
+HS.routeTexture=id=>TEXTURE[HS.carrierOf(id)]||'';
+HS.CARRIERS=[['blood','Blood-borne message'],['nerve','Nerve or light signal'],['portal','Portal — a short hop to the next gland'],['feedback','Feedback — acts back']];
+HS.grammarLegend=function(){
+  const present=new Set(Object.keys(ROUTES).map(id=>HS.carrierOf(id)));
+  const colFor={blood:COL.msg,nerve:COL.nerve,portal:COL.msg,feedback:COL.fb};
+  const line=k=>`<svg width="42" height="12" aria-hidden="true"><line x1="3" y1="6" x2="39" y2="6" stroke="${colFor[k]}" stroke-width="2.6" stroke-linecap="round"${TEXTURE[k]?` stroke-dasharray="${TEXTURE[k]}"`:''}/></svg>`;
+  const carr=HS.CARRIERS.filter(c=>present.has(c[0])).map(c=>`<li>${line(c[0])}<span>${c[1]}</span></li>`).join('');
+  const glyph=(k,c)=>`<svg width="30" height="18" viewBox="-16 -9 30 18" aria-hidden="true">${endGlyph(k,0,0,0,1,c)}</svg>`;
+  const ends=[['arrow','stimulates',COL.msg],['bar','inhibits',COL.fb],['diamond','modulates',COL.fb]]
+    .map(([k,t,c])=>`<li>${glyph(k,c)}<span>${t}</span></li>`).join('');
+  return `<div class="grammar"><span class="eyebrow">How to read the lines</span>
+    <ul class="gleg">${carr}</ul><ul class="gleg">${ends}</ul></div>`;
+};
 HS.ov={hoverKey:null,showAll:false};
 
 /* routes */
@@ -27,7 +46,7 @@ HS.setRoute=function(id,st,opt){
   const hit=document.querySelector(`#gRoutes .rhit[data-route="${id}"]`); if(hit) hit.dataset.st=st;
   const gl=document.getElementById('g-'+id); if(gl) gl.style.opacity=st==='on'?.14:0;   // active routes carry a quiet static glow
   if(st==='ghost'&&was!=='ghost'&&!HS.RM()){ p.classList.remove('ghostin'); void p.getBoundingClientRect(); p.classList.add('ghostin'); setTimeout(()=>p.classList.remove('ghostin'),1700); }   // a new ghost breathes once so the eye finds it
-  if(st==='ghost') p.setAttribute('stroke-dasharray','6 7'); else p.removeAttribute('stroke-dasharray');
+  if(st==='ghost') p.setAttribute('stroke-dasharray','6 7'); else { const dz=HS.routeTexture(id); if(dz) p.setAttribute('stroke-dasharray',dz); else p.removeAttribute('stroke-dasharray'); }
   if(opt&&opt.draw&&st==='on'&&was!=='on') drawOn(id);
 };
 /* draw-on: the route grows from source to target once (600 ms). Strokes are non-scaling, so while

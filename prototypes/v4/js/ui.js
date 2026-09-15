@@ -23,10 +23,13 @@ const HOW={blood:'Carried in the blood.',portal:'Carried a short way in portal b
 HS.showRouteCard=function(id,ev){
   const r=HS.routeDef(id), label=r.label||HS.gateLabel(id)||'signal · route', [sig,how]=label.split(' · ');
   const key=Object.keys(HS.GLOSSARY).find(k=>k.toLowerCase()===sig.toLowerCase()), def=key?HS.GLOSSARY[key]:'', pk=HS.passKeyForRoute(id);
+  const carrier=HS.carrierOf(id), carrLbl={blood:'carried in the blood',nerve:'a nerve or light signal',portal:'a short portal hop',feedback:'acts back — feedback'}[carrier];
+  const cc={blood:'#7CCBFF',nerve:'#C4A8FF',portal:'#7CCBFF',feedback:'#FFB547'}[carrier], dz=HS.routeTexture(id);
+  const swatch=`<svg width="30" height="10" aria-hidden="true"><line x1="2" y1="5" x2="28" y2="5" stroke="${cc}" stroke-width="2.6" stroke-linecap="round"${dz?` stroke-dasharray="${dz}"`:''}/></svg>`;
   const a=app.getBoundingClientRect(); let x=ev.clientX-a.left+16, y=ev.clientY-a.top-12;
   if(x+300>app.clientWidth-10) x-=332; y=Math.max(76,Math.min(app.clientHeight-230,y));
   HS.closeCards();
-  cards.insertAdjacentHTML('beforeend',`<div class="card float" role="dialog" aria-label="${cap(sig)}" style="left:${x}px;top:${y}px"><button class="x" aria-label="Close">×</button><div class="lvl">Signal · ${r.kind==='nerve'?'nerve route':r.kind==='fb'?'acts back':'message'}</div><h5>${cap(sig)}</h5><p>${def} ${HOW[how]||''}</p><div class="row2"><span class="ev">Illustrative · not reviewed</span>${HS.advOn&&pk?'<button class="more" data-passport="1">Passport ›</button>':''}</div></div>`);
+  cards.insertAdjacentHTML('beforeend',`<div class="card float" role="dialog" aria-label="${cap(sig)}" style="left:${x}px;top:${y}px"><button class="x" aria-label="Close">×</button><div class="lvl">Signal · ${r.kind==='nerve'?'nerve route':r.kind==='fb'?'acts back':'message'}</div><h5>${cap(sig)}</h5><p>${def} ${HOW[how]||''}</p><div class="carr">${swatch}<span>${carrLbl}</span></div><div class="row2"><span class="ev">Illustrative · not reviewed</span>${HS.advOn&&pk?'<button class="more" data-passport="1">Passport ›</button>':''}</div></div>`);
   const c=cards.querySelector('.card'); c.querySelector('.x').onclick=()=>HS.closeCards(); c.querySelector('.x').focus();
   const pb=c.querySelector('[data-passport]'); if(pb){ pb.onclick=()=>{ HS.closeCards(); HS.openPassport(pk,null); }; pb.focus(); }
   HS.say(`${cap(sig)}. ${def} ${HOW[how]||''}`);
@@ -219,7 +222,7 @@ HS.openRead=function(){
   s.setAttribute('aria-label','Read the route');
   s.innerHTML=`<button class="x" aria-label="Close">×</button><h3>Read the route</h3><p class="sub">${S.trigger.title} · illustrative draft, not reviewed science</p>
   ${HS.E.route?`<span class="eyebrow">${S.pathways[HS.E.route].name} at a glance</span><div class="diagram">${HS.causalSVG(S,HS.E.route,HS.isRevealed)}</div>`:''}${S.read({revealed:HS.isRevealed})}
-  <h4>About routes</h4><p class="sub" style="margin:0">Routes show that a message travels and where it arrives. They are not drawings of blood vessels or nerves. Time words show order and rough timescale, not measured time.</p>`;
+  <h4>About routes</h4><p class="sub" style="margin:0 0 8px">Routes show that a message travels and where it arrives. They are not drawings of blood vessels or nerves. The line's texture shows how the message is carried; the arrow end shows what it does. Time words show order and rough timescale, not measured time.</p>${HS.grammarLegend()}`;
   s.classList.remove('closed'); s.querySelector('.x').onclick=()=>HS.closeRead(true); s.querySelector('.x').focus();
 };
 HS.closeRead=function(focus){
