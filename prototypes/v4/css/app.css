@@ -13,7 +13,8 @@
 }
 *{box-sizing:border-box}
 html,body{height:100%}
-body{margin:0;background:var(--stage-b);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased;overflow:hidden}
+:root{font-size:100%}
+body{margin:0;background:var(--stage-b);color:var(--ink);font-family:var(--sans);font-size:.875rem;line-height:1.45;-webkit-font-smoothing:antialiased;overflow:hidden}
 button{font-family:inherit;color:inherit}
 :focus-visible{outline:3px solid var(--primary);outline-offset:2px}
 .app{position:fixed;inset:0;min-width:1024px;min-height:680px;background:radial-gradient(80% 90% at 58% 42%,var(--stage-a) 0%,var(--stage-b) 100%);overflow:hidden}
@@ -73,10 +74,10 @@ button{font-family:inherit;color:inherit}
 /* caption, tips */
 .caption{position:absolute;top:22px;left:50%;transform:translateX(-50%);z-index:12;text-align:center;pointer-events:none}
 .caption b{display:block;font-size:20px;font-weight:600;letter-spacing:-.01em;text-wrap:balance}
-.caption span{display:block;font-size:13.5px;color:var(--ink-2);margin-top:2px}
+.caption span{display:block;font-size:.844rem;color:var(--ink-2);margin-top:2px}
 .caption.fade{animation:capin .5s var(--ease)}
 @keyframes capin{from{opacity:0;transform:translate(-50%,-6px)}to{opacity:1;transform:translate(-50%,0)}}
-.tip{position:absolute;z-index:25;display:flex;align-items:flex-start;gap:10px;max-width:300px;border-radius:14px;padding:10px 10px 10px 12px;font-size:13.5px;animation:tipin .3s var(--ease)}
+.tip{position:absolute;z-index:25;display:flex;align-items:flex-start;gap:10px;max-width:19rem;border-radius:14px;padding:10px 10px 10px 12px;font-size:.844rem;animation:tipin .3s var(--ease)}
 .tip .bulb{color:var(--warm);flex:none;margin-top:1px}
 .tip button{border:0;background:transparent;color:var(--ink-3);cursor:pointer;padding:0 2px;font-size:16px;line-height:1}
 @keyframes tipin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
@@ -92,7 +93,7 @@ button{font-family:inherit;color:inherit}
 .card{position:absolute;z-index:26;width:300px;border-radius:14px;padding:14px 14px 12px;animation:tipin .18s var(--ease)}
 .card h5{margin:0 26px 4px 0;font-size:15.5px;font-weight:600}
 .card .lvl{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
-.card p{margin:6px 0 10px;color:var(--ink-2);font-size:14px;line-height:20px}
+.card p{margin:6px 0 10px;color:var(--ink-2);font-size:.875rem;line-height:1.4}
 .card .row2{display:flex;justify-content:space-between;align-items:center}
 .card .ev{font-size:11px;padding:3px 8px;border-radius:999px;border:1px dashed #3A5560;color:var(--warm)}
 .card .more{border:0;background:transparent;color:var(--primary);font-weight:600;font-size:13px;cursor:pointer;padding:4px 2px}
@@ -101,8 +102,8 @@ button{font-family:inherit;color:inherit}
 /* try it card */
 .try{position:absolute;z-index:27;width:320px;border-radius:16px;padding:14px}
 .try .k{font-size:11px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--warm)}
-.try h5{margin:6px 0 4px;font-size:16px;line-height:21px;font-weight:600}
-.try p{margin:0;color:var(--ink-2);font-size:13.5px}
+.try h5{margin:6px 0 4px;font-size:1rem;line-height:1.31;font-weight:600}
+.try p{margin:0;color:var(--ink-2);font-size:.844rem}
 .try .picks{margin:10px 0 0;font-size:12.5px;color:var(--ink-3)}
 .try .acts{display:flex;justify-content:space-between;gap:8px;margin-top:12px}
 .btn{height:38px;border-radius:999px;border:0;padding:0 16px;font-size:13.5px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
@@ -110,7 +111,7 @@ button{font-family:inherit;color:inherit}
 .btn.p:disabled{opacity:.35;cursor:default}
 .btn.t{background:transparent;color:var(--ink-2)}
 .btn.t:hover{background:rgba(255,255,255,.06)}
-.res{margin-top:10px;padding:10px 12px;border-radius:12px;font-size:13.5px;line-height:19px}
+.res{margin-top:10px;padding:10px 12px;border-radius:12px;font-size:.844rem;line-height:1.4}
 .res.good{background:rgba(67,217,154,.12);color:#BFF3DC}
 .res.warm{background:rgba(240,194,126,.12);color:#F7DDB5}
 .res b{display:block;margin-bottom:2px}
@@ -140,7 +141,7 @@ button{font-family:inherit;color:inherit}
 .rb-words{position:relative;height:18px;margin:0 10px;font-size:12px;color:var(--ink-3)}
 .rb-words span{position:absolute;transform:translateX(-50%);white-space:nowrap}
 .rb-words span.on{color:var(--ink);font-weight:600}
-.rb-cap{text-align:center;font-size:13.5px;color:var(--ink-2);margin-top:4px;min-height:20px}
+.rb-cap{text-align:center;font-size:.844rem;color:var(--ink-2);margin-top:4px;min-height:20px}
 .rb-cap b{color:var(--ink);font-weight:600}
 .pbar{height:56px;border-radius:999px;display:flex;align-items:center;gap:6px;padding:0 8px 0 18px}
 .pbar .nm{font-weight:600;font-size:14px;margin-right:6px;white-space:nowrap}
@@ -174,9 +175,9 @@ button{font-family:inherit;color:inherit}
 /* read sheet */
 .sheet{position:absolute;top:74px;right:14px;bottom:190px;width:400px;border-radius:18px;z-index:22;padding:16px 18px;overflow:auto;transition:transform .32s var(--ease),opacity .25s}
 .sheet.closed{transform:translateX(430px);opacity:0;pointer-events:none}
-.sheet h3{margin:0 0 2px;font-size:18px}
+.sheet h3{margin:0 0 2px;font-size:1.125rem}
 .sheet .sub{color:var(--ink-3);font-size:12.5px;margin:0 0 12px}
-.sheet ol{margin:0;padding-left:20px;display:grid;gap:10px;font-size:14px;line-height:20px}
+.sheet ol{margin:0;padding-left:20px;display:grid;gap:10px;font-size:.875rem;line-height:1.4}
 .sheet .m{font-family:var(--mono);font-size:12px;color:var(--msg)}
 .sheet .f{font-family:var(--mono);font-size:12px;color:var(--fb)}
 .sheet .n{font-family:var(--mono);font-size:12px;color:var(--nerve)}
@@ -304,10 +305,10 @@ button{font-family:inherit;color:inherit}
 .leadchip{border:1px solid rgba(67,217,154,.45);background:rgba(67,217,154,.1);color:#9BEFC9;border-radius:999px;font:600 11.5px var(--sans);padding:3px 9px;cursor:pointer;white-space:nowrap}
 .leadchip:hover{background:rgba(67,217,154,.2)}
 .sheet .eyebrow{display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin:0 0 4px}
-.sheet .lead-p{font-size:15px;line-height:22px;color:var(--ink);margin:4px 0 6px}
+.sheet .lead-p{font-size:.9375rem;line-height:1.45;color:var(--ink);margin:4px 0 6px}
 .linkbtn{border:0;background:transparent;color:var(--primary);font:600 13px var(--sans);padding:4px 0;cursor:pointer}
-.deeper{margin:6px 0 0;padding:10px 12px;border-radius:12px;background:var(--primary-soft);font-size:14px;line-height:20px}
-.sheet .trail{gap:6px;color:var(--ink-2);font-size:13.5px}
+.deeper{margin:6px 0 0;padding:10px 12px;border-radius:12px;background:var(--primary-soft);font-size:.875rem;line-height:1.4}
+.sheet .trail{gap:6px;color:var(--ink-2);font-size:.844rem}
 .sheet .trail li.here{color:var(--ink);font-weight:600}
 .claim{border:1px solid var(--float-line);border-radius:12px;padding:10px 12px;display:grid;gap:6px}
 .claim-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:13.5px;font-weight:600}
@@ -410,7 +411,7 @@ button{font-family:inherit;color:inherit}
 .lab.one.adv span{display:block;max-width:290px;line-height:17px}
 .clspill{display:inline-flex;align-items:center;margin:8px 0 10px;padding:3px 10px;border-radius:999px;border:1px solid var(--c);color:var(--c);font:600 12px var(--sans)}
 .ppfig svg{display:block;width:100%;height:auto;border-radius:10px}
-.sheet dl.pp{display:grid;grid-template-columns:92px 1fr;gap:8px 12px;margin:12px 0 0;font-size:13.5px;line-height:19px}
+.sheet dl.pp{display:grid;grid-template-columns:92px 1fr;gap:8px 12px;margin:12px 0 0;font-size:.844rem;line-height:1.4}
 .sheet dl.pp dt{color:var(--ink-3);font-size:12px}
 .sheet dl.pp dd{margin:0;color:var(--ink)}
 .pptable-wrap{overflow-x:auto}
@@ -420,7 +421,7 @@ button{font-family:inherit;color:inherit}
 .pptable tr.here td{background:rgba(141,176,255,.08);color:var(--ink)}
 .pptable .linkbtn{padding:0;text-align:left}
 .dotc{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--c);margin-right:6px}
-.sheet ul.why{gap:6px;font-size:13px;line-height:19px}
+.sheet ul.why{gap:6px;font-size:.8125rem;line-height:1.4}
 @media (max-width:1400px){ #bAdv .lbl{display:none} }
 /* advanced menu & rebuild */
 .advmenu{position:absolute;z-index:42;width:300px;border-radius:16px;padding:8px;background:var(--float-solid)}
