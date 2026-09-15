@@ -100,18 +100,24 @@ explicit.
 
 | Pillar | Baseline | Target | Evidence | Status |
 | --- | ---: | ---: | --- | --- |
-| Visual quality | 3/5 | 5/5 | [Browser review](browser-review-2026-09-15.md), screenshots, quality-bar results | In progress |
-| Interactivity | 3/5 | 5/5 | [Browser review](browser-review-2026-09-15.md), behavioural browser checks, regression tests | In progress |
-| Learning experience | 3/5 | 5/5 | [Browser review](browser-review-2026-09-15.md), comprehension proxies, independent browser judgement | In progress |
+| Visual quality | 3/5 | 5/5 | [Post-fix close](browser-review-2026-09-16-postfix-close.md), [final review](browser-review-2026-09-16-final.md), screenshots, quality-bar results | Met |
+| Interactivity | 3/5 | 5/5 | [Post-fix close](browser-review-2026-09-16-postfix-close.md), behavioural browser checks, regression tests | Met |
+| Learning experience | 3/5 | 5/5 | [Post-fix close](browser-review-2026-09-16-postfix-close.md), comprehension proxies, independent browser judgement | Met |
 
 ## Current round status
 
-The final narrow-reader finding `V4-FINAL-01` is implemented in `f8a2215` and
-has fresh 1280×800 and 1024×768 browser evidence in
-`validation-v4-reader-focus-postfix.md`. The expanded quality-bar probe now
-covers caption clearance, active-anatomy clearance, control reachability, and
-reader-close restoration at the 1024px boundary.
+Round **closed** on 16 September 2026. The final narrow-reader finding
+`V4-FINAL-01` is implemented in `f8a2215`, with main-agent evidence in
+`validation-v4-reader-focus-postfix.md` and independent post-fix confirmation in
+`browser-review-2026-09-16-postfix-close.md`. That confirmation re-checked both
+1280×800 and 1024×768 (no horizontal overflow, reader within viewport, evidence
+and close control visible, workspace restored on close) and re-swept for new
+issues: no P0/P1 remains. The expanded quality-bar probe covers caption
+clearance, active-anatomy clearance, control reachability, and reader-close
+restoration at the 1024px boundary.
 
-The scorecard remains **In progress** until an independent post-fix browser
-report confirms that no P0/P1 finding remains. Scientific and anatomical
-review remain separate gates.
+Required checks are green: `v4-quality-bar.mjs` 106/106, `v4-comprehension-check.mjs`
+47/47, `v4-browser-check.mjs` no errors.
+
+Scientific and anatomical correctness of the physiology and artwork remain
+separate review gates and are **not** closed by this round.
