@@ -21,12 +21,19 @@ HS.viewCenter=()=>[vb.x+vb.w/2,vb.y+vb.h/2];
 HS.unproject=(px,py)=>{ const s=scale(); return [vb.x+px/s,vb.y+py/s]; };
 HS.resetLevel=()=>{ lastLevel=''; };
 
-const CHIP={body:'Whole body · <b>plain story</b>',organ:'Organ · <b>pathway names</b>',structure:'Close-up · <b>precise location</b>'};
+const CHIP={body:'Whole body · <b>plain story</b>',organ:'Organ · <b>pathway names</b>',structure:'Close-up · <b>precise location</b>',cell:'Cell · <b>mechanism</b>'};
+const RUNG={body:0,organ:1,structure:1,cell:2};   // three rungs: body → organ (incl. close-up) → cell
+const RUNGLBL={body:'whole body',organ:'organ',structure:'close-up',cell:'cell'};
+HS.depthChip=function(state){
+  const c=$('#lvlChip'); if(!c) return; const r=RUNG[state]!=null?RUNG[state]:0;
+  c.setAttribute('aria-label','Depth: '+RUNGLBL[state]);
+  c.innerHTML=`<span class="rungs" aria-hidden="true">${[0,1,2].map(i=>`<i class="${i===r?'on':''}"></i>`).join('')}</span><span class="dlab">${CHIP[state]}</span>`;
+};
 HS.updateView=function(){
   world.setAttribute('viewBox',`${vb.x.toFixed(2)} ${vb.y.toFixed(2)} ${vb.w.toFixed(2)} ${vb.h.toFixed(2)}`);
   HS.updateLod(HS.zoomRatio());
   const L=HS.level();
-  if(L!==lastLevel){ lastLevel=L; $('#lvlChip').innerHTML=CHIP[L]; HS.onLevel(L); }
+  if(L!==lastLevel){ lastLevel=L; if(!HS.E.cellOpen) HS.depthChip(L); HS.onLevel(L); }
   const mv=$('#mv'); if(mv){ mv.setAttribute('x',vb.x); mv.setAttribute('y',vb.y); mv.setAttribute('width',vb.w); mv.setAttribute('height',vb.h); }
   HS.renderOverlay();
   if(HS.syncHash) HS.syncHash();

@@ -307,11 +307,11 @@ function openCell(key){
   });
   d.addEventListener('keydown',e=>{ if(e.key==='ArrowRight'){ e.preventDefault(); go(cur+1); } else if(e.key==='ArrowLeft'){ e.preventDefault(); go(cur-1); } });
   $('#cellX').onclick=closeCell;
-  $('#lvlChip').innerHTML='Cell · <b>mechanism</b>';
+  HS.depthChip('cell');
   go(0,true); HS.say(`${C.say} Step 1 of ${n}. Use Next, or the arrow keys, to step through.`);
   d.querySelector('[data-cn="1"]').focus();
 }
-function closeCell(){ if(!E.cellOpen) return; E.cellOpen=false; const d=$('#cellInset'); if(d) d.remove(); HS.resetLevel(); HS.updateView(); }
+function closeCell(){ if(!E.cellOpen) return; E.cellOpen=false; const d=$('#cellInset'); if(d) d.remove(); HS.resetLevel(); HS.depthChip(HS.level()); HS.updateView(); }
 HS.openCell=openCell; HS.closeCell=closeCell;
 
 /* ---------- What if? ---------- */
