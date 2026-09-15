@@ -44,6 +44,7 @@ document.addEventListener('keydown',e=>{
   else if(k==='0') HS.camTo('body');
   else if(k==='/'){ e.preventDefault(); $('#bSearch').click(); }
   else if(k==='a'||k==='A') HS.setAdvanced(!HS.advOn,true);
+  else if(k==='h'||k==='H') HS.setTips(!HS.tipsOn,true);
   else if(p){
     if(k===' '&&!tgt.closest('button')){ e.preventDefault(); HS.play(); }
     else if(k===']'||k==='['){ const n=p.hots.length, i=k===']'?Math.min(n-1,E.cur+1):Math.max(0,E.cur-1); HS.goHot(i,true); setTimeout(()=>HS.focusHotspot(E.sceneId+E.route+i),50); }
@@ -70,7 +71,7 @@ window.addEventListener('hashchange',()=>{ if(!HS.restoring) HS.restoreFromHash(
 $('#labels').addEventListener('focusin',e=>{ if(e.target.matches('.hs,.lab button')) HS.ensureVisible(e.target); });
 
 /* keyboard shortcuts (?) */
-const KEYS=[['Anywhere',[['⌘K or /','Search'],['S','Systems panel'],['L','Show all labels'],['+ and −','Zoom'],['0','Whole body'],['Arrows','Pan, when the body has focus'],['A','Advanced mode'],['?','This list'],['Esc','Close, then zoom out, then leave']]],
+const KEYS=[['Anywhere',[['⌘K or /','Search'],['S','Systems panel'],['L','Show all labels'],['+ and −','Zoom'],['0','Whole body'],['Arrows','Pan, when the body has focus'],['A','Advanced mode'],['H','Hints on or off'],['?','This list'],['Esc','Close, then zoom out, then leave']]],
  ['In a pathway',[['Space','Play or pause'],['] and [','Next or previous step'],['T','Try it?'],['W','What if?'],['F and G','First or second route'],['R','Read the route']]]];
 HS.toggleKeys=function(){
   let d=$('#keys'); if(d){ const ret=d._ret; d.remove(); if(ret&&document.contains(ret)) ret.focus(); return; }

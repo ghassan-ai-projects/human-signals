@@ -35,16 +35,30 @@ HS.showRouteCard=function(id,ev){
 /* ---------- toast & tips ---------- */
 let toastT=0; const toastEl=document.createElement('div'); toastEl.className='tip float'; toastEl.style.cssText='left:50%;top:84px;transform:translateX(-50%);display:none'; toastEl.setAttribute('role','status'); app.appendChild(toastEl);
 HS.toast=m=>{ toastEl.textContent=m; toastEl.style.display='flex'; clearTimeout(toastT); toastT=setTimeout(()=>toastEl.style.display='none',2800); };
-const tipsSeen=HS.tipsSeen=new Set(), tipsBox=$('#tips'); HS.tipsOn=true;
-HS.tip=function(key,text,pos){
-  if(!HS.tipsOn||tipsSeen.has(key)) return; tipsSeen.add(key);
+const tipsSeen=HS.tipsSeen=new Set(), tipsBox=$('#tips'); HS.tipsOn=true; HS._curTip=null;
+function renderTip(key,text,pos){
   tipsBox.innerHTML='';   // one tip at a time: a newer tip replaces the older one
   const d=document.createElement('div'); d.className='tip float'; d.dataset.key=key;
   Object.entries(pos).forEach(([k,v])=>d.style[k]=v+'px');
   d.innerHTML=`<svg class="bulb" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>${text}</span><button aria-label="Dismiss tip">×</button>`;
   d.querySelector('button').onclick=()=>d.remove(); tipsBox.appendChild(d);
+}
+HS.tip=function(key,text,pos){
+  HS._curTip={key,text,pos};   // remembered so the hints control can bring it back
+  if(!HS.tipsOn||tipsSeen.has(key)) return; tipsSeen.add(key);
+  renderTip(key,text,pos);
 };
 HS.clearTip=key=>{ const d=tipsBox.querySelector(`[data-key="${key}"]`); if(d) d.remove(); };
+/* hints control: one switch for all the little bulb tips */
+HS.setTips=function(on,announce){
+  HS.tipsOn=!!on;
+  const b=$('#bHints'), t=$('#tTips');
+  if(b){ b.setAttribute('aria-pressed',HS.tipsOn); b.setAttribute('aria-label',HS.tipsOn?'Hints on':'Hints off'); }
+  if(t) t.setAttribute('aria-checked',HS.tipsOn);
+  if(!HS.tipsOn){ tipsBox.innerHTML=''; }
+  else if(HS._curTip){ tipsSeen.delete(HS._curTip.key); renderTip(HS._curTip.key,HS._curTip.text,HS._curTip.pos); tipsSeen.add(HS._curTip.key); }
+  if(announce) HS.toast(HS.tipsOn?'Hints on: a short tip appears once at each depth.':'Hints hidden. Turn them back on any time with the bulb, or H.');
+};
 
 /* ---------- organ lighting ---------- */
 const light=HS.light={lit:new Set(),dim:null,preview:null};
@@ -223,13 +237,14 @@ function applyLayer(name,on,user){
 HS.setLayer=(name,on)=>{ document.querySelector(`[data-layer="${name}"]`).setAttribute('aria-checked',on); applyLayer(name,on,false); };
 function pop(btn,id){ const p=$(id), open=p.hidden; document.querySelectorAll('.pop').forEach(x=>x.hidden=true); document.querySelectorAll('#bLayers,#bSettings').forEach(b=>b.setAttribute('aria-expanded','false')); if(open){ p.hidden=false; btn.setAttribute('aria-expanded','true'); } }
 $('#bLayers').addEventListener('click',e=>{ e.stopPropagation(); pop(e.currentTarget,'#popLayers'); });
+$('#bHints').addEventListener('click',()=>HS.setTips(!HS.tipsOn,true));
 $('#bSettings').addEventListener('click',e=>{ e.stopPropagation(); pop(e.currentTarget,'#popSettings'); });
 document.addEventListener('click',e=>{ if(!e.target.closest('.pop')&&!e.target.closest('#bLayers,#bSettings')){ document.querySelectorAll('.pop').forEach(x=>x.hidden=true); document.querySelectorAll('#bLayers,#bSettings').forEach(b=>b.setAttribute('aria-expanded','false')); } });
 document.querySelectorAll('.toggle[role="switch"]').forEach(t=>t.addEventListener('click',()=>{
   const on=t.getAttribute('aria-checked')!=='true'; t.setAttribute('aria-checked',on);
   if(t.id==='tMotion'){ HS.userRM=on; HS.applyRM(); HS.stopPlay(); HS.setPlayUI(); }
   else if(t.id==='tLabels'){ HS.ov.showAll=on; HS.renderOverlay(); }
-  else if(t.id==='tTips'){ HS.tipsOn=on; if(!on) tipsBox.innerHTML=''; }
+  else if(t.id==='tTips'){ HS.setTips(on); }
   else if(t.dataset.layer) applyLayer(t.dataset.layer,on,true);
 }));
 })(window.HS);

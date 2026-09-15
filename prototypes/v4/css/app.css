@@ -369,7 +369,7 @@ button{font-family:inherit;color:inherit}
   .lvl-chip{bottom:220px}
   #tips .tip[style*="bottom"]{margin-bottom:50px}
 }
-@media (max-width:1400px){
+@media (max-width:1500px){
   .caption{top:70px}
   .caption b{font-size:18px}
   .thought{top:124px}
