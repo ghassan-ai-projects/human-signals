@@ -60,10 +60,12 @@ const INSET={
  hyp:{name:'Hypothalamus',c:[102,174],r:6.5,region:'brain'},
  pit:{name:'Pituitary',c:[95,199],r:6.2,region:'brain'},
  scn:{name:'Body clock (SCN)',c:[86,171],r:4.2,region:'brain'},
- pineal:{name:'Pineal gland',c:[141,165],r:4.6,region:'brain'}
+ pineal:{name:'Pineal gland',c:[141,165],r:4.6,region:'brain'},
+ retina:{name:'Eyes',c:[30,180],r:6.5,region:'brain',fill:'#3B6573'}
 };
 const REG={body:{x:0,y:30,w:640,h:750},head:{x:292,y:30,w:120,h:110},brain:{x:14,y:52,w:196,h:208},pit:{x:62,y:170,w:70,h:56},adr:{x:262,y:492,w:74,h:54},adrClose:{x:281,y:503,w:38,h:32},liver:{x:244,y:418,w:180,h:100},heart:{x:320,y:334,w:94,h:106},hpa:{x:0,y:50,w:460,h:520},fast:{x:150,y:40,w:460,h:560},
- panc:{x:318,y:480,w:136,h:72},pancClose:{x:356,y:504,w:44,h:34},muscle:{x:430,y:316,w:120,h:160},int:{x:262,y:540,w:176,h:180},meal:{x:190,y:30,w:390,h:560},fed:{x:200,y:300,w:380,h:430}};
+ panc:{x:318,y:480,w:136,h:72},pancClose:{x:356,y:504,w:44,h:34},muscle:{x:430,y:316,w:120,h:160},int:{x:262,y:540,w:176,h:180},meal:{x:190,y:30,w:390,h:560},fed:{x:200,y:300,w:380,h:430},
+ night:{x:10,y:40,w:400,h:230},clock:{x:14,y:120,w:150,h:96}};
 
 HS.ORGS=ORGS; HS.INSET=INSET; HS.REG=REG; HS.bodyPath=bodyPath; HS.darken=darken; HS.lighten=lighten;
 HS.wc=(key,i=0)=> INSET[key]?INSET[key].c : [ORGS[key].parts[i].c[0]+90, ORGS[key].parts[i].c[1]];
@@ -78,6 +80,7 @@ HS.buildWorld=function(){
   <radialGradient id="ambient"><stop offset="0" stop-color="#2F7F93" stop-opacity=".2"/><stop offset="1" stop-color="#2F7F93" stop-opacity="0"/></radialGradient>
   <radialGradient id="sheen" cx=".32" cy=".24" r=".9"><stop offset="0" stop-color="#FFFFFF" stop-opacity=".22"/><stop offset=".42" stop-color="#FFFFFF" stop-opacity=".04"/><stop offset="1" stop-color="#000000" stop-opacity=".22"/></radialGradient>
   <radialGradient id="halo"><stop offset="0" stop-color="#8FDCFF" stop-opacity=".5"/><stop offset=".5" stop-color="#8FDCFF" stop-opacity=".14"/><stop offset="1" stop-color="#8FDCFF" stop-opacity="0"/></radialGradient>
+  <radialGradient id="coolWash"><stop offset="0" stop-color="#7FB2FF" stop-opacity=".2"/><stop offset=".6" stop-color="#7FB2FF" stop-opacity=".08"/><stop offset="1" stop-color="#7FB2FF" stop-opacity="0"/></radialGradient>
   <clipPath id="insetClip"><circle cx="112" cy="150" r="96"/></clipPath>`;
   ORDER.forEach(k=>{ const f=ORGS[k].fill; s+=`<linearGradient id="gr-${k}" x1=".2" y1="0" x2=".8" y2="1"><stop offset="0" stop-color="${lighten(f,.22)}"/><stop offset=".5" stop-color="${f}"/><stop offset="1" stop-color="${darken(f,.45)}"/></linearGradient>`; ORGS[k].parts.forEach((p,i)=>{ s+=`<clipPath id="cl-${k}${i}"><path d="${p.d}"/></clipPath>`; }); });
   s+=`</defs>`;
@@ -115,7 +118,7 @@ HS.buildWorld=function(){
     o.parts.forEach(p=>{ s+=`<ellipse class="ring" cx="${p.c[0]}" cy="${p.c[1]}" rx="${p.r[0]+5}" ry="${p.r[1]+5}"/>`; });
     s+=`</g>`;
   });
-  s+=`<g id="eyes">${[240,280].map((x,i)=>`<ellipse cx="${x}" cy="108" rx="7.5" ry="4.6" fill="#1C3038" stroke="#3A5E6A" stroke-width=".8"/><circle cx="${x}" cy="108" r="3.4" fill="#3B6573"/><circle class="pupil" id="${i?'pupL':'pupR'}" cx="${x}" cy="108" r="1.9" fill="#030809"/>`).join('')}</g>`;
+  s+=`<g id="eyes">${[240,280].map((x,i)=>`<ellipse cx="${x}" cy="108" rx="7.5" ry="4.6" fill="#1C3038" stroke="#3A5E6A" stroke-width=".8"/><circle cx="${x}" cy="108" r="3.4" fill="#3B6573"/><circle class="pupil" id="${i?'pupL':'pupR'}" cx="${x}" cy="108" r="1.9" fill="#030809"/><path class="lid" d="M ${x-8.5} 108 C ${x-6} 101.5 ${x+6} 101.5 ${x+8.5} 108 C ${x+6} 109.5 ${x-6} 109.5 ${x-8.5} 108 Z" fill="#12303A" stroke="#3A5E6A" stroke-width=".8"/>`).join('')}</g>`;
   s+=`</g>`;
 
   /* brain · sagittal cutaway inset (front of the head faces left) */
@@ -129,11 +132,11 @@ HS.buildWorld=function(){
      <path d="M 146 184 C 162 172 196 176 198 198 C 200 216 182 224 164 220 C 150 216 142 200 146 184 Z" fill="#2F3A52" stroke="#46557A" stroke-width=".8"/>
      <g fill="none" stroke="#46557A" stroke-width=".7" opacity=".8"><path d="M 154 196 C 170 190 186 194 194 204"/><path d="M 152 207 C 168 203 182 207 190 215"/></g>
      <path d="M 132 176 C 140 194 146 216 148 250 L 128 250 C 128 222 124 200 118 184 Z" fill="#333E57"/>
-     <ellipse cx="30" cy="180" rx="9" ry="7" fill="#1C3038" stroke="#3A5E6A" stroke-width=".8"/><circle cx="24" cy="180" r="2.6" fill="#3B6573"/>
+     <ellipse cx="30" cy="180" rx="11" ry="9" fill="#1C3038" stroke="#3A5E6A" stroke-width=".8"/>
      <path d="M 39 180 L 84 182" stroke="#4E6A8C" stroke-width="2.4" stroke-linecap="round" fill="none"/><ellipse cx="84" cy="182" rx="4" ry="2.2" fill="#5A7394"/>
      <path d="M 100 180 C 98 186 96 190 95 193" stroke="#6D7BA0" stroke-width="1.8" fill="none" stroke-linecap="round"/>
    </g>
-   ${Object.entries(INSET).map(([k,o])=>`<g class="org" data-org="${k}" id="o-${k}"><circle class="halo" cx="${o.c[0]}" cy="${o.c[1]}" r="${o.r*2.8}" fill="url(#halo)"/><circle class="org-shape" cx="${o.c[0]}" cy="${o.c[1]}" r="${o.r}" fill="${k==='pineal'||k==='scn'?'#5E5A8A':'#7263A0'}"/><circle cx="${o.c[0]-o.r*.3}" cy="${o.c[1]-o.r*.35}" r="${o.r*.45}" fill="#FFFFFF" opacity=".16" pointer-events="none"/><circle class="ring" cx="${o.c[0]}" cy="${o.c[1]}" r="${o.r+5}"/></g>`).join('')}
+   ${Object.entries(INSET).map(([k,o])=>`<g class="org" data-org="${k}" id="o-${k}"><circle class="halo" cx="${o.c[0]}" cy="${o.c[1]}" r="${o.r*2.8}" fill="url(#halo)"/><circle class="org-shape" cx="${o.c[0]}" cy="${o.c[1]}" r="${o.r}" fill="${o.fill||(k==='pineal'||k==='scn'?'#5E5A8A':'#7263A0')}"/><circle cx="${o.c[0]-o.r*.3}" cy="${o.c[1]-o.r*.35}" r="${o.r*.45}" fill="#FFFFFF" opacity=".16" pointer-events="none"/><circle class="ring" cx="${o.c[0]}" cy="${o.c[1]}" r="${o.r+5}"/></g>`).join('')}
    <g id="pitLod" class="lod" opacity="0" pointer-events="none"><ellipse cx="92.6" cy="199.6" rx="4.4" ry="5" fill="#9A8BC8"/><ellipse cx="99.7" cy="198.4" rx="3" ry="4.1" fill="#4E4675"/><path d="M 96.8 194.6 L 96.6 204" stroke="#0B171C" stroke-width=".6"/></g>
    <text x="112" y="262" text-anchor="middle" font-family="Roboto Mono,monospace" font-size="8" letter-spacing="1" fill="#4F7680">BRAIN · CUTAWAY VIEW</text></g>`;
   s+=`<g id="gSigns"></g><g id="gRoutes"></g>`;

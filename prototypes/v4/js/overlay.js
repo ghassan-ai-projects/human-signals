@@ -51,6 +51,7 @@ HS.ripple=function(p,color,o={}){ if(HS.RM()) return; fx.push({p,c:color,t0:perf
 
 /* stage atmosphere: a quiet tint behind the body per trigger; never encodes amount */
 HS.setAtmos=function(color){ const a=$('#atmos'); if(color) a.style.setProperty('--atm',color); a.classList.toggle('on',!!color); };
+HS.setNight=v=>{ $('#night').style.opacity=v||0; };
 HS.ptOn=function(id,t){ const el=pathEl[id]; const L=el.getTotalLength(); const p=el.getPointAtLength(L*t); return [p.x,p.y]; };
 const pulse=HS.pulse={on:false,route:null,t:0}; let travelTok=0;
 HS.cancelTravel=()=>{ travelTok++; };
@@ -73,13 +74,16 @@ HS.buildSigns=function(signs){
   signs.forEach(sg=>{
     if(sg.type==='ripple'){ const c=HS.wc(sg.org); s+=`<g id="sg-${sg.id}" class="sign off">${[0,.31].map((d,i)=>`<circle class="beat" style="animation-delay:${d}s" cx="${c[0]}" cy="${c[1]}" r="${sg.r||34}" fill="none" stroke="${sg.color}" stroke-width="${i?1.5:2}"/>`).join('')}</g>`; }
     else if(sg.type==='glyphs'){ const c=HS.wc(sg.org), o=sg.offset||[0,0], dr=sg.drift||[-46,26]; s+=`<g id="sg-${sg.id}" class="sign off">${[[0,0],[14,10],[-10,14],[8,-8],[-16,-2]].map((q,i)=>`<g transform="translate(${c[0]+o[0]+q[0]} ${c[1]+o[1]+q[1]})"><path class="glyph" style="animation-delay:${i*.6}s;--dx:${dr[0]}px;--dy:${dr[1]}px" d="M0 -5 L4.3 -2.5 L4.3 2.5 L0 5 L-4.3 2.5 L-4.3 -2.5Z" fill="rgba(247,216,138,.25)" stroke="#F7D88A" stroke-width="1.2"/></g>`).join('')}</g>`; }
+    else if(sg.type==='wash'){ s+=`<ellipse id="sg-${sg.id}" class="sign off" cx="${sg.anchor[0]}" cy="${sg.anchor[1]}" rx="${sg.r[0]}" ry="${sg.r[1]}" fill="url(#coolWash)" pointer-events="none"/>`; }
   });
   $('#gSigns').innerHTML=s;
-  ['pupR','pupL'].forEach(p=>$('#'+p).classList.remove('wide'));
+  ['pupR','pupL'].forEach(p=>$('#'+p).classList.remove('wide')); $('#eyes').classList.remove('sleepy');
   document.querySelectorAll('#world .org-body').forEach(g=>g.classList.remove('breathe'));
 };
 HS.setSign=function(sg,on,t){
-  if(sg.type==='ripple'||sg.type==='glyphs'){ const g=$('#sg-'+sg.id); g.classList.toggle('off',!on); if(sg.type==='ripple') g.querySelectorAll('.beat').forEach(b=>b.classList.toggle('calm',(sg.calmAt||[]).includes(t))); }
+  if(sg.type==='wash') $('#sg-'+sg.id).classList.toggle('off',!on);
+  else if(sg.type==='lids') $('#eyes').classList.toggle('sleepy',on);
+  else if(sg.type==='ripple'||sg.type==='glyphs'){ const g=$('#sg-'+sg.id); g.classList.toggle('off',!on); if(sg.type==='ripple') g.querySelectorAll('.beat').forEach(b=>b.classList.toggle('calm',(sg.calmAt||[]).includes(t))); }
   else if(sg.type==='pupils'){ ['pupR','pupL'].forEach(p=>$('#'+p).classList.toggle('wide',on)); }
   else if(sg.type==='breathe'){ $(`#o-${sg.org} .org-body`).classList.toggle('breathe',on); }
 };

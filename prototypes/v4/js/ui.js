@@ -24,6 +24,7 @@ HS.toast=m=>{ toastEl.textContent=m; toastEl.style.display='flex'; clearTimeout(
 const tipsSeen=new Set(), tipsBox=$('#tips'); HS.tipsOn=true;
 HS.tip=function(key,text,pos){
   if(!HS.tipsOn||tipsSeen.has(key)) return; tipsSeen.add(key);
+  tipsBox.innerHTML='';   // one tip at a time: a newer tip replaces the older one
   const d=document.createElement('div'); d.className='tip float'; d.dataset.key=key;
   Object.entries(pos).forEach(([k,v])=>d.style[k]=v+'px');
   d.innerHTML=`<svg class="bulb" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>${text}</span><button aria-label="Dismiss tip">×</button>`;
@@ -59,7 +60,9 @@ HS.TREE=[
  {id:'glucoseSys',label:'Blood glucose',dot:'#E0AE4A',children:[
   {id:'betweenP',label:'Between meals',scene:'meal',path:'between',sub:'pancreas → glucagon → liver',organs:['panc','liver','brain'],children:[{id:'glucagon',ab:'GCG',label:'Glucagon',organs:['panc','liver']},{id:'glucoseSig',ab:'GLU',label:'Glucose',organs:['int','liver','brain','muscle']}]},
   {id:'afterP',label:'After a meal',scene:'meal',path:'after',sub:'pancreas → insulin → liver, muscle',organs:['int','panc','liver','muscle'],children:[{id:'insulin',ab:'INS',label:'Insulin',organs:['panc','liver','muscle']}]}]},
- {id:'dopa',label:'Dopamine',dot:'#A58BF5'},{id:'rhythm',label:'Daily rhythms',dot:'#7C9BF0'}
+ {id:'dopa',label:'Dopamine',dot:'#A58BF5'},
+ {id:'rhythm',label:'Daily rhythms',dot:'#7C9BF0',children:[
+  {id:'melP',label:'Melatonin at night',scene:'dark',path:'night',sub:'eyes → body clock → pineal',organs:['retina','scn','pineal','brain'],children:[{id:'melatonin',ab:'MEL',label:'Melatonin',organs:['pineal','scn','brain']}]}]}
 ];
 const NODE=HS.NODE={}, PARENT={}; (function idx(list,parent){ list.forEach(n=>{ NODE[n.id]=n; if(parent) PARENT[n.id]=parent; if(n.children) idx(n.children,n.id); }); })(HS.TREE);
 HS.selectedNode=null; const openNodes=new Set(['stress','fastP','hpaP']);

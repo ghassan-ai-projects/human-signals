@@ -40,7 +40,7 @@ function leave(cam){
   $('#bottom').classList.add('hidden'); $('#caption').innerHTML='';
   Object.keys(HS.rstate).forEach(id=>HS.setRoute(id,'hide'));
   HS.light.lit=new Set(); HS.light.dim=null; HS.applyOrgs();
-  setTime(0); applySigns(); E.timeRef=null; HS.setLayer('nervous',false); HS.closeRead(false); HS.setAtmos(null);
+  setTime(0); applySigns(); E.timeRef=null; HS.setLayer('nervous',false); HS.closeRead(false); HS.setAtmos(null); HS.setNight(0);
   if(cam) HS.camTo('body',700);
 }
 HS.leave=()=>leave(true);
@@ -56,13 +56,14 @@ function setTime(i,user){
   if(!E.scene||!TL()) return;
   const T=TL(), last=lastT(), p=P();
   if(i===last && E.whatIf){ i=last-1; if(user) HS.toast(p.whatIf.holdToast); }
-  if(i===last && p && p.gate && !isRevealed()){ i=last-1; if(user) HS.toast(p.gate.calmBlocked); }
+  if(i===last && p && p.gate && p.gate.blocksEnd!==false && !isRevealed()){ i=last-1; if(user) HS.toast(p.gate.calmBlocked); }
   E.tIdx=i;
   const pct=i/last*100; $('#rbFill').style.width=pct+'%'; $('#rbHandle').style.left=pct+'%';
   $('#rbHandle').setAttribute('aria-valuenow',i); $('#rbHandle').setAttribute('aria-valuetext',T[i].w+'. '+HS.strip(T[i].c));
   document.querySelectorAll('.rb-words span').forEach((s,k)=>s.classList.toggle('on',k===i));
   document.querySelectorAll('.rb-way').forEach((s,k)=>s.classList.toggle('on',k<=i));
   $('#rbCap').innerHTML=T[i].c;
+  if(E.state==='triggered'&&!E.whatIf){ if(T[i].atmos) HS.setAtmos(T[i].atmos); if(T[i].vignette!=null) HS.setNight(T[i].vignette); }
   (T[i].show||[]).forEach(id=>HS.setRoute(id,'on'));
   applySigns(); HS.renderOverlay();
   if(user) HS.say(HS.strip(T[i].c));
@@ -266,6 +267,7 @@ function openWhatIf(){
   const p=P(); if(!p||!p.whatIf||E.whatIf||(p.gate&&!isRevealed())) return; const w=p.whatIf;
   stopPlay(); closeTry(); closeCell(); HS.closeCards(); E.whatIf='predict';
   $('#thought').hidden=false; (w.fade||[]).forEach(id=>HS.setRoute(id,'faint'));
+  if(w.atmos){ HS.setAtmos(w.atmos); HS.setNight(0); }
   HS.camTo(w.region||p.region,600);
   const box=document.createElement('div'); box.className='try float'; box.id='wiCard'; box.setAttribute('role','dialog'); box.setAttribute('aria-label','What if?');
   box.style.left=Math.min(app.clientWidth-500,Math.max(340,app.clientWidth*.56))+'px'; box.style.top='120px';
@@ -292,6 +294,7 @@ function restoreWhatIf(focus){
   if(!E.whatIf) return; const p=P(); E.whatIf=null; $('#thought').hidden=true;
   const c=$('#wiCard'); if(c) c.remove();
   if(p) (p.whatIf.fade||[]).forEach(id=>{ if(p.draw.includes(id)) HS.setRoute(id,'on'); });
+  if(p&&p.whatIf.atmos) setTime(E.tIdx);
   if(p&&p.gate&&isRevealed()) p.gate.routes.forEach(id=>HS.setRoute(id,'on',{draw:true}));
   HS.renderOverlay(); if(focus){ $('#bWhat').focus(); HS.say('Restored the normal pathway.'); }
 }

@@ -3,6 +3,7 @@
 const $=HS.$, E=HS.E;
 
 HS.onLevel=L=>{
+  ['organ','structure'].forEach(k=>{ if(k!==L) HS.clearTip(k); });   // a zoom tip leaves once you leave its level
   if(L==='organ') HS.tip('organ','You’re at organ level: labels now show signal names. Click inside to look closer, or click the mini-map to zoom out.',{right:16,bottom:210});
   if(L==='structure') HS.tip('structure','Close-up. Tap i on a label for a short explanation, or Cell › where it appears.',{right:16,bottom:210});
   HS.renderOverlay();

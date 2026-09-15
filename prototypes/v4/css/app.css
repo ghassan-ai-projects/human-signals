@@ -284,3 +284,8 @@ button{font-family:inherit;color:inherit}
 .caption b{font-size:22px;letter-spacing:-.015em}
 .caption span{color:var(--lit)}
 .lab{box-shadow:0 4px 14px rgba(0,0,0,.35)}
+/* dark scene: night vignette (behind labels and routes overlay), sleepy eyelids, cool wash */
+.night{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity 1.4s var(--ease);background:radial-gradient(62% 70% at 56% 42%,transparent 38%,rgba(2,4,16,.92) 100%)}
+.lid{opacity:0;transition:opacity 1s var(--ease)}
+#eyes.sleepy .lid{opacity:1}
+.rm .night,.rm .lid{transition:none}
