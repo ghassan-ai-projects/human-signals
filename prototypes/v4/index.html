@@ -1,0 +1,94 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Human Signals · Body Scenes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400..700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="css/app.css">
+
+<div class="app" id="app">
+  <svg id="world" role="img" aria-label="Illustrated body. Use the Systems panel, the pathway controls or Read the route for a text alternative."></svg>
+  <svg id="overlay" aria-hidden="true"></svg>
+  <div id="labels"></div>
+
+  <div class="toolbar float" role="toolbar" aria-label="Main">
+    <div class="brand"><svg width="22" height="22" viewBox="0 0 26 26" aria-hidden="true"><circle cx="6" cy="18" r="4" fill="#8DB0FF"/><circle cx="20" cy="8" r="4" fill="none" stroke="#8DB0FF" stroke-width="2"/><path d="M9.5 16 C 13 14, 13 10, 16.5 9.5" fill="none" stroke="#8DB0FF" stroke-width="2" stroke-linecap="round"/></svg>Human Signals</div>
+    <button class="tb" id="bSearch"><svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Search <kbd>⌘K</kbd></button>
+    <button class="tb" id="bSystems" aria-pressed="true"><svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Systems</button>
+    <button class="tb" id="bLayers" aria-expanded="false"><svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5 9-5zM3 13l9 5 9-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Layers</button>
+    <button class="tb" id="bSettings" aria-expanded="false" aria-label="Settings"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+  </div>
+  <div class="pop float" id="popLayers" hidden style="left:300px">
+    <h4>Layers</h4>
+    <button class="toggle" role="switch" aria-checked="false" data-layer="nervous"><span>Nervous<small>Brain, spinal cord, nerve routes</small></span><span class="sw"></span></button>
+    <button class="toggle" role="switch" aria-checked="true" data-layer="endocrine"><span>Endocrine<small>Glands emphasised</small></span><span class="sw"></span></button>
+    <button class="toggle" role="switch" aria-checked="false" data-layer="blood"><span>Blood<small>Heart and blood-borne routes</small></span><span class="sw"></span></button>
+  </div>
+  <div class="pop float" id="popSettings" hidden style="left:390px">
+    <h4>Settings</h4>
+    <button class="toggle" role="switch" aria-checked="false" id="tMotion"><span>Reduce motion<small>No travelling pulses or animated signs</small></span><span class="sw"></span></button>
+    <button class="toggle" role="switch" aria-checked="false" id="tLabels"><span>Show all labels<small>For review and teaching · L</small></span><span class="sw"></span></button>
+    <button class="toggle" role="switch" aria-checked="true" id="tTips"><span>Tips<small>One per zoom level, shown once</small></span><span class="sw"></span></button>
+  </div>
+  <div class="draft">Illustrative draft · not reviewed science</div>
+
+  <nav class="panel float" id="panel" aria-label="Systems">
+    <div class="panel-scroll">
+      <div class="sec">What happens if…</div>
+      <div id="triggers"></div>
+      <div class="divider"></div>
+      <div class="sec">Systems</div>
+      <ul class="tree" id="tree" role="tree" aria-label="Body systems"></ul>
+    </div>
+    <div class="panel-foot">Hover a signal to light its organs · S hides this panel</div>
+  </nav>
+
+  <div class="caption" id="caption" aria-live="polite"></div>
+  <div class="thought" id="thought" hidden>Thought experiment · simplified</div>
+  <div id="tips"></div>
+  <div id="cards"></div>
+
+  <div class="bottom hidden" id="bottom">
+    <div class="ribbon float" id="ribbon">
+      <div class="rb-track" id="rbTrack">
+        <div class="rb-line"></div><div class="rb-fill" id="rbFill"></div>
+        <div id="rbWays"></div>
+        <div class="rb-handle" id="rbHandle" role="slider" tabindex="0" aria-label="Time, in words" aria-valuemin="0" aria-valuemax="4" aria-valuenow="0" aria-valuetext="now"></div>
+      </div>
+      <div class="rb-words" id="rbWords"></div>
+      <div class="rb-cap" id="rbCap"></div>
+    </div>
+    <div class="pbar float" id="pbar" role="group" aria-label="Pathway controls">
+      <span class="nm" id="pName"></span>
+      <button class="playbtn" id="bPlay"><svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" id="playIcon"><path d="M7 5l12 7-12 7z" fill="currentColor"/></svg><span id="playTxt">Play pathway</span></button>
+      <div class="dots" id="dots"></div>
+      <span class="sep"></span>
+      <div class="seg" id="seg" role="group" aria-label="Route"></div>
+      <span class="chip" id="timeChip"></span>
+      <button class="tb whatif" id="bWhat" hidden>What if?</button>
+      <span class="sep"></span>
+      <button class="tb" id="bRead"><svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Read the route</button>
+      <button class="tb" id="bExit" aria-label="Leave pathway">✕</button>
+    </div>
+  </div>
+
+  <aside class="sheet float closed" id="sheet" aria-label="Read the route"></aside>
+
+  <div class="lvl-chip float" id="lvlChip">Whole body · <b>plain story</b></div>
+  <div class="zoomer float"><button id="zIn" aria-label="Zoom in">+</button><button id="zOut" aria-label="Zoom out">−</button><button id="zReset" aria-label="Whole body" style="font-size:13px">⟲</button></div>
+  <button class="mini float" id="mini" aria-label="Mini-map: zoom out to whole body"><svg id="miniSvg" viewBox="0 0 700 780" aria-hidden="true"></svg></button>
+  <div class="orient">FRONT VIEW · THE BODY’S RIGHT IS ON YOUR LEFT</div>
+  <div class="sr" id="live" aria-live="polite"></div>
+</div>
+
+<script src="js/core.js"></script>
+<script src="js/anatomy.js"></script>
+<script src="js/camera.js"></script>
+<script src="js/overlay.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/scenes/stress.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/app.js"></script>
