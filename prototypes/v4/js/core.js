@@ -8,7 +8,7 @@ const mq=window.matchMedia('(prefers-reduced-motion: reduce)');
 HS.$=$; HS.app=app;
 HS.scenes={};
 HS.userRM=false;
-HS.RM=()=>HS.userRM||mq.matches;
+HS.RM=()=>HS.userRM||mq.matches||!!HS.instant;   // instant: restoring a link applies state without animation
 HS.applyRM=()=>app.classList.toggle('rm',HS.RM());
 HS.applyRM(); if(mq.addEventListener) mq.addEventListener('change',HS.applyRM);
 HS.say=t=>{ live.textContent=''; setTimeout(()=>{ live.textContent=t; },40); };

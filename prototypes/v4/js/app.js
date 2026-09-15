@@ -48,9 +48,24 @@ document.addEventListener('keydown',e=>{
   }
 });
 
+$('#bShare').addEventListener('click',async()=>{
+  HS.syncHashNow();
+  try{ await navigator.clipboard.writeText(location.href); HS.toast('Link copied. It opens this moment, paused.'); }
+  catch(e){ HS.toast('Copy this page’s address to share this moment. It opens paused.'); }
+});
+const be=$('#bErase'); let eraseT=0;
+be.addEventListener('click',()=>{
+  if(!be.classList.contains('confirm')){ be.classList.add('confirm'); be.textContent='Tap again to erase'; clearTimeout(eraseT); eraseT=setTimeout(()=>{ be.classList.remove('confirm'); be.textContent='Erase progress'; },3000); return; }
+  clearTimeout(eraseT); be.classList.remove('confirm'); be.textContent='Erase progress';
+  if(E.route) HS.leave();
+  HS.eraseProgress(); HS.renderContinue(); HS.renderSummary(); HS.toast('Progress erased from this device.');
+});
+window.addEventListener('hashchange',()=>{ if(!HS.restoring) HS.restoreFromHash(); });
+
 /* first paint */
 HS.buildWorld(); HS.renderTriggers(); HS.renderTree();
+HS.loadProgress(); HS.renderContinue(); HS.renderSummary();
 HS.camTo('body',0);
-HS.tip('start','Start here: pick something that happens to you.',{left:326,top:92});
+HS.restoreFromHash().then(opened=>{ if(!opened) HS.tip('start','Start here: pick something that happens to you.',{left:326,top:92}); });
 if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>HS.renderOverlay());
 })(window.HS);

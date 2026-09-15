@@ -8,6 +8,10 @@ const P=HS.pathway=()=>E.scene&&E.route?E.scene.pathways[E.route]:null;
 const key=(r=E.route)=>E.sceneId+':'+r;
 const vis=HS.visitedOf=(r=E.route)=>visited[key(r)]||(visited[key(r)]=new Set());
 const isRevealed=HS.isRevealed=(r=E.route)=>!!revealed[key(r)];
+HS.progressOf=(sc,pa)=>({visited:(visited[sc+':'+pa]||new Set()).size,revealed:!!revealed[sc+':'+pa]});
+HS.exportProgress=()=>({visited:Object.fromEntries(Object.entries(visited).map(([k,v])=>[k,[...v]])),revealed:{...revealed}});
+HS.importProgress=d=>{ Object.keys(visited).forEach(k=>delete visited[k]); Object.keys(revealed).forEach(k=>delete revealed[k]); Object.entries(d.visited||{}).forEach(([k,v])=>{ visited[k]=new Set(v); }); Object.assign(revealed,d.revealed||{}); };
+HS.markRevealed=(sc,pa)=>{ revealed[sc+':'+pa]=true; };
 const TL=()=>{ const p=P(); return (p&&p.time)||E.scene.time; };   // a pathway may carry its own ribbon
 const lastT=()=>TL().length-1;
 const signOn=sg=>sg.on.includes(E.tIdx)&&(!sg.paths||sg.paths.includes(E.route));
@@ -42,6 +46,7 @@ function leave(cam){
   HS.light.lit=new Set(); HS.light.dim=null; HS.applyOrgs();
   setTime(0); applySigns(); E.timeRef=null; HS.setLayer('nervous',false); HS.closeRead(false); HS.setAtmos(null); HS.setNight(0);
   if(cam) HS.camTo('body',700);
+  HS.renderContinue(); HS.syncHash();
 }
 HS.leave=()=>leave(true);
 
@@ -67,6 +72,7 @@ function setTime(i,user){
   (T[i].show||[]).forEach(id=>HS.setRoute(id,'on'));
   applySigns(); HS.renderOverlay();
   if(user) HS.say(HS.strip(T[i].c));
+  HS.syncHash();
 }
 HS.setTime=setTime;
 (function bindRibbon(){
@@ -143,6 +149,7 @@ HS.setPlayUI=setPlayUI;
 async function enterPathway(r,autoplay){
   const S=E.scene; stopPlay(); closeTry(); closeCell(); restoreWhatIf(false);
   E.route=r; E.cur=-1; const p=S.pathways[r];
+  HS.setLast(E.sceneId,r); HS.renderContinue();
   if(E.timeRef!==TL()){ buildRibbon(); setTime(0); }
   if(p.minTime&&E.tIdx<p.minTime) setTime(p.minTime);
   $('#pName').textContent=p.name; $('#timeChip').textContent=p.chip;
@@ -156,6 +163,7 @@ async function enterPathway(r,autoplay){
   HS.light.dim=new Set(p.organs); HS.light.lit=new Set(p.organs); HS.applyOrgs();
   HS.selectNode(p.node); renderDots(); setPlayUI(); HS.renderOverlay();
   await HS.camTo(p.region,700);
+  HS.syncHash();
   if(p.enterTip) HS.tip(p.enterTip.key,p.enterTip.text,p.enterTip.pos);
   if(autoplay) play();
 }
@@ -164,7 +172,7 @@ function stopPlay(){ if(E.playing){ E.playing=false; HS.cancelTravel(); setPlayU
 HS.stopPlay=stopPlay;
 async function goHot(i,user){
   const p=P(), h=p.hots[i]; if(user){ stopPlay(); closeTry(); }
-  E.cur=i; vis().add(i); renderDots();
+  E.cur=i; vis().add(i); renderDots(); HS.saveSoon(); HS.syncHash();
   if(E.tIdx<h.t) setTime(h.t);
   HS.say(`Step ${h.num}: ${h.one}`);
   if(user){ await HS.camTo(h.region,650); if(h.seg) await HS.travel(h.seg,900); }
@@ -232,7 +240,8 @@ async function checkTry(show){
   $('#tryCard .acts').innerHTML=`<span></span><button class="btn p" id="tryCalm">${g.calmButton}</button>`;
   $('#tryCalm').onclick=()=>{ closeTry(); setTime(lastT(),true); HS.camTo('body',700); if(g.afterTip) setTimeout(()=>HS.tip(g.afterTip.key,g.afterTip.text,g.afterTip.pos),900); }; $('#tryCalm').focus();
   HS.say(fb.head+' '+fb.txt);
-  revealed[key()]=true; g.routes.forEach(id=>HS.setRoute(id,'on',{draw:true})); renderDots(); HS.renderOverlay();
+  if(!show) HS.recordAttempt({scene:E.sceneId,path:E.route,type:E.tryCtx.exposed?'practice':E.tryCtx.why?'assisted':'unassisted',correct:all&&!wrong});
+  revealed[key()]=true; g.routes.forEach(id=>HS.setRoute(id,'on',{draw:true})); renderDots(); HS.renderOverlay(); HS.saveSoon(); HS.syncHash();
   await HS.sleep(HS.RM()?0:650);
   for(const id of g.routes){ if(!isRevealed()||E.whatIf) break; await HS.travel(id,1100); }
 }

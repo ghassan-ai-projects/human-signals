@@ -34,11 +34,17 @@
     <button class="toggle" role="switch" aria-checked="false" id="tMotion"><span>Reduce motion<small>No travelling pulses or animated signs</small></span><span class="sw"></span></button>
     <button class="toggle" role="switch" aria-checked="false" id="tLabels"><span>Show all labels<small>For review and teaching · L</small></span><span class="sw"></span></button>
     <button class="toggle" role="switch" aria-checked="true" id="tTips"><span>Tips<small>One per zoom level, shown once</small></span><span class="sw"></span></button>
+    <div class="divider"></div>
+    <h4>Your progress</h4>
+    <div class="psum" id="psum">Nothing explored yet</div>
+    <button class="erase" id="bErase">Erase progress</button>
+    <div class="psub">Stored only on this device. Nothing is sent anywhere.</div>
   </div>
   <div class="draft">Illustrative draft · not reviewed science</div>
 
   <nav class="panel float" id="panel" aria-label="Systems">
     <div class="panel-scroll">
+      <div id="continue"></div>
       <div class="sec">What happens if…</div>
       <div id="triggers"></div>
       <div class="divider"></div>
@@ -73,6 +79,7 @@
       <button class="tb whatif" id="bWhat" hidden>What if?</button>
       <span class="sep"></span>
       <button class="tb" id="bRead"><svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Read the route</button>
+      <button class="tb" id="bShare" aria-label="Copy a link to this moment" title="Copy a link to this moment"><svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
       <button class="tb" id="bExit" aria-label="Leave pathway">✕</button>
     </div>
   </div>
@@ -96,4 +103,5 @@
 <script src="js/scenes/meal.js"></script>
 <script src="js/scenes/dark.js"></script>
 <script src="js/engine.js"></script>
+<script src="js/store.js"></script>
 <script src="js/app.js"></script>

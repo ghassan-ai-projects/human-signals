@@ -21,7 +21,7 @@ HS.showInfoCard=function(key,anchorEl){
 /* ---------- toast & tips ---------- */
 let toastT=0; const toastEl=document.createElement('div'); toastEl.className='tip float'; toastEl.style.cssText='left:50%;top:84px;transform:translateX(-50%);display:none'; toastEl.setAttribute('role','status'); app.appendChild(toastEl);
 HS.toast=m=>{ toastEl.textContent=m; toastEl.style.display='flex'; clearTimeout(toastT); toastT=setTimeout(()=>toastEl.style.display='none',2800); };
-const tipsSeen=new Set(), tipsBox=$('#tips'); HS.tipsOn=true;
+const tipsSeen=HS.tipsSeen=new Set(), tipsBox=$('#tips'); HS.tipsOn=true;
 HS.tip=function(key,text,pos){
   if(!HS.tipsOn||tipsSeen.has(key)) return; tipsSeen.add(key);
   tipsBox.innerHTML='';   // one tip at a time: a newer tip replaces the older one
@@ -47,6 +47,20 @@ HS.TRIGGERS=[
 ];
 HS.renderTriggers=function(){
   $('#triggers').innerHTML=HS.TRIGGERS.map(t=>{ const S=HS.scenes[t.id]; return `<button class="trig${S?'':' soon'}" data-trigger="${t.id}" aria-pressed="false"><span class="ti"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">${t.icon}</svg></span><span>${t.title}<small>${S?S.trigger.sub:'Not in this concept'}</small></span></button>`; }).join('');
+};
+/* Continue: the last pathway, with how much of it has been explored (quiet, no score) */
+HS.renderContinue=function(){
+  const box=$('#continue'), l=HS.store&&HS.store.last, S=l&&HS.scenes[l.scene], p=S&&S.pathways[l.path];
+  const here=p&&HS.E.state==='triggered'&&HS.E.sceneId===l.scene&&HS.E.route===l.path;
+  if(!p||here){ box.innerHTML=''; return; }
+  const pr=HS.progressOf(l.scene,l.path), total=p.hots.length+(p.gate?1:0), done=pr.visited+(p.gate&&pr.revealed?1:0);
+  if(!done){ box.innerHTML=''; return; }
+  box.innerHTML=`<button class="trig continue" data-cont="1"><span class="ti"><svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5l12 7-12 7z" fill="currentColor"/></svg></span><span>Continue · ${p.name}<small>${S.trigger.title} · ${done} of ${total} explored</small></span></button><div class="divider"></div>`;
+};
+$('#continue').addEventListener('click',e=>{ if(e.target.closest('[data-cont]')){ const l=HS.store.last; HS.openPathway(l.scene,l.path,false); } });
+HS.renderSummary=function(){
+  const d=HS.exportProgress(), v=Object.values(d.visited).reduce((a,x)=>a+x.length,0), r=Object.values(d.revealed).filter(Boolean).length, a=(HS.store.attempts||[]).length;
+  $('#psum').textContent=v||r||a?`${v} steps visited · ${r} feedback ${r===1?'loop':'loops'} revealed · ${a} ${a===1?'answer':'answers'} checked`:'Nothing explored yet';
 };
 HS.syncTriggers=()=>document.querySelectorAll('[data-trigger]').forEach(b=>b.setAttribute('aria-pressed',HS.E.sceneId===b.dataset.trigger&&HS.E.state==='triggered'));
 $('#triggers').addEventListener('click',e=>{ const b=e.target.closest('[data-trigger]'); if(b) HS.clickTrigger(b.dataset.trigger); });

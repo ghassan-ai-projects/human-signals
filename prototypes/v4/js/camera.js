@@ -26,7 +26,10 @@ HS.updateView=function(){
   if(L!==lastLevel){ lastLevel=L; $('#lvlChip').innerHTML=CHIP[L]; HS.onLevel(L); }
   const mv=$('#mv'); if(mv){ mv.setAttribute('x',vb.x); mv.setAttribute('y',vb.y); mv.setAttribute('width',vb.w); mv.setAttribute('height',vb.h); }
   HS.renderOverlay();
+  if(HS.syncHash) HS.syncHash();
 };
+/* frame a world point at a zoom ratio relative to the whole-body fit (used by links) */
+HS.setView=function(cx,cy,z){ const W=app.clientWidth,H=app.clientHeight, s=bodyScale()*Math.max(.85,Math.min(18,z)); vb={x:cx-W/2/s,y:cy-H/2/s,w:W/s,h:H/s}; cam.region=null; HS.updateView(); };
 HS.camTo=function(name,dur=650,pad=.12){
   cam.region=name; const t=targetVB(HS.REG[name],pad);
   cancelAnimationFrame(camRaf);
