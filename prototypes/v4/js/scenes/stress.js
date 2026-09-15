@@ -42,6 +42,7 @@ HS.scenes.stress={
    reflect:{q:'Why does the stress response eventually settle itself?',model:'Cortisol acts back on the pituitary and the hypothalamus to slow its own release — negative feedback — so the response winds down instead of running away.'},
    gate:{
     routes:['f1','f2'],at:['f1',.5],labelRoutes:['f1'],tipKey:'ghost',from:'adr',loopFrom:'acth',
+    unrevealed:'The dashed line means this step has not been revealed yet. Open the ? dot to work it out.',
     aria:'Try it: something acts back here',ariaRevealed:'Feedback: cortisol acts back on the pituitary and hypothalamus, revealed',dotAria:'Try it: what acts back?',
     calmBlocked:'The body can’t calm down until something acts back. Open Try it? on the dashed line.',
     calmButton:'Watch the body calm down',

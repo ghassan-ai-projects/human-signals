@@ -35,6 +35,7 @@ HS.scenes.meal={
    reflect:{q:'Between meals, how does the body keep blood glucose from falling too low?',model:'The pancreas releases glucagon; it tells the liver to break down stored glycogen and release glucose into the blood.'},
    gate:{
     routes:['fbGlu'],at:['fbGlu',.5],labelRoutes:['fbGlu'],tipKey:'mealGhost',from:'liver',loopFrom:'glucagon',
+    unrevealed:'The dashed line means this step has not been revealed yet. Open the ? dot to work it out.',
     aria:'Try it: something turns glucagon down',ariaRevealed:'Feedback: rising glucose acts back on the pancreas, revealed',dotAria:'Try it: what turns glucagon down?',
     calmBlocked:'Glucose can’t settle until something turns glucagon down. Open Try it? on the dashed line.',
     calmButton:'Watch glucose settle',
@@ -83,6 +84,7 @@ HS.scenes.meal={
    reflect:{q:'After a meal, how does the body keep blood glucose from rising too high?',model:'The pancreas releases insulin; it helps the liver and the muscles take glucose out of the blood to use or store.'},
    gate:{
     routes:['fbIns'],at:['fbIns',.5],labelRoutes:['fbIns'],tipKey:'fedGhost',from:'muscle',loopFrom:'insM',
+    unrevealed:'The dashed line means this step has not been revealed yet. Open the ? dot to work it out.',
     aria:'Try it: something turns insulin down',ariaRevealed:'Feedback: falling glucose acts back on the pancreas, revealed',dotAria:'Try it: what turns insulin down?',
     calmBlocked:'Glucose can’t settle until something turns insulin down. Open Try it? on the dashed line.',
     calmButton:'Watch glucose settle',

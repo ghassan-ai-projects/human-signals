@@ -88,13 +88,26 @@ const ghost = await page.evaluate(() => {
   const g = routes.find(isGhost);
   const revealed = routes.filter((p) => !isGhost(p));
   const cs = g ? getComputedStyle(g) : null;
+  const labs = [...document.querySelectorAll('#labels .lab')];
+  const ghostLabs = labs.filter((l) => /not revealed|not shown|hidden yet/i.test(l.textContent));
+  /* is the wording attached to the dashed line? measure against the ? badge */
+  const q = document.querySelector('#labels .hs.q');
+  let anchorDist = null;
+  if (q && ghostLabs.length) {
+    const a = q.getBoundingClientRect(), b = ghostLabs[0].getBoundingClientRect();
+    anchorDist = Math.round(Math.hypot((a.x + a.width / 2) - (b.x + b.width / 2), (a.y + a.height / 2) - (b.y + b.height / 2)));
+  }
+  const tip = document.querySelector('.tip span');
   return {
     found: !!g,
     opacity: cs ? +cs.opacity : null,
     dash: g ? g.getAttribute('stroke-dasharray') : null,
     revealedOpacity: revealed.length ? +getComputedStyle(revealed[0]).opacity : null,
-    ghostWords: [...document.querySelectorAll('#labels .lab')].map((l) => l.textContent.trim())
-      .filter((t) => /not|yet|reveal|acts back|\?/i.test(t)),
+    ghostWords: ghostLabs.map((l) => l.textContent.trim()),
+    anchored: anchorDist != null && anchorDist < 240,
+    anchorDist,
+    hasInstruction: !!tip && /revealed|try it|\? dot/i.test(tip.textContent),
+    instruction: tip ? tip.textContent.trim().slice(0, 90) : '',
     hasGate: !!(window.HS.pathway() && window.HS.pathway().gate),
   };
 });
@@ -110,6 +123,12 @@ rec('5', 'the unrevealed route is visually distinct from revealed and faint rout
   `ghost op=${ghost.opacity} vs faint op=${ghost.revealedOpacity}`);
 rec('5', 'the unrevealed state is described in words on the body, not only after opening Read',
   ghost.ghostWords.length > 0, ghost.ghostWords.join(' | ') || 'no wording found');
+/* The words must be ATTACHED to the dashed line, not floating elsewhere on the stage. */
+rec('5', 'the unrevealed wording sits on the unrevealed line, not somewhere else',
+  ghost.anchored === true, `distance from the ? badge = ${ghost.anchorDist}px`);
+/* And the instruction — what to DO about it — must be reachable through the tip channel. */
+rec('5', 'the learner is told what to do about the unrevealed line',
+  ghost.hasInstruction === true, ghost.instruction || 'no instruction found');
 rec('5', 'the unrevealed line is operable (leads to the gated Try it?)', ghost.hasGate,
   ghost.hasGate ? 'scene has a gate' : 'no gate on this pathway');
 

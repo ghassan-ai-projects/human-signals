@@ -24,6 +24,15 @@ HS.grammarLegend=function(){
 };
 HS.ov={hoverKey:null,showAll:false};
 
+/* The unrevealed state is said in the SHAPE first and the words second.
+   A dashed line on its own is the conventional mark for "association", which is exactly the
+   misconception §10 task 5 tests for. So the unrevealed route is drawn as an unfinished line:
+   it carries no end glyph (every other route kind has one — arrow / bar / diamond), and the
+   `?` badge sits at the point where it stops. That asymmetry is the thing made loud.
+   The label is deliberately one short phrase, because the playing state of stress:slow
+   already reaches the 8-label ceiling; the "open the ? dot" instruction lives in HS.tip. */
+HS.GHOST_WORD='Not revealed yet';
+
 /* routes */
 let ROUTES={};
 const rstate=HS.rstate={}, pathEl={};
@@ -148,7 +157,19 @@ HS.renderOverlay=function(){
   const hl=hr||(hh&&hh.seg);
   Object.entries(pathEl).forEach(([id,el])=>el.classList.toggle('hl',id===hl));
   const items=HS.getLabels().slice();
-  if(hr){ const ghost=rstate[hr]==='ghost', r=ROUTES[hr]; items.push({key:'hovroute',text:ghost?'Something acts back here · Try it?':(r.label||HS.gateLabel(hr)||'feedback'),cls:(ghost?'badge':'sig')+' hover',anchor:HS.ov.hoverAt||HS.ptOn(hr,.5),dx:14,dy:-20,noLeader:true}); }
+  /* The unrevealed route names its own state, always on, wherever the learner is. Pushed
+     FIRST so it wins collision resolution and cannot be dropped by the 8-label cap.
+     No level test: dark:night opens at organ level, so a body-only gate would silently skip
+     one of the four gated pathways. Suppressed only while a gated card is open, where the
+     card itself carries the words. */
+  const gp=HS.pathway&&HS.pathway();
+  const ghostOn=gp&&gp.gate&&!HS.isRevealed()&&!HS.E.tryMode&&!HS.E.whatIf;
+  if(ghostOn){
+    const g=gp.gate;
+    items.unshift({key:'ghostword',text:HS.GHOST_WORD,cls:'badge ghostword',
+      anchor:HS.ptOn(g.at[0],g.at[1]),dx:0,dy:-30,aria:true,noLeader:false});
+  }
+  if(hr){ const ghost=rstate[hr]==='ghost', r=ROUTES[hr]; if(!ghost) items.push({key:'hovroute',text:(r.label||HS.gateLabel(hr)||'feedback'),cls:'sig hover',anchor:HS.ov.hoverAt||HS.ptOn(hr,.5),dx:14,dy:-20,noLeader:true}); }
   if(hh&&hh.tip&&!items.some(i=>i.key==='one'&&i.org===hh.org)){ const d=hh.dx||0; items.push({key:'hovhot',text:hh.tip,cls:'one hover',anchor:hh.anchor,dx:d>=0?d+24:d-24,dy:hh.dy||0,noLeader:true}); }
   if(HS.ov.showAll){ HS.orgKeys().forEach(k=>{ if(!items.some(i=>i.org===k)) items.push({key:'all-'+k,org:k,text:HS.orgName(k),anchor:HS.wc(k),dx:34,dy:-20,info:k}); }); }
   const hk=HS.ov.hoverKey;
@@ -163,7 +184,7 @@ HS.renderOverlay=function(){
     const [px,py]=project(it.anchor[0],it.anchor[1]); if(px<-20||py<40||px>W+20||py>H+20) return;
     seen.add(it.key); let el=labEls.get(it.key);
     if(!el){ el=document.createElement('div'); labelsEl.appendChild(el); labEls.set(it.key,el); }
-    const html=`<span>${it.text}</span>${it.lead?`<button class="leadchip" title="${it.lead.why}">↗ ${HS.scenes[it.lead.scene].pathways[it.lead.path].name}</button>`:''}${it.cell?'<button class="cell" data-cell="1">Cell ›</button>':''}${it.info?`<button class="i" aria-label="About ${it.text}">i</button>`:''}`;
+    const html=`<span${it.aria?' aria-hidden="true"':''}>${it.text}</span>${it.lead?`<button class="leadchip" title="${it.lead.why}">↗ ${HS.scenes[it.lead.scene].pathways[it.lead.path].name}</button>`:''}${it.cell?'<button class="cell" data-cell="1">Cell ›</button>':''}${it.info?`<button class="i" aria-label="About ${it.text}">i</button>`:''}`;
     if(el._html!==html){ el.innerHTML=html; el._html=html; }
     el.className='lab'+(it.cls?' '+it.cls:''); el._it=it;
     const [ax,ay]=project(it.anchor[0],it.anchor[1]); const w=el.offsetWidth, h=el.offsetHeight;

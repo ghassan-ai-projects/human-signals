@@ -112,7 +112,15 @@ HS.getLabels=function(){
   if(E.cur>=0){ const h=p.hots[E.cur]; out.push({key:'one',org:h.org,text:HS.advLine(h)||h.one,cls:'one'+(HS.advLine(h)?' adv':''),anchor:HS.wc(h.org),dx:h.ldx,dy:h.ldy,info:h.org,cell:L!=='body'&&h.cell,lead:!E.tryMode&&!E.whatIf&&!E.playing&&h.leads}); }
   HS.lodLabels(L).forEach(l=>out.push(l));
   const pr=HS.pulse.on&&S.routes[HS.pulse.route];
-  if(pr&&pr.label) out.push({key:'rl-'+HS.pulse.route,text:HS.routeText(HS.pulse.route),cls:'sig',anchor:HS.ptOn(HS.pulse.route,pr.at),dx:pr.dx,dy:pr.dy,noLeader:true});
+  /* While a pulse is travelling, its route name is worth naming — but only if the current
+     step's own label does not already name the same thing. During playback both used to show
+     ("Hypothalamus releases CRH" AND "CRH · portal"), which is duplicate information paying
+     twice for one label slot; that duplication is what pushed stress:slow to 9 labels, over
+     the §10 ceiling of 8. Suppressing the redundant one removes repetition, not content. */
+  const stepNames=(E.cur>=0&&p.hots[E.cur])?((HS.advLine(p.hots[E.cur])||p.hots[E.cur].one)||''):'';
+  const routeFirst=t=>String(t||'').toLowerCase().split(/[·—-]/)[0].replace(/\s+/g,' ').trim();
+  if(pr&&pr.label&&!(E.cur>=0&&stepNames.toLowerCase().includes(routeFirst(HS.routeText(HS.pulse.route)))))
+    out.push({key:'rl-'+HS.pulse.route,text:HS.routeText(HS.pulse.route),cls:'sig',anchor:HS.ptOn(HS.pulse.route,pr.at),dx:pr.dx,dy:pr.dy,noLeader:true});
   else if(L!=='body'){ p.draw.concat(p.gate&&isRevealed()?p.gate.labelRoutes:[]).forEach(id=>{ const r=S.routes[id]; if(HS.rstate[id]==='on'&&r.label) out.push({key:'rl-'+id,text:HS.routeText(id),cls:'sig',anchor:HS.ptOn(id,r.at),dx:r.dx,dy:r.dy,noLeader:true}); }); }
   if(L==='body'){
     const has=k=>out.some(o=>o.org===k);
@@ -183,6 +191,11 @@ async function enterPathway(r,autoplay){
   await HS.camTo(p.region,700);
   HS.syncHash();
   if(p.enterTip) HS.tip(p.enterTip.key,p.enterTip.text,p.enterTip.pos);
+  /* The unrevealed line's one-time instruction. The always-on label on the body stays short
+     ("Not revealed yet"); this is where the learner is told what to DO about it, through the
+     existing one-shot, dismissible, Settings-switchable tip channel rather than a second
+     permanent label. Shown only while the gate is still unrevealed. */
+  if(p.gate&&p.gate.unrevealed&&!isRevealed(r)) HS.tip('ghosthow_'+E.sceneId+'_'+r,p.gate.unrevealed,{right:16,bottom:214});
   if(autoplay&&E.route===r&&!(HS.RB&&HS.RB.active)) play();   // a stale autoplay never fires into another pathway or a challenge
 }
 HS.enterPathway=enterPathway;

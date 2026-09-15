@@ -24,6 +24,7 @@ HS.scenes.dark={
    reflect:{q:'As it gets dark, how does the body prepare for sleep?',model:'The eyes sense less light, the body clock signals the pineal gland, and it releases melatonin into the blood, which helps the brain and body get ready for sleep.'},
    gate:{
     routes:['fbMel'],at:['fbMel',.5],labelRoutes:['fbMel'],tipKey:'darkGhost',from:'pineal',blocksEnd:false,loopFrom:'clockPineal',
+    unrevealed:'The dashed line means this step has not been revealed yet. Open the ? dot to work it out.',
     aria:'Try it: melatonin acts back somewhere',ariaRevealed:'Melatonin acts back on the body clock, revealed',dotAria:'Try it: where does melatonin act back?',
     calmButton:'Watch the morning come',
     afterTip:{key:'darkWhatIf',text:'Try What if? in the pathway bar: what if the lights stay on?',pos:{right:16,bottom:214}},
