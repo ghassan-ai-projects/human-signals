@@ -217,6 +217,42 @@ rec('8', 'the text alternative contrasts fast and slow in words', t78.hasContras
 rec('8', 'no invented measured times leak into the explanation', t78.numbers.length === 0,
   t78.numbers.join(', ') || 'none');
 
+/* V4-BR-03: explanatory blocks carry their own truthful evidence state. */
+const claimStatus = await page.evaluate(() => {
+  const readStatus = () => {
+    const read = document.querySelector('#sheet .mechanism-block');
+    const status = read && read.querySelector('[data-evidence-status]');
+    return status ? {
+      state: status.dataset.evidenceStatus,
+      labels: [...status.querySelectorAll('span')].map((span) => span.textContent.trim()),
+    } : { state: null, labels: [] };
+  };
+  window.HS.openRead();
+  const read = readStatus();
+  const passport = (() => {
+    window.HS.setAdvanced(true, false);
+    window.HS.openPassport('cortisol');
+    const block = document.querySelector('#sheet .passport-mechanism');
+    const item = block && block.querySelector('[data-evidence-status]');
+    return item ? {
+      state: item.dataset.evidenceStatus,
+      labels: [...item.querySelectorAll('span')].map((span) => span.textContent.trim()),
+    } : { state: null, labels: [] };
+  })();
+  const expected = ['Illustrative draft; not scientifically reviewed', 'Source: no source assigned'];
+  const hasPositiveReviewedLabel = (status) => status.state === 'reviewed'
+    || status.labels.some((label) => /(?:status|claim|source|content)\s*:\s*reviewed\b/i.test(label));
+  return { read, passport, expected, readHasPositiveReviewed: hasPositiveReviewedLabel(read), passportHasPositiveReviewed: hasPositiveReviewedLabel(passport) };
+});
+rec('V4-BR-03', 'Read exposes adjacent truthful evidence status',
+  claimStatus.read.labels.join(' | ') === claimStatus.expected.join(' | ')
+    && claimStatus.read.state === 'illustrative' && !claimStatus.readHasPositiveReviewed,
+  claimStatus.read.labels.join(' | ') || 'missing');
+rec('V4-BR-03', 'every passport mechanism block exposes status without reviewed labeling',
+  claimStatus.passport.labels.join(' | ') === claimStatus.expected.join(' | ')
+    && claimStatus.passport.state === 'illustrative' && !claimStatus.passportHasPositiveReviewed,
+  claimStatus.passport.labels.join(' | ') || 'missing');
+
 /* ---- Task 7/8, behavioural half: an ungraded explanation moment must be reachable
    ON DEMAND in every pathway, must not be scored or recorded, and must not stack
    dialogs. The text alternative already carries the mechanism (checked above); this

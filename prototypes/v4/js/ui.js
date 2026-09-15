@@ -294,6 +294,9 @@ HS.closeSearch=function(focus){ const d=$('#palette'); if(!d) return; d.remove()
 document.addEventListener('pointerdown',e=>{ if($('#palette')&&!e.target.closest('#palette,#bSearch')) HS.closeSearch(false); });
 
 /* ---------- Read the route ---------- */
+HS.evidenceStatus=function(){
+  return `<div class="evidence-status" data-evidence-status="illustrative" role="note" aria-label="Evidence status"><span>Illustrative draft; not scientifically reviewed</span><span>Source: no source assigned</span></div>`;
+};
 HS.openRead=function(){
   const S=HS.E.scene; if(!S) return; const s=$('#sheet');
   HS.layers.start('read',$('#bRead'),focus=>HS.closeRead(focus),$('#bRead'));
@@ -305,7 +308,7 @@ HS.openRead=function(){
      route card carries it too, and this is the text-alternative home for it. */
   s.innerHTML=`<button class="x" aria-label="Close">×</button><h3>Read the route</h3><p class="sub">${S.trigger.title} · illustrative draft, not reviewed science</p>
   <p class="schem">Routes are schematic: a line is not a drawing of a blood vessel or a nerve. Its texture shows how the message is carried and its end shows what it does.</p>
-  ${HS.E.route?`<span class="eyebrow">${S.pathways[HS.E.route].name} at a glance</span><div class="diagram">${HS.causalSVG(S,HS.E.route,HS.isRevealed)}</div>`:''}${S.read({revealed:HS.isRevealed})}
+  ${HS.E.route?`<span class="eyebrow">${S.pathways[HS.E.route].name} at a glance</span><div class="diagram">${HS.causalSVG(S,HS.E.route,HS.isRevealed)}</div>`:''}<div class="mechanism-block">${HS.evidenceStatus()}${S.read({revealed:HS.isRevealed})}</div>
   <h4>About routes</h4><p class="sub" style="margin:0 0 8px">Routes show that a message travels and where it arrives. They are not drawings of blood vessels or nerves. The line's texture shows how the message is carried; the arrow end shows what it does. Time words show order and rough timescale, not measured time.</p>${HS.grammarLegend()}`;
   s.classList.remove('closed'); app.classList.add('reader-focus'); s.scrollTop=0;   // match openMore/openPassport: always open at the top
   HS.layers.mount('read',s); s.querySelector('.x').onclick=()=>HS.closeRead(true); s.querySelector('.x').focus();
