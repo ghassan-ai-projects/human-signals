@@ -273,7 +273,34 @@ rec('rm:stage', 'nothing on stage animates or transitions under reduced motion',
   rmAnim.length === 0, rmAnim.slice(0, 6).join(' | ') || 'clean');
 await page.evaluate(() => { window.HS.userRM = false; window.HS.applyRM(); });
 
-/* ---------- 4. routes and hotspots are the most salient marks (squint proxy) ---------- */
+/* ---------- 5. text scales with the user's font size (WCAG 2.2 · 1.4.4) ----------
+   The reading UI must respond to a larger base font size, not just to browser zoom. This
+   caught a real gap: body used rem but the interface components were hardcoded px, so the
+   primary navigation did not grow at all when the base size doubled. */
+await page.setViewportSize({ width: 1440, height: 900 });
+await page.evaluate(() => window.HS.openPathway('stress', 'slow', false));
+await page.waitForTimeout(600);
+const scale = await page.evaluate(() => {
+  const px = (s) => { const e = document.querySelector(s); return e ? parseFloat(getComputedStyle(e).fontSize) : null; };
+  const w = (s) => { const e = document.querySelector(s); return e ? parseFloat(getComputedStyle(e).width) : null; };
+  return { trig: px('#triggers .trig'), sec: px('.sec'), row: px('.row'), panel: w('.panel') };
+});
+await page.evaluate(() => { document.documentElement.style.fontSize = '200%'; });
+await page.waitForTimeout(500);
+const scale2 = await page.evaluate(() => {
+  const px = (s) => { const e = document.querySelector(s); return e ? parseFloat(getComputedStyle(e).fontSize) : null; };
+  const w = (s) => { const e = document.querySelector(s); return e ? parseFloat(getComputedStyle(e).width) : null; };
+  return { trig: px('#triggers .trig'), sec: px('.sec'), row: px('.row'), panel: w('.panel') };
+});
+await page.evaluate(() => { document.documentElement.style.fontSize = ''; });
+rec('text-zoom', 'the reading UI doubles its text at 200% base font size',
+  scale.trig != null && scale2.trig >= scale.trig * 1.9 && scale2.sec >= scale.sec * 1.9 && scale2.row >= scale.row * 1.9,
+  `trig ${scale.trig}→${scale2.trig} · sec ${scale.sec}→${scale2.sec} · row ${scale.row}→${scale2.row}`);
+rec('text-zoom', 'text containers grow with the text so it is not cramped',
+  scale.panel != null && scale2.panel >= scale.panel * 1.9,
+  `panel ${scale.panel}→${scale2.panel}`);
+
+/* ---------- 6. routes and hotspots are the most salient marks (squint proxy) ---------- */
 await page.setViewportSize({ width: 1440, height: 900 });
 await page.evaluate(() => window.HS.openPathway('stress', 'slow', false));
 await page.waitForTimeout(700);
