@@ -325,12 +325,15 @@ rec('text-zoom', 'the scene caption is not hidden under the panel at 200%',
 /* The 200% checks above run at 1440; the draft banner and the ribbon words failed at the
    smallest supported width (V4-R2-RR-03), where the banner grew over the toolbar and
    mouse-blocked Layers/Hints/Settings and the 24px time words collided in the 18px strip.
-   Both measured here at 1024x768, at 200%, not inferred from the wider run. */
+   Both measured here at 1024x768, at 200%, not inferred from the wider run. The banner then
+   relocated onto the orientation line (V4-R2-RR-04), so the whole top-right stack is
+   asserted disjoint here: toolbar → draft → orient → caption. */
 await page.setViewportSize({ width: 1024, height: 768 });
 await page.evaluate(() => { document.documentElement.style.fontSize = '200%'; });
 await page.waitForTimeout(600);
 const big1024 = await page.evaluate(() => {
   const d = document.querySelector('.draft').getBoundingClientRect();
+  const o = document.querySelector('.orient').getBoundingClientRect();
   const covered = ['bLayers', 'bHints', 'bSettings'].map((id) => {
     const b = document.querySelector(`#${id}`).getBoundingClientRect();
     const ox = Math.max(0, Math.min(d.right, b.right) - Math.max(d.left, b.left));
@@ -343,11 +346,17 @@ const big1024 = await page.evaluate(() => {
   let pairs = 0;
   for (let i = 0; i < words.length - 1; i++)
     if (Math.min(words[i].right, words[i + 1].right) - Math.max(words[i].left, words[i + 1].left) > 0) pairs++;
-  return { covered, pairs };
+  const cap = document.querySelector('.caption').getBoundingClientRect();
+  const inter = (a, c) => Math.round(Math.max(0, Math.min(a.right, c.right) - Math.max(a.left, c.left)))
+    * Math.round(Math.max(0, Math.min(a.bottom, c.bottom) - Math.max(a.top, c.top)));
+  return { covered, pairs, draftOrient: inter(d, o), orientCap: inter(o, cap), draftCap: inter(d, cap) };
 });
 rec('text-zoom@1024', 'the draft banner leaves Layers/Hints/Settings visible and clickable at 200%',
   big1024.covered.every((c) => c.overlap === 0 && c.hit === c.id),
   big1024.covered.map((c) => `${c.id}: ${c.overlap}px² hit=${c.hit}`).join(' · '));
+rec('text-zoom@1024', 'the draft banner and the orientation line stack clear of each other and the caption at 200%',
+  big1024.draftOrient === 0 && big1024.orientCap === 0 && big1024.draftCap === 0,
+  `draft∩orient=${big1024.draftOrient} orient∩cap=${big1024.orientCap} draft∩cap=${big1024.draftCap}`);
 rec('text-zoom@1024', 'the time ribbon words do not overlap each other at 200%',
   big1024.pairs === 0, `${big1024.pairs} overlapping pairs`);
 await page.evaluate(() => { document.documentElement.style.fontSize = ''; });
