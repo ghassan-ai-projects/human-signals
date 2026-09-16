@@ -198,3 +198,60 @@ check at 1024 and 1280, the quality-bar run with the added draft-vs-orient regre
 check, and confirmation that nothing else moved — then all three pillars stand at 5 to the
 bar's letter, with the learner-observation and anatomy/science gates explicitly open by
 design.
+
+---
+
+## 10. Final narrow pass — definitive (HEAD `ed9de9b`, fixes `c1fc014` / `31fab06`)
+
+Method: my own probe (`coverage/v4-r2-rr/probe-11-final.mjs`), fresh contexts, own
+measurements — no implementer output trusted; screenshots `validation-v4-r2rr-final-200-1024.png`,
+`-200-1280.png`, `validation-v4-r2rr-final-thought-1024.png`.
+
+### 10.1 RR-04 and RR-05 re-verification
+
+| Check | Verdict | Independent measurement |
+| --- | --- | --- |
+| RR-04 disjoint top-right bands (`c1fc014`) | **PASS** | At 1024×768 and 1280×800 @200% root font: `draft ∩ orient` = **0 px²** (was 5,675), `draft ∩ caption` = 0, `orient ∩ caption` = 0; band gaps measured 4.0 / 3.61 / 4.5px (the 3.61px draft→orient gap is sub-pixel rounding of the pill's border-box — no overlap either way); all five toolbar buttons at 0 px² from both banner and line and hit-test to themselves; orient text intact, `pointer-events:none` on both passive layers; caption ∩ panel 0; ribbon word overlaps 0. In my measured state the orient line ∩ hotspot pills was 0 with the hotspot hit-testable (the disclosed 304px² tail-graze is state-dependent label placement; the line is passive, the control stays clickable — accepted residual). `validation-v4-r2rr-final-200-1024.png` / `-200-1280.png` |
+| RR-05 thought tag band (`31fab06`) | **PASS** | At both widths @200%, What if? open on stress:slow after reveal: tag ∩ caption = **0** (was 3,130 at 1024), tag ∩ `#wiCard` = **0** (was 17,401), tag ∩ panel = 0, tag ∩ ribbon = 0, tag ∩ pathway bar = 0. The only non-zero is tag ∩ `#bottom` (1,076px² at 1024, 674px² at 1280) — the transparent flex wrapper's empty corner; both visible children measure 0, so nothing is visually or interactively affected. `validation-v4-r2rr-final-thought-1024.png` |
+
+### 10.2 Judgement of the disclosed What-if card growth at 200%
+
+After "See what happens" at 1024×768 @200% the result card grows to [368,96 → 1008,675] — still **fully inside the viewport**, with the Restore button visible, hit-testable and working, the tag/caption/card intersections all 0, and the ribbon caption readable beside it. A modal the learner opened covering part of the stage is ordinary dialog behaviour at every text size; unlike the fixed defects, nothing static is misplaced, no control is blocked, and one Escape/click restores the stage (verified). **Inside the bar** — accepted as the documented residual; if polish is ever wanted, capping the card height with internal scroll at large base fonts is the natural follow-up, not a round obligation.
+
+### 10.3 Earlier fixes and regression sweep on the fixed HEAD
+
+Popover Escape (route kept, focus `#bLayers`) ✓ · What-if Escape after reveal (focus `#bWhat`) ✓ · gated ribbon End → 3, Home → 0 ✓ · stress:fast `t` honest toast, no card ✓ · Blood in-scene (heart → 1, glucagon 4.6px) and across a scene change (adrenaline 4.6px, nerve 2.6px) ✓ · search "pupils" → stress:fast ✓ · 200% mid-session caption∩panel = 0 ✓. Default-size sanity at 1024 (no bigtext): draft∩orient 0, draft∩toolbar 0, caption∩panel 0 — the band rules are scoped to `html.bigtext` and nothing regressed at the default size. Reader sheet at 200% at both widths: within viewport, close button hit-testable. Zero console errors in every probe.
+
+### 10.4 Official floor (run this session, from repo root)
+
+| Script | Result |
+| --- | --- |
+| `node scripts/v4-quality-bar.mjs` | **TOTAL 110/110 pass, 0 fail** (`text-zoom@1024` now 4/4: caption/panel, draft-vs-buttons + ribbon words, draft-vs-orient, thought tag) |
+| `node scripts/v4-comprehension-check.mjs` | **TOTAL 47/47 pass, 0 fail** |
+| `node scripts/v4-browser-check.mjs` | **ERRORS: none** |
+
+---
+
+## 11. Fresh pillar scores and definitive verdict
+
+| Pillar | Score | Justification |
+| --- | ---: | --- |
+| Visual quality | **5** (resilient craft) | The explanatory composition is now verified coherent across the three scenes, the supported widths probed, zoom, reduced motion (floor suite), **text scaling at 200% at the two tightest widths, and open panels/cards/sheets**: every measured collision from this round's chain (caption×panel, draft×toolbar, draft×orient, thought×caption/card, ribbon words) is 0 px², with the band stack holding ≥3.6px gaps and both passive layers pointer-inert. The two residuals (orient tail grazing a pill edge, 304px², passive; modal card over stage at 200%, disclosed) are inside the bar as judged in §10.2. Independent visual review = this review chain; no unresolved P0/P1. |
+| Interactivity | **5** (resilient interaction) | Re-confirmed on the fixed HEAD: the full Escape chain closes every surface in order and restores focus; scrubbing matches the slider pattern; T/W answer honestly everywhere; preference toggling (Blood/Nervous/Endocrine) survives pathway and scene switches coherently; search lands on the app's own vocabulary; every critical behavior probed this session has an automated check plus browser evidence, and no stale, contradictory, or inaccessible state was found. |
+| Learning experience | **4** (teachable) | Every browser-observable criterion at or above level 4 verifies, and nothing observed this round is a learning defect. Level 5's one remaining requirement — "bounded learner observation" in addition to independent browser review — is evidence no browser review can produce. That gate stays **explicitly open by design** (with scientific/anatomy review, artwork and provenance), exactly as the quality bar's evidence-limits section prescribes: marked, not implied to pass. |
+
+### Verdict
+
+**Round 2 closes.** All twelve committed fixes (V4-R2-01..07, RR-01..05) are independently
+verified on the final HEAD; no P0/P1 finding remains open; the official floor is green at
+110/110 · 47/47 · no errors; and the two pillars this review can fully evidence — visual and
+interactivity — are at 5 against the level tables as written, re-proven rather than
+re-asserted. Learning closes at 4 with its single remaining level-5 requirement being the
+learner-observation gate, which is open by design and requires a separately reported
+learner observation (no code work remains in this round on its account). If the program
+wants the literal 5 on the scorecard for learning too, the one remaining action is to run
+and record that bounded observation — nothing else.
+
+Scope note: this verdict covers layout, state, interaction and wording in the browser at
+the supported desktop surface. Anatomical/physiological correctness, artwork, asset
+provenance and publication readiness remain separate, explicitly open review gates.
