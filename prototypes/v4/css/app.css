@@ -475,6 +475,14 @@ button{font-family:inherit;color:inherit}
 html.bigtext .caption{top:104px;left:auto;right:20px;transform:none;text-align:right;max-width:calc(100% - 21rem)}
 html.bigtext .thought{top:150px}
 html.bigtext .panel{max-height:calc(100% - 300px)}
+/* At 200% the draft banner (0.75rem → 24px) grew down over the toolbar and mouse-blocked
+   Layers/Hints/Settings at 1024 — both are position:absolute;z-index:20 and .draft comes
+   later in the DOM. The banner is passive status text with nothing to click, so at a large
+   base font it drops below the toolbar row at a fixed 12px and never takes pointer events;
+   70–99px clears the toolbar (ends 62px) and the caption (starts 104px) at every width. */
+html.bigtext .draft{top:70px;font-size:12px;padding:5px 10px;pointer-events:none}
+/* the five time words at 24px overlapped each other inside the 18px strip; 11px fits the track */
+html.bigtext .rb-words{font-size:11px}
 /* Narrow desktop reader focus: the sheet is an intentional alternative view, so the model
    must get the space previously reserved for the systems tree. Keep the objective, current
    route, and timeline visible while stopping the timeline before the reader's right edge. */
