@@ -26,6 +26,7 @@ document.addEventListener('keydown',e=>{
   if(k==='?'){ e.preventDefault(); HS.toggleKeys(); return; }
   if(k==='Escape'){
     if(HS.layers&&HS.layers.active){ e.preventDefault(); HS.layers.active.close(true); return; }
+    if(document.querySelector('.pop:not([hidden])')){ HS.closePopovers(true); return; }   // a popover is the active surface: close it (and refocus its toolbar button) before any pathway Escape semantics
     if($('#keys')){ HS.toggleKeys(); return; }
     if($('#advMenu')){ HS.toggleAdvMenu(false); $('#bAdv').focus(); return; }
     if(E.reflectOpen){ HS.closeReflect(true); return; }
