@@ -91,7 +91,7 @@ HS.setTime=setTime;
   h.addEventListener('pointerup',()=>{ dragging=false; track.classList.remove('drag'); });
   track.addEventListener('click',e=>{ if(e.target.closest('.rb-handle,[data-t]')) return; stopPlay(); setTime(idxAt(e.clientX),true); });   // click anywhere on the ribbon
   $('#rbWays').addEventListener('click',e=>{ const b=e.target.closest('[data-t]'); if(b){ stopPlay(); setTime(+b.dataset.t,true); } });
-  h.addEventListener('keydown',e=>{ if(e.key==='ArrowRight'||e.key==='ArrowUp'){ e.preventDefault(); stopPlay(); setTime(Math.min(lastT(),E.tIdx+1),true); } if(e.key==='ArrowLeft'||e.key==='ArrowDown'){ e.preventDefault(); stopPlay(); setTime(Math.max(0,E.tIdx-1),true); } });
+  h.addEventListener('keydown',e=>{ if(e.key==='ArrowRight'||e.key==='ArrowUp'){ e.preventDefault(); stopPlay(); setTime(Math.min(lastT(),E.tIdx+1),true); } else if(e.key==='ArrowLeft'||e.key==='ArrowDown'){ e.preventDefault(); stopPlay(); setTime(Math.max(0,E.tIdx-1),true); } else if(e.key==='Home'){ e.preventDefault(); stopPlay(); setTime(0,true); } else if(e.key==='End'){ e.preventDefault(); stopPlay(); setTime(lastT(),true); } });
 })();
 function applySigns(){ if(!E.scene) return; const active=E.state==='triggered'&&!(HS.RB&&HS.RB.active)&&!(HS.CMP&&HS.CMP.active);   /* no sign gives away a Rebuild answer */ const p=P();
   E.scene.signs.forEach(sg=>{ const inRoute=sg.org&&p&&p.hots.some(h=>h.org===sg.org); const landed=!(E.gate&&inRoute)||E.landed.has(sg.org); HS.setSign(sg,active&&signOn(sg)&&landed,E.tIdx); }); }
