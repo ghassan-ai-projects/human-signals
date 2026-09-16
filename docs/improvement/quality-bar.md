@@ -1,6 +1,6 @@
 # Human Signals V4 improvement quality bar
 
-Status: active — Round 2 open
+Status: active — Round 2 closed (Visual 5, Interactivity 5, Learning 4 pending learner observation)
 Date: 16 September 2026 (Round 1 bar defined 15 September 2026)
 Scope: `prototypes/v4/` and its browser checks
 
@@ -98,11 +98,34 @@ explicit.
 
 ## Round scorecard
 
-| Pillar | Baseline | Target | Evidence | Status |
-| --- | ---: | ---: | --- | --- |
-| Visual quality | TBD — set by opening review | baseline + 2, cap 5 | pending | Open |
-| Interactivity | TBD — set by opening review | baseline + 2, cap 5 | pending | Open |
-| Learning experience | TBD — set by opening review | baseline + 2, cap 5 | pending | Open |
+| Pillar | Baseline | Target | Final | Evidence | Status |
+| --- | ---: | ---: | ---: | --- | --- |
+| Visual quality | 4/5 | 5 | **5/5** | [Opening review](browser-review-2026-09-16-round2-open.md), [post-fix re-review + final pass](browser-review-2026-09-16-round2-postfix.md), [verification chain](validation-v4-r2-postfix.md) · [2](validation-v4-r2-postfix2.md) · [3](validation-v4-r2-postfix3.md), screenshots | **Met** |
+| Interactivity | 4/5 | 5 | **5/5** | Same reports; every behavior re-proven with probe + evidence per the level-5 letter | **Met** |
+| Learning experience | 4/5 | 5 | **4/5** | Same reports; every browser-observable level-5 requirement met | **Not met on paper — sole blocker is the learner-observation gate** |
+
+## Round 2 record (closed 16 September 2026)
+
+The opening independent review scored the app **4/4/4** — round 1's self-reported
+5/5 did not survive strict re-scoring — and raised 7 findings (V4-R2-01..07, 1×P1).
+The main agent reproduced all 7, an implementation agent fixed them in 7 commits,
+and the main agent verified each fix with its own probes. The re-review then found
+5 more findings in its adversarial sweeps (V4-R2-RR-01..05, all P2, including two
+introduced by an earlier fix in the same round); these were fixed and verified the
+same way. The final pass confirms **no P0/P1 remains**, visual and interactivity
+reach 5, and learning stays at 4 for exactly one reason: level 5 requires a
+**bounded learner observation**, which is evidence no browser review can produce.
+
+**Honest bottom line:** two pillars gained +1 to their cap-5 target; the third
+(+1 available) is blocked by an evidence gate, not by the product — there is no
+remaining code or copy work between the app and a 5/5 scorecard except running
+and recording a real bounded learner observation.
+
+Round-2 hardening that outlives the round: `v4-quality-bar.mjs` grew 106 → 110
+checks (text-zoom@1024 now asserts caption/panel, draft-vs-toolbar-buttons,
+ribbon words, draft-vs-orient, and the thought tag at 200% text). Anatomy and
+physiology correctness, artwork provenance, and publication readiness remain
+separate, unclosed review gates.
 
 ## Round 2 rules (opened 16 September 2026)
 
