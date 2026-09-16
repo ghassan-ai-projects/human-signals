@@ -101,6 +101,11 @@ HS.applyTextScale=function(){
 };
 HS.applyTextScale();
 window.addEventListener('resize',HS.applyTextScale);
+/* The 200% case arrives as a browser setting or user stylesheet changing the root font size
+   MID-SESSION, and no resize event fires then. html and body are height:100% here, so neither
+   box ever moves; the root is observed anyway, but the reliable signals are the two
+   content-sized surfaces this flag exists to separate — a base-size change always reflows them. */
+if(window.ResizeObserver){ const ro=new ResizeObserver(()=>HS.applyTextScale()); ro.observe(document.documentElement); ro.observe($('#panel')); ro.observe($('#caption')); }
 
 /* first paint */
 HS.buildWorld(); HS.renderTriggers(); HS.renderTree();
