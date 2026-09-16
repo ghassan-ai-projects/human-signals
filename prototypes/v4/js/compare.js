@@ -11,7 +11,7 @@ HS.openCompare=function(){
   const [a,b]=S.toggle.options.map(o=>o[0]), A=S.pathways[a], B=S.pathways[b];
   if(!A.compare||!B.compare) return;
   const opener=HS.layers.opener(document.activeElement,$('#bAdv'));
-  HS.layers.start('compare',opener,()=>HS.closeCompare(false),$('#bAdv'));
+  HS.layers.start('compare',opener,focus=>HS.closeCompare(focus),$('#bAdv'));
   HS.stopPlay(); HS.closeTry(false); HS.restoreWhatIf(false); HS.closeCell(false); HS.closeCards(); HS.closeRead(false); if(HS.RB.active) HS.closeRebuild(false); $('#tips').innerHTML='';
   Object.assign(CMP,{active:true,S,a,b,A,B,tok:0});
   Object.keys(HS.rstate).forEach(id=>{ HS.setRoute(id,'hide'); HS.setHollow(id,false); });
