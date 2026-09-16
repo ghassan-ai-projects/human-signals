@@ -11,7 +11,7 @@ const shuffle=(arr,seed)=>{ const a=arr.slice(); let s=seed; for(let i=a.length-
 HS.openRebuild=function(){
   const p=HS.pathway(); if(!p||!p.rebuild||RB.active) return;
   const opener=HS.layers.opener(document.activeElement,$('#bAdv'));
-  HS.layers.start('rebuild',opener,()=>HS.closeRebuild(false),$('#bAdv'));
+  HS.layers.start('rebuild',opener,focus=>HS.closeRebuild(focus),$('#bAdv'));
   HS.stopPlay(); HS.closeTry(false); HS.restoreWhatIf(false); HS.closeCell(false); HS.closeCards(); HS.closeRead(false); $('#tips').innerHTML='';
   const R=p.rebuild, seed=(E.sceneId+E.route).split('').reduce((a,c)=>a+c.charCodeAt(0),0);
   Object.assign(RB,{active:true,p,R,picks:[],names:[],stage:'order',orderOk:null,namesOk:null,cands:shuffle([...new Set(R.chain.concat(Object.values(R.alt||{}).flat(),R.distractors))],seed) /* accepted alternatives must be pickable too */,pool:shuffle(R.links.concat(R.extra),seed+11)});

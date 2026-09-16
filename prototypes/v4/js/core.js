@@ -13,7 +13,10 @@ HS.$=$; HS.app=app;
    opener (or its owning control). */
 const FOCUSABLE='a[href],area[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
 const layers=HS.layers={active:null,inertNodes:[],suppressRestore:false};
-const available=el=>el&&document.contains(el)&&!el.disabled&&!el.hidden&&el.getAttribute('aria-hidden')!=='true'&&el.getClientRects().length>0&&getComputedStyle(el).display!=='none'&&getComputedStyle(el).visibility!=='hidden';
+/* body/html are never restore targets: they have client rects, so without this exclusion
+   layers.opener() can capture the stage as the "opener" and Escape would restore focus to
+   nothing (the browser default) instead of a control. */
+const available=el=>el&&el!==document.body&&el!==document.documentElement&&document.contains(el)&&!el.disabled&&!el.hidden&&el.getAttribute('aria-hidden')!=='true'&&el.getClientRects().length>0&&getComputedStyle(el).display!=='none'&&getComputedStyle(el).visibility!=='hidden';
 const firstFocusable=el=>el&&[...el.querySelectorAll(FOCUSABLE)].find(available);
 function restoreFocus(opener,fallback){
   const target=available(opener)?opener:(available(fallback)?fallback:null);

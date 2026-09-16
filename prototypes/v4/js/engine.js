@@ -311,7 +311,7 @@ function openReflect(){
   const p=P(); if(!p||!p.reflect||E.reflectOpen||E.playing||E.tryMode||E.whatIf||E.cellOpen||(HS.RB&&HS.RB.active)||(HS.CMP&&HS.CMP.active)) return;
   const fallback=$('#bSay')&&!$('#bSay').hidden?$('#bSay'):$('#bRead');
   const opener=HS.layers.opener(document.activeElement,fallback);
-  HS.layers.start('reflect',opener,()=>closeReflect(false),fallback);
+  HS.layers.start('reflect',opener,focus=>closeReflect(focus),fallback);
   E.reflectOpen=true; const r=p.reflect; HS.closeCards&&HS.closeCards();
   /* Remember what opened this, so Escape returns focus where the learner was — pressing Y
      from a focused hotspot should not throw focus across the screen to the toolbar. */
@@ -375,7 +375,7 @@ HS.playAll=playAll;
 function openTry(){
   const p=P(); if(!p||!p.gate||E.tryMode||E.whatIf) return; const g=p.gate, tr=g.try;
   const opener=HS.layers.opener(document.activeElement,$('#bRead'));
-  HS.layers.start('try',opener,()=>closeTry(false),$('#bRead'));
+  HS.layers.start('try',opener,focus=>closeTry(focus),$('#bRead'));
   const q=typeof tr.q==='string'?tr.q:(tr.q[HS.level()]||tr.q.organ);   // wording follows the zoom level it was opened at
   stopPlay(); HS.closeCards(); HS.clearTip(g.tipKey); E.tryMode=true; E.picks.clear(); E.tryCtx={exposed:isRevealed(),why:false};
   tr.candidates.forEach(k=>$('#o-'+k).classList.add('cand'));
@@ -437,7 +437,7 @@ HS.closeTry=closeTry;
 function openCell(key){
   const C=E.scene&&E.scene.cells&&E.scene.cells[key]; if(E.cellOpen||!C) return; E.cellOpen=true; HS.closeCards();
   const opener=HS.layers.opener(document.activeElement,$('#bRead'));
-  HS.layers.start('cell',opener,()=>closeCell(false),$('#bRead'));
+  HS.layers.start('cell',opener,focus=>closeCell(focus),$('#bRead'));
   const n=C.steps.length, F=C.focus||[], adv=HS.advOn&&C.adv;
   const d=document.createElement('div'); d.className='inset float'; d.id='cellInset'; d.setAttribute('role','dialog'); d.setAttribute('aria-label',C.aria);
   d.style.right='150px'; d.style.top='96px';
@@ -491,7 +491,7 @@ HS.openCell=openCell; HS.closeCell=closeCell;
 function openWhatIf(){
   const p=P(); if(!p||!p.whatIf||E.whatIf||(p.gate&&!isRevealed())) return; const w=p.whatIf;
   const opener=HS.layers.opener(document.activeElement,$('#bWhat'));
-  HS.layers.start('what',opener,()=>restoreWhatIf(false),$('#bWhat'));
+  HS.layers.start('what',opener,focus=>restoreWhatIf(focus),$('#bWhat'));
   stopPlay(); closeTry(false); closeCell(false); HS.closeCards(); E.whatIf='predict';
   $('#thought').hidden=false; (w.fade||[]).forEach(id=>HS.setRoute(id,'faint'));
   if(w.atmos){ HS.setAtmos(w.atmos); HS.setNight(0); }
