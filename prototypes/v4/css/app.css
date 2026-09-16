@@ -473,7 +473,6 @@ button{font-family:inherit;color:inherit}
   .panel{max-height:calc(100% - 300px)}
 }
 html.bigtext .caption{top:118px;left:auto;right:20px;transform:none;text-align:right;max-width:calc(100% - 21rem)}
-html.bigtext .thought{top:150px}
 html.bigtext .panel{max-height:calc(100% - 300px)}
 /* At 200% the draft banner (0.75rem → 24px) grew down over the toolbar and mouse-blocked
    Layers/Hints/Settings at 1024 — both are position:absolute;z-index:20 and .draft comes
@@ -488,6 +487,15 @@ html.bigtext .draft{top:66px;font-size:12px;padding:5px 10px;pointer-events:none
 html.bigtext .orient{top:99px;font-size:10px;pointer-events:none}
 /* the five time words at 24px overlapped each other inside the 18px strip; 11px fits the track */
 html.bigtext .rb-words{font-size:11px}
+/* The thought tag keeps its centred top slot at the default size, but at 200% it sat on the
+   caption and behind the docked What-if card (3,130 / 17,401px² measured). It moves to the
+   bottom-left band between the systems panel and the ribbon — the only free floor at 1024,
+   where the card foot, level chip and ribbon claim the whole right side (the panel reaches
+   542/574px and the ribbon starts at x=150, so the tag wraps at 130px): fixed 10px, pinned
+   line-height, 4px clear of the panel above and the ribbon to the right at both widths.
+   While a What-if answer plays the card grows over the stage; that growth is the card's own
+   200% behaviour, not the tag's placement. */
+html.bigtext .thought{top:auto;bottom:192px;left:16px;right:auto;transform:none;font-size:10px;line-height:12px;padding:2px 10px;width:130px;white-space:normal}
 /* Narrow desktop reader focus: the sheet is an intentional alternative view, so the model
    must get the space previously reserved for the systems tree. Keep the objective, current
    route, and timeline visible while stopping the timeline before the reader's right edge. */

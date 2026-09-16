@@ -359,6 +359,32 @@ rec('text-zoom@1024', 'the draft banner and the orientation line stack clear of 
   `draft∩orient=${big1024.draftOrient} orient∩cap=${big1024.orientCap} draft∩cap=${big1024.draftCap}`);
 rec('text-zoom@1024', 'the time ribbon words do not overlap each other at 200%',
   big1024.pairs === 0, `${big1024.pairs} overlapping pairs`);
+/* The thought tag only exists while a What if? is open, and at 200% it used to sit on the
+   caption and behind the docked card (V4-R2-RR-05). stress:slow has a whatIf behind its
+   reveal, so open it here, measure the tag against its band neighbours, and close it again. */
+await page.evaluate(() => { window.HS.markRevealed('stress', 'slow'); window.HS.openWhatIf(); });
+await page.waitForTimeout(600);
+const thought1024 = await page.evaluate(() => {
+  const r = (s) => { const e = document.querySelector(s); return e ? e.getBoundingClientRect() : null; };
+  const inter = (a, c) => a && c
+    ? Math.round(Math.max(0, Math.min(a.right, c.right) - Math.max(a.left, c.left)))
+      * Math.round(Math.max(0, Math.min(a.bottom, c.bottom) - Math.max(a.top, c.top)))
+    : -1;
+  const th = r('#thought');
+  if (!th || th.width < 1) return { visible: false };
+  return {
+    visible: true,
+    panel: inter(th, r('#panel')), ribbon: inter(th, r('.ribbon')),
+    caption: inter(th, r('#caption')), card: inter(th, r('#wiCard')),
+  };
+});
+rec('text-zoom@1024', 'the thought tag sits clear of the panel, ribbon, caption and What-if card at 200%',
+  thought1024.visible && thought1024.panel === 0 && thought1024.ribbon === 0
+    && thought1024.caption === 0 && thought1024.card === 0,
+  thought1024.visible
+    ? `panel=${thought1024.panel} ribbon=${thought1024.ribbon} caption=${thought1024.caption} card=${thought1024.card}`
+    : 'tag not visible');
+await page.evaluate(() => { window.HS.restoreWhatIf(false); });
 await page.evaluate(() => { document.documentElement.style.fontSize = ''; });
 
 /* ---------- 6. routes and hotspots are the most salient marks (squint proxy) ---------- */
