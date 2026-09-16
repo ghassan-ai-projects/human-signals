@@ -131,6 +131,9 @@ HS.scenes.stress={
  search:[
   {t:'Fast route',k:'Pathway',syn:['sympathetic','adrenal medulla','nerves','fight or flight'],go:{pathway:['stress','fast']}},
   {t:'HPA axis',k:'Pathway',syn:['slow route','stress axis','hypothalamic-pituitary-adrenal'],go:{pathway:['stress','slow']}},
+  {t:'Pupils widen',k:'Body sign',syn:['pupil','pupils','wide eyes'],go:{pathway:['stress','fast']}},
+  {t:'Heart beats faster',k:'Body sign',syn:['heart pounding','racing heart'],go:{pathway:['stress','fast']}},
+  {t:'Breathing quickens',k:'Body sign',syn:['quick breathing'],go:{pathway:['stress','fast']}},
   {t:'Adrenaline',k:'Signal',syn:['epinephrine'],go:{node:'adrenaline'}},
   {t:'Noradrenaline',k:'Signal',syn:['norepinephrine'],go:{node:'noradrenaline'}},
   {t:'CRH',k:'Signal',syn:['corticotropin-releasing hormone'],go:{node:'crh'}},
