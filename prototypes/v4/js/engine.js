@@ -373,7 +373,9 @@ HS.playAll=playAll;
 
 /* ---------- Try it? ---------- */
 function openTry(){
-  const p=P(); if(!p||!p.gate||E.tryMode||E.whatIf) return; const g=p.gate, tr=g.try;
+  const p=P(); if(!p) return;
+  if(!p.gate){ HS.toast('Try it? is not part of this route: no feedback loop acts back here.'); return; }   // the keys dialog advertises T on every pathway, so a no-target press says so instead of dying silently
+  if(E.tryMode||E.whatIf) return; const g=p.gate, tr=g.try;
   const opener=HS.layers.opener(document.activeElement,$('#bRead'));
   HS.layers.start('try',opener,focus=>closeTry(focus),$('#bRead'));
   const q=typeof tr.q==='string'?tr.q:(tr.q[HS.level()]||tr.q.organ);   // wording follows the zoom level it was opened at
@@ -489,7 +491,11 @@ HS.openCell=openCell; HS.closeCell=closeCell;
 
 /* ---------- What if? ---------- */
 function openWhatIf(){
-  const p=P(); if(!p||!p.whatIf||E.whatIf||(p.gate&&!isRevealed())) return; const w=p.whatIf;
+  const p=P(); if(!p) return;
+  if(!p.whatIf){ HS.toast('What if? is not part of this route.'); return; }
+  if(E.whatIf) return;
+  if(p.gate&&!isRevealed()){ HS.toast('What if? opens once the feedback loop is revealed — use Try it? first.'); return; }
+  const w=p.whatIf;
   const opener=HS.layers.opener(document.activeElement,$('#bWhat'));
   HS.layers.start('what',opener,focus=>restoreWhatIf(focus),$('#bWhat'));
   stopPlay(); closeTry(false); closeCell(false); HS.closeCards(); E.whatIf='predict';
