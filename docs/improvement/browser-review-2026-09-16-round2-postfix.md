@@ -130,3 +130,71 @@ supported desktop widths with keyboard and mouse. It does not assess anatomical 
 physiological correctness, artwork quality, asset provenance, or publication readiness;
 the app's own "Illustrative draft · not reviewed science" banner and per-block evidence
 statuses remain the correct marking of those open gates. Probe scripts: `coverage/v4-r2-rr/probe-01-escapes.mjs` through `probe-08-confirm.mjs` (gitignored), run against HEAD `030ba25`.
+
+---
+
+## 7. Closing pass (same reviewer, HEAD `c7c13fa`, fixes `d62e7f9` / `24e2c27` / `018e84e`)
+
+Method: my own probes (`coverage/v4-r2-rr/probe-09-close.mjs`, `probe-10-close2.mjs`, `orient-shot.mjs`),
+fresh contexts, no reliance on the implementer's runs; abbreviated re-checks of all seven
+original fixes; a new-issue sweep around the three changed surfaces; the official floor.
+
+### 7.1 Re-verification of RR-01..03
+
+| Finding | Fix commit | Verdict | Independent measurement |
+| --- | --- | --- | --- |
+| RR-01 Compare Escape | `d62e7f9` | **PASS** | Escape from Compare on `#s=meal&p=between`: focus `#bAdv` (was BODY), `CMP.active` false, legend hidden, and the route state snapshot is **byte-identical** to the pre-compare state (`absorb:faint, fbGlu:ghost, fbIns:hide, glucagon:on, glucose:on, insL:faint, insM:faint`); the "Not revealed yet" ghost badge re-renders. Close button: focus `#bAdv`, state restored. Play-both interrupted by Escape mid-travel: pulse stopped, card gone, state restored, focus `#bAdv`. Zero console errors. |
+| RR-02 Blood across scenes | `24e2c27` | **PASS** | Blood on at meal:between (5 routes lit) → stress:fast: `#r-adrenaline` bloodlit at **4.6px**, `#r-nerve` untouched (2.6px, no class) → dark:night: `#r-melatonin` bloodlit at **4.6px**, `#r-rht` 2.6px, `#r-fbMel` never bloodlit → stress:slow: portal `#r-crh` never bloodlit, `#r-acth` 4.6px, ghost `#r-f1` never bloodlit. Popover stays `aria-checked=true` and the heart stays at opacity 1 throughout — stage now matches the advertised state. Toggle off clears every class and stroke. Endocrine + Nervous toggles with Blood on survive a scene change (`#r-insL` 4.6px, nervous 0.35/1). Hidden routes carry the class but sit at opacity 0 — nothing leaks. Zero console errors. |
+| RR-03 200% toolbar/ribbon | `018e84e` | **PASS on its own acceptance criteria — with a residual, see RR-04** | At 1024×768 and 1280×800 @200% root font: draft ∩ every toolbar button = **0 px²**; `elementFromPoint` at each button center hits the button (all five); real clicks on `#bLayers`/`#bSettings` land; ribbon word pairwise overlap **0** (was 24/47px); banner `pointer-events:none`; caption clear of panel and of the banner (0 px² both widths); reader sheet at 200% within the viewport at both widths with the close button hit-testable (`validation-v4-r2rr-close-200-1024.png`, `-200-1280.png`). The relocated banner now collides with the orientation line instead — new finding RR-04. |
+
+### 7.2 New finding
+
+### V4-R2-RR-04 — The relocated draft banner covers the tail of the orientation line at 200% (P2)
+
+- Severity: P2
+- Pillar: Visual quality
+- Route/state + viewport: any state, root font-size 200% set mid-session, 1024×768 and 1280×800 (identical geometry — right-anchored)
+- Observed: under `html.bigtext` the banner moves to `top:70px`, but `.orient` ("FRONT VIEW · THE BODY'S RIGHT IS ON YOUR LEFT", `top:62px`, rem-scaled) has no bigtext rule. Measured: draft [777,70 → 1006,99] ∩ orient [352,62 → 1004,95] = **5,744 px² = 26% of the label's area** at both widths — the pill covers the bottom band of the line's right ~227px, i.e. the words "…IS ON YOUR LEFT" (`validation-v4-r2rr-close-orient-overlap-1024.png`, wide view in `validation-v4-r2rr-close-200-1024.png`). No interaction harm (the banner is `pointer-events:none`); the commit's own clearance check measured the toolbar and the caption but not `.orient`.
+- Expected: visual level 2 as written — "no measured label/UI collisions; text remains usable at 200% base size". This is the same observable bar the original RR-03 failed; the fix moved the collision off the interactive controls but not out of the layout.
+- Consequence: a low-vision learner at 200% loses the mirroring caveat of the orientation aid at every width; the anatomy orientation statement is cut off mid-sentence.
+- Acceptance criteria: (1) at 200% root font at 1024×768 and 1280×800, `.draft` ∩ `.orient` = 0 px² (move the banner, the line, or hide the passive line under `html.bigtext` — one bounded CSS change); (2) the `text-zoom@1024` checks in `v4-quality-bar.mjs` gain the draft-vs-orient pair so it cannot return; (3) no console errors.
+
+### 7.3 Spot-checks — all seven original fixes still hold
+
+R2-01 popover Escape: popover hidden, route `between`, focus `#bLayers` ✓. R2-02 What-if Escape after reveal: card gone, `whatIf` null, focus `#bWhat` ✓. R2-05: gated End → **3** + gate toast, Home → **0** ✓. R2-07: stress:fast `t`/`w` → both honest toasts, no cards ✓. R2-03: 200% mid-session panel∩caption = **0**, `bigtext` applied ✓. R2-06: heart 0.32 → 1 (measured mid-transition at 0.995 as the fade settled), `#r-glucagon` 4.6px ✓. R2-04: "pupils" → "Pupils widen · Body sign" → lands `stress:fast` ✓. Zero console errors in every check.
+
+### 7.4 Official floor (run this session, from repo root)
+
+| Script | Result |
+| --- | --- |
+| `node scripts/v4-quality-bar.mjs` | **TOTAL 108/108 pass, 0 fail** (includes the two new `text-zoom@1024` checks) |
+| `node scripts/v4-comprehension-check.mjs` | **TOTAL 47/47 pass, 0 fail** |
+| `node scripts/v4-browser-check.mjs` | **ERRORS: none** |
+
+---
+
+## 8. Fresh pillar scores at close
+
+| Pillar | Score | Justification |
+| --- | ---: | --- |
+| Visual quality | **4** | All of RR-03's acceptance criteria now pass — toolbar, caption, ribbon words, reader sheet and popovers are clean at 200% at 1024 and 1280, and the Blood emphasis is coherent across scenes. It is held at 4 solely by **V4-R2-RR-04**: a measured 5,744 px² collision (26% of the orientation label) at 200% fails the level-2 bar as written ("no measured label/UI collisions; text remains usable at 200% base size"), by the same cumulative-levels standard applied at round open and in the RR review. Level 5's own bar ("coherent across … text scaling") cannot be confirmed while a supported text-scale state contains a measured collision. |
+| Interactivity | **5** (resilient interaction) | Re-proven, not re-asserted: Escape now closes every surface in the chain in the right order and restores focus to a real control — popovers (mouse and keyboard opens), Try/What-if/Rebuild/Say-it-back/cell, keys dialog, search, reader sheet, cell, **and now Compare**, whose close restores the exact pre-compare route state (`afterRestored: true` byte-for-byte) and survives a Play-both interrupt. Scrubbing matches the ARIA slider pattern (Home/End, gate clamp, playback interruption, no toast stacking). Toggling preferences is coherent across pathway and scene switches — the Blood emphasis survives every scene load with carriers correct and clears on toggle-off. Advertised triggers all respond or say honestly why not. Each critical behavior named here has an automated probe (implementer's and this review's) plus browser evidence. No stale, contradictory, or inaccessible state was found on any surface probed this session. |
+| Overall = lowest pillar | **4** | Interactivity reaches target; visual is one bounded CSS change away; learning is capped by a gate that is open by design, not by any browser defect. |
+
+Learning experience stays at **4** for the reason recorded at round open: level 5 requires
+"bounded learner observation" in addition to independent browser review, and none exists in
+the repository. That gate — with scientific/anatomical correctness, artwork, asset
+provenance and publication readiness — remains open by design and is untouched by any
+finding in this round.
+
+## 9. Closing verdict
+
+**Round 2 does not close — one bounded finding remains.** No P0/P1 exists anywhere; RR-01
+and RR-02 are verified fixed and lift Interactivity to 5; the official floor is green at
+108/108 · 47/47 · no errors. Visual quality is held at 4 only by V4-R2-RR-04, a one-line
+CSS iteration of the same 200% reflow family (draft banner vs `.orient`), with acceptance
+criteria in §7.2. After that lands, a final narrow pass needs only: the RR-04 geometry
+check at 1024 and 1280, the quality-bar run with the added draft-vs-orient regression
+check, and confirmation that nothing else moved — then all three pillars stand at 5 to the
+bar's letter, with the learner-observation and anatomy/science gates explicitly open by
+design.
