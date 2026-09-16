@@ -321,9 +321,22 @@ HS.closeRead=function(focus){
 /* ---------- layers & settings ---------- */
 function applyLayer(name,on,user){
   if(name==='nervous') $('#gNerv').setAttribute('opacity',on?1:.35);
-  else if(name==='blood'){ $('#o-heart').classList.toggle('lit',on); if(on&&user) HS.toast('Blood layer: the heart and blood-borne routes are emphasised. No vessel tree is drawn, because routes are schematic.'); }
+  else if(name==='blood'){ HS._bloodOn=!!on; $('#o-heart').classList.toggle('lit',on); HS.applyBloodLayer(HS._bloodOn); if(on&&user) HS.toast('Blood layer: the heart and blood-borne routes are emphasised. No vessel tree is drawn, because routes are schematic.'); }
   else if(name==='endocrine'){ document.querySelectorAll('#o-adr,#o-thy,#o-panc,#o-hyp,#o-pit').forEach(g=>g.style.filter=on?'':'saturate(.2)'); }
 }
+/* Blood emphasis on the stage itself: `.lit` on the heart alone was invisible at whole-body
+   zoom because no `.org.lit` rule raises the group's opacity (it only restrokes the shape),
+   and the organ sits dimmed at .org.dim. `bloodlit` is applied to the heart and to
+   blood-carrier routes that are actually on stage (not hidden), and it must NOT be a class
+   HS.applyOrgs() manages (it only toggles lit/hov/dim) — otherwise organ updates would strip
+   the emphasis on the next state change. Re-applied after every scene load. */
+HS.applyBloodLayer=function(on){
+  const heart=$('#o-heart'); if(heart) heart.classList.toggle('bloodlit',!!on);
+  document.querySelectorAll('#gRoutes .route').forEach(el=>{
+    const id=(el.id||'').replace(/^r-/,'');
+    el.classList.toggle('bloodlit',!!on&&!!id&&HS.carrierOf(id)==='blood'&&HS.rstate[id]&&HS.rstate[id]!=='hide');
+  });
+};
 HS.setLayer=(name,on)=>{ document.querySelector(`[data-layer="${name}"]`).setAttribute('aria-checked',on); applyLayer(name,on,false); };
 let popReturn=null;
 HS.closePopovers=function(focus=false){

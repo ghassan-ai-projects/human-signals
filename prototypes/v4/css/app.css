@@ -333,6 +333,13 @@ button{font-family:inherit;color:inherit}
 .org-body{transition:filter .35s var(--ease)}
 .org.hov .org-body{filter:brightness(1.18)}
 .app.busy .org.hov .org-body{filter:none}
+/* Blood layer emphasis (Layers popover): weight + full opacity, not a new hue, so it stays
+   readable in grayscale. Placed after the .org.lit/.org.hov rules so .org.bloodlit outranks
+   .org.dim, which is what made the toggle invisible before. `bloodlit` is deliberately not a
+   class HS.applyOrgs() toggles (it only manages lit/hov/dim), so organ updates never strip it. */
+.org.bloodlit{opacity:1}
+.org.bloodlit .org-shape{stroke:#7CCBFF;stroke-width:2.2}
+#gRoutes .route.bloodlit{stroke-width:4.6}
 .hs.cur::before{content:"";position:absolute;inset:-3px;border-radius:50%;border:2px solid var(--msg);opacity:0;animation:hsring 1s var(--ease) 1}
 @keyframes hsring{0%{transform:scale(1);opacity:.9}100%{transform:scale(2.3);opacity:0}}
 .rm .hs.cur::before{animation:none}

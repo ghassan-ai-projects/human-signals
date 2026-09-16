@@ -49,6 +49,7 @@ HS.buildRoutes=function(routes){
   s+=Object.entries(routes).map(([id,r])=>`<path class="rhit" data-route="${id}" data-st="hide" d="${r.d}"/>`).join('');   // wide invisible hit areas, on top
   $('#gRoutes').innerHTML=s; HS.ov.hoverRoute=null;
   Object.keys(routes).forEach(id=>{ pathEl[id]=document.getElementById('r-'+id); rstate[id]='hide'; });
+  if(HS._bloodOn) HS.applyBloodLayer(true);   // a scene load rebuilds every route element, so the Blood toggle must be re-applied to survive it
 };
 HS.routeDef=id=>ROUTES[id];
 /* hollow style (Compare route B): a wider line with a dark core, readable without colour */
