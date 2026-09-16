@@ -1,7 +1,7 @@
 # Human Signals V4 improvement quality bar
 
-Status: active
-Date: 15 September 2026
+Status: active — Round 2 open
+Date: 16 September 2026 (Round 1 bar defined 15 September 2026)
 Scope: `prototypes/v4/` and its browser checks
 
 This is the bar for improving V4 as a learning experience. It measures what a
@@ -100,13 +100,33 @@ explicit.
 
 | Pillar | Baseline | Target | Evidence | Status |
 | --- | ---: | ---: | --- | --- |
-| Visual quality | 3/5 | 5/5 | [Post-fix close](browser-review-2026-09-16-postfix-close.md), [final review](browser-review-2026-09-16-final.md), screenshots, quality-bar results | Met |
-| Interactivity | 3/5 | 5/5 | [Post-fix close](browser-review-2026-09-16-postfix-close.md), behavioural browser checks, regression tests | Met |
-| Learning experience | 3/5 | 5/5 | [Post-fix close](browser-review-2026-09-16-postfix-close.md), comprehension proxies, independent browser judgement | Met |
+| Visual quality | TBD — set by opening review | baseline + 2, cap 5 | pending | Open |
+| Interactivity | TBD — set by opening review | baseline + 2, cap 5 | pending | Open |
+| Learning experience | TBD — set by opening review | baseline + 2, cap 5 | pending | Open |
 
-## Current round status
+## Round 2 rules (opened 16 September 2026)
 
-Round **closed** on 16 September 2026. The final narrow-reader finding
+Round 1 closed with all three pillars self-reported at 5/5. A closed self-report
+is not a standing entitlement: Round 2's baseline is re-established by a fresh
+independent browser review that scores the app against the pillar tables above
+as they are written, without assuming any previous round's claims. Two
+consequences:
+
+1. If the opening review scores a pillar below 5, that score is the baseline and
+   the target is baseline + 2 (capped at 5). The loop of review → validate →
+   implement → re-review repeats until every pillar meets its target.
+2. If the opening review confirms 5/5 everywhere, the round may not coast: the
+   review must instead name the strongest concrete gaps that remain inside the
+   existing level definitions (regression risks, thin evidence, untested states),
+   each treated as a finding with the same rigour. "Two levels up" then means
+   the re-review at round close still independently confirms 5/5 against a
+   stricter evidence set — every pillar re-proven, not merely re-asserted.
+
+Baseline claim waits on the opening review report under `docs/improvement/`.
+
+## Round 1 record (closed 16 September 2026)
+
+Round 1 **closed** on 16 September 2026 at 3/5 → 5/5 on all three pillars. The final narrow-reader finding
 `V4-FINAL-01` is implemented in `f8a2215`, with main-agent evidence in
 `validation-v4-reader-focus-postfix.md` and independent post-fix confirmation in
 `browser-review-2026-09-16-postfix-close.md`. That confirmation re-checked both
